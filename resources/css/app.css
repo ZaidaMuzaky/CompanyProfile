@@ -1,0 +1,12 @@
+#loginError {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050; /* Pastikan lebih tinggi dari modal */
+    width: 300px;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    display: none; /* Default disembunyikan */
+}
