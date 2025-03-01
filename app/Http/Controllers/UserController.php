@@ -23,13 +23,23 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'type' => $request->type
+
+        // Validasi input
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'password' => 'nullable|string|min:8', // Bisa kosong jika tidak ingin mengubah password
+            'role' => 'required|string',
         ]);
 
-        return redirect()->route('admin.users')->with('success', 'User updated successfully');
+        // Update data pengguna
+        $user->username = $request->username;
+        if ($request->password) {
+            $user->password = bcrypt($request->password); // Enkripsi jika ada input password baru
+        }
+        $user->type = $request->role;
+        $user->save();
+
+        return redirect()->back()->with('success', 'User updated successfully');
     }
 
     public function destroy($id)

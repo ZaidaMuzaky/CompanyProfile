@@ -16,7 +16,7 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        <title>@yield('title', 'Dashboard') - NiceAdmin</title>
+        <title>@yield('title', 'Dashboard') - Admin</title>
 
         <!-- Favicons -->
         <link href="{{ asset('assets2/img/favicon.png') }}" rel="icon">
@@ -39,7 +39,7 @@
         @include('partials.navbarapp')
 
         <main id="main" class="main">
-            {{-- <div class="pagetitle">
+            <div class="pagetitle">
                 <h1>@yield('title')</h1>
                 <nav>
                     <ol class="breadcrumb">
@@ -47,7 +47,7 @@
                         <li class="breadcrumb-item active">@yield('title')</li>
                     </ol>
                 </nav>
-            </div><!-- End Page Title --> --}}
+            </div><!-- End Page Title -->
 
             <section class="section dashboard">
                 <div class="row">
@@ -65,6 +65,7 @@
         <!-- Vendor JS Files -->
         <script src="{{ asset('assets2/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('assets2/js/main.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     </body>

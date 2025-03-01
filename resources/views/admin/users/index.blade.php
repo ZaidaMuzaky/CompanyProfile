@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="container">
-        <h2>Manage Users</h2>
         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
         <table class="table">
             <tr>
@@ -19,18 +18,19 @@
                     <td>
                         <!-- Button to open Edit Modal -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal"
-                            onclick="editUser('{{ $user->id }}', '{{ $user->username }}', '{{ $user->password }}', '{{ $user->type }}')">
+                            onclick="editUser('{{ $user->id_user }}', '{{ $user->username }}', '{{ $user->type }}')">
                             Edit
                         </button>
 
                         <!-- Delete Form -->
-                        {{-- <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"                             style="display:inline;">
+                        <form action="{{ route('admin.users.destroy', $user->id_user) }}" method="POST"
+                            style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
                                 Delete
                             </button>
-                        </form> --}}
+                        </form>
                     </td>
                 </tr>
             @endforeach
@@ -94,7 +94,7 @@
 
                         <div class="mb-3">
                             <label for="editUserPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="editUserPassword" name="password" required>
+                            <input type="password" class="form-control" id="editUserPassword" name="password">
                         </div>
 
                         <div class="mb-3">
@@ -112,14 +112,27 @@
         </div>
     </div>
     <script>
-        function editUser(id, username, password, type) {
+        function editUser(id, username, type) {
             document.getElementById("editUserId").value = id;
             document.getElementById("editUserName").value = username;
-            document.getElementById("editUserPassword").value = password;
             document.getElementById("editUserRole").value = type;
 
             let form = document.getElementById("editUserForm");
             form.action = "/admin/users/" + id + "/update";
         }
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+        });
+    </script>
+
 @endsection

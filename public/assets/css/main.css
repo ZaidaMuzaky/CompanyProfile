@@ -2143,6 +2143,7 @@ section,
 /*--------------------------------------------------------------
 # Blog Posts Section
 --------------------------------------------------------------*/
+
 .blog-posts article {
   background-color: var(--surface-color);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
