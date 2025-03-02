@@ -7,12 +7,14 @@
         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
         <table class="table">
             <tr>
+                <th>No</th>
                 <th>Username</th>
                 <th>Role</th>
                 <th>Actions</th>
             </tr>
-            @foreach ($users as $user)
+            @foreach ($users as $index => $user)
                 <tr>
+                    <td>{{ $index + 1 }}</td>
                     <td>{{ $user->username }}</td>
                     <td>{{ $user->type }}</td>
                     <td>
@@ -27,7 +29,8 @@
                             style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Anda yakin akan menghapus pengguna ini?')">
                                 Delete
                             </button>
                         </form>

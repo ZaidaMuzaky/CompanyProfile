@@ -13,7 +13,7 @@ class Folder extends Model
     protected $table = 'folders';
     protected $primaryKey = 'id_folder';
 
-    protected $fillable = ['divisi'];
+    protected $fillable = ['nama'];
 
     public function files(): HasMany
     {

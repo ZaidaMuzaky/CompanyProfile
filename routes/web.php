@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FoldersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/users/{id}/update', [UserController::class, 'update'])->name('admin.users.update');
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
+
+    // folder management
+    Route::get('/admin/folders', [FoldersController::class, 'index'])->name('admin.folders');
+    Route::post('/admin/folders', [FoldersController::class, 'store'])->name('admin.folders.store');
+    Route::put('/admin/folders/{id}/update', [FoldersController::class, 'update'])->name('admin.folders.update');
+    Route::delete('/admin/folders/{id}', [FoldersController::class, 'destroy'])->name('admin.folders.destroy');
 });
