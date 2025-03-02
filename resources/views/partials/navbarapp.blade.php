@@ -19,6 +19,11 @@
                 <i class="bi bi-grid"></i> <span>Dashboard</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link " href="{{ route('user.files') }}">
+                <i class="bi bi-file-earmark-pdf"></i> <span>Managemen Files PDF</span>
+            </a>
+        </li>
         @if (Auth::check() && Auth::user()->type === 'admin')
             <li class="nav-item">
                 <span class="nav-link ">Admin</span>

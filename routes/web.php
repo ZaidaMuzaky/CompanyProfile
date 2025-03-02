@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\FoldersController;
 
 /*
@@ -25,6 +26,7 @@ Route::get('dashboard', function () {
 })->name('dashboard')->middleware('auth');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
 // user management
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
@@ -38,4 +40,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/folders', [FoldersController::class, 'store'])->name('admin.folders.store');
     Route::put('/admin/folders/{id}/update', [FoldersController::class, 'update'])->name('admin.folders.update');
     Route::delete('/admin/folders/{id}', [FoldersController::class, 'destroy'])->name('admin.folders.destroy');
+});
+
+// file management for authenticated users
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user/files', [FilesController::class, 'index'])->name('user.files');
+    Route::post('/user/files', [FilesController::class, 'store'])->name('user.files.store');
+    Route::put('/user/files/{id}/update', [FilesController::class, 'update'])->name('user.files.update');
+    Route::delete('/user/files/{id}', [FilesController::class, 'destroy'])->name('user.files.destroy');
+    Route::get('/user/files/download/{id}', [FilesController::class, 'download'])->name('user.files.download');
 });
