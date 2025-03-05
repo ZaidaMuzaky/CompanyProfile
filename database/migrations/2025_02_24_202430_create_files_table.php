@@ -15,10 +15,14 @@ class CreateFilesTable extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id('id_file');
-            $table->foreignId('id_folder')->constrained('folders', 'id_folder')->onDelete('cascade');
+            $table->unsignedBigInteger('id_folder');
             $table->string('nama_file');
-            $table->foreignId('id_user_upload')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->string('path'); // Tambahkan kolom path
+            $table->unsignedBigInteger('id_user_upload')->nullable();
             $table->timestamps();
+
+            $table->foreign('id_folder')->references('id_folder')->on('folders')->onDelete('cascade');
+            $table->foreign('id_user_upload')->references('id_user')->on('users')->onDelete('set null'); // Sesuaikan kunci asing
         });
     }
 

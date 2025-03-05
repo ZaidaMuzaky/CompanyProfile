@@ -1,4 +1,3 @@
-<!-- filepath: /d:/dp/CompanyD/resources/views/user/files/index.blade.php -->
 @extends('layouts.logapp')
 
 @section('title', 'Managemen Files PDF')
@@ -6,15 +5,24 @@
 @section('content')
     <div class="container">
         <h2>Select Folder</h2>
-        <ul class="list-group">
+        <div class="row">
             @foreach ($folders as $folder)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $folder->nama }}
-                    <button class="btn btn-primary btn-sm"
-                        onclick="selectFolder('{{ $folder->id_folder }}', '{{ $folder->nama }}')">Select</button>
-                </li>
+                <div class="col-md-4">
+                    <div class="card mb-3 shadow-sm" onclick="selectFolder('{{ $folder->id_folder }}', '{{ $folder->nama }}')"
+                        style="cursor: pointer;">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-folder-fill" style="font-size: 2rem; color: #fbc02d;"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">{{ $folder->nama }}</h5>
+                                <small class="text-muted">{{ $folder->files->count() }} items</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             @endforeach
-        </ul>
+        </div>
     </div>
 
     <!-- Add File Modal -->
@@ -43,10 +51,7 @@
 
     <script>
         function selectFolder(id, name) {
-            document.getElementById("selectedFolderId").value = id;
-            document.getElementById("selectedFolderName").innerText = name;
-            var addFileModal = new bootstrap.Modal(document.getElementById('addFileModal'));
-            addFileModal.show();
+            window.location.href = '/user/files/' + id; // Arahkan ke halaman manipulasi file
         }
     </script>
 @endsection

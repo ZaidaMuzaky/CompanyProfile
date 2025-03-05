@@ -45,6 +45,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // file management for authenticated users
 Route::middleware(['auth'])->group(function () {
     Route::get('/user/files', [FilesController::class, 'index'])->name('user.files');
+    Route::get('/user/files/{id_folder}', [FilesController::class, 'show'])->name('user.files.show');
     Route::post('/user/files', [FilesController::class, 'store'])->name('user.files.store');
     Route::put('/user/files/{id}/update', [FilesController::class, 'update'])->name('user.files.update');
     Route::delete('/user/files/{id}', [FilesController::class, 'destroy'])->name('user.files.destroy');
