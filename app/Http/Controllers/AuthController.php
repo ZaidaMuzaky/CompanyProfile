@@ -16,6 +16,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            // Update is_online status to true and record last login time
+            $user = Auth::user();
+            $user->is_online = true;
+            $user->last_login_at = now();
+            $user->save();
+
             return response()->json(['success' => true, 'redirect' => route('dashboard')]);
         }
 
@@ -24,8 +31,17 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        // Update is_online status to false
+        $user = Auth::user();
+        if ($user) {
+            $user->is_online = false;
+            $user->save();
+        }
+
         Auth::logout();
         $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/');
     }
 }

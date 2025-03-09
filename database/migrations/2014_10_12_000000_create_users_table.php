@@ -18,6 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->enum('type', ['admin', 'user']);
+            $table->boolean('is_online')->default(false);
+            $table->timestamp('last_login_at')->nullable();
             $table->timestamps(); // Auto-create 'created_at' & 'updated_at'
         });
     }

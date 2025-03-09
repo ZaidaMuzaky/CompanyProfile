@@ -11,21 +11,23 @@ class FilesController extends Controller
 {
     public function index()
     {
-        $folders = Folder::all(); // Ambil semua folder
+        $folders = Folder::whereNull('parent_id')->get();
         return view('user.files.index', compact('folders'));
     }
 
-    public function show($id_folder, Request $request)
+    public function show($id_folder)
     {
         $folder = Folder::findOrFail($id_folder);
-        $query = File::with('user')->where('id_folder', $id_folder);
+        $subfolders = $folder->subfolders;
+        $files = $folder->files;
+        return view('user.files.show', compact('folder', 'subfolders', 'files'));
+    }
 
-        if ($request->has('search')) {
-            $query->where('nama_file', 'like', '%' . $request->search . '%');
-        }
-
-        $files = $query->get();
-        return view('user.files.show', compact('folder', 'files'));
+    public function manage($id_folder)
+    {
+        $folder = Folder::findOrFail($id_folder);
+        $files = $folder->files;
+        return view('user.files.file', compact('folder', 'files'));
     }
 
     public function store(Request $request)
@@ -38,14 +40,14 @@ class FilesController extends Controller
         $file = new File();
         $file->id_folder = $request->id_folder;
         $file->nama_file = $request->file('file')->getClientOriginalName();
-        $file->id_user_upload = Auth::id(); // Simpan id_user_upload dengan ID pengguna yang sedang login
+        $file->id_user_upload = Auth::id();
         if ($request->file('file')) {
             $filePath = $request->file('file')->store('files', 'public');
             $file->path = $filePath;
         }
         $file->save();
 
-        return redirect()->route('user.files.show', $request->id_folder)->with('success', 'File uploaded successfully.');
+        return redirect()->route('user.files.manage', $request->id_folder)->with('success', 'File uploaded successfully.');
     }
 
     public function update(Request $request, $id)
@@ -59,14 +61,14 @@ class FilesController extends Controller
 
         $file->id_folder = $request->id_folder;
         $file->nama_file = $request->file('file')->getClientOriginalName();
-        $file->id_user_upload = Auth::id(); // Simpan id_user_upload dengan ID pengguna yang sedang login
+        $file->id_user_upload = Auth::id();
         if ($request->file('file')) {
             $filePath = $request->file('file')->store('files', 'public');
             $file->path = $filePath;
         }
         $file->save();
 
-        return redirect()->route('user.files.show', $request->id_folder)->with('success', 'File updated successfully.');
+        return redirect()->route('user.files.manage', $request->id_folder)->with('success', 'File updated successfully.');
     }
 
     public function destroy($id)
@@ -74,7 +76,7 @@ class FilesController extends Controller
         $file = File::findOrFail($id);
         $file->delete();
 
-        return redirect()->route('user.files.show', $file->id_folder)->with('success', 'File deleted successfully.');
+        return redirect()->route('user.files.manage', $file->id_folder)->with('success', 'File deleted successfully.');
     }
 
     public function download($id)

@@ -16,7 +16,7 @@ class User extends Authenticatable
     protected $table = 'users';
     protected $primaryKey = 'id_user';
 
-    protected $fillable = ['username', 'password', 'type'];
+    protected $fillable = ['username', 'password', 'type', 'is_online', 'last_login_at'];
 
     public function files(): HasMany
     {
