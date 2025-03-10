@@ -21,7 +21,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('user.files.index') ? '' : 'collapsed' }}"
+            <a class="nav-link {{ request()->routeIs('user.files.*') ? '' : 'collapsed' }}"
                 href="{{ route('user.files.index') }}">
                 <i class="bi bi-file-earmark-pdf"></i> <span>Managemen Files PDF</span>
             </a>
@@ -37,7 +37,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.folders.index') ? '' : 'collapsed' }}"
+                <a class="nav-link {{ request()->routeIs('admin.folders.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.folders.index') }}">
                     <i class="bi bi-folder"></i> <span>Managemen Folders</span>
                 </a>

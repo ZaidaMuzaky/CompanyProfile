@@ -22,7 +22,7 @@
                             </div>
                             <div>
                                 <h5 class="card-title mb-1">{{ $folder->nama }}</h5>
-                                <small class="text-muted">{{ $folder->files->count() }} items</small>
+                                <small class="text-muted">{{ $folder->subfolders->count() }} subfolders</small>
                             </div>
                         </div>
                     </div>

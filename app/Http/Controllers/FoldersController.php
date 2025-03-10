@@ -51,15 +51,24 @@ class FoldersController extends Controller
 
         $folder->save();
 
-        return redirect()->route('admin.folders.index')->with('success', 'Folder updated successfully');
+        if ($folder->parent_id) {
+            return redirect()->route('admin.folders.show', $folder->parent_id)->with('success', 'Subfolder updated successfully');
+        } else {
+            return redirect()->route('admin.folders.index')->with('success', 'Folder updated successfully');
+        }
     }
 
     public function destroy($id)
     {
         $folder = Folder::findOrFail($id);
+        $parentId = $folder->parent_id;
         $folder->delete();
 
-        return redirect()->route('admin.folders.index')->with('success', 'Folder deleted successfully');
+        if ($parentId) {
+            return redirect()->route('admin.folders.show', $parentId)->with('success', 'Subfolder deleted successfully');
+        } else {
+            return redirect()->route('admin.folders.index')->with('success', 'Folder deleted successfully');
+        }
     }
 
     public function store(Request $request)
@@ -80,6 +89,10 @@ class FoldersController extends Controller
 
         $folder->save();
 
-        return redirect()->route('admin.folders.index')->with('success', 'Folder created successfully.');
+        if ($folder->parent_id) {
+            return redirect()->route('admin.folders.show', $folder->parent_id)->with('success', 'Subfolder created successfully.');
+        } else {
+            return redirect()->route('admin.folders.index')->with('success', 'Folder created successfully.');
+        }
     }
 }
