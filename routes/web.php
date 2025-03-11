@@ -18,9 +18,9 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/home', function () {
     return view('home');
-});
+})->name('home');
 // login page
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
