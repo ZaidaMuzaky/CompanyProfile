@@ -4,7 +4,9 @@
 
 @section('content')
     <div class="container">
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-plus-circle"></i> Add User
+        </button>
         <table class="table">
             <tr>
                 <th>No</th>
@@ -18,20 +20,20 @@
                     <td>{{ $user->username }}</td>
                     <td>{{ $user->type }}</td>
                     <td>
-                        <!-- Button to open Edit Modal -->
+                        <!-- Edit Icon -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editUserModal"
                             onclick="editUser('{{ $user->id_user }}', '{{ $user->username }}', '{{ $user->type }}')">
-                            Edit
+                            <i class="bi bi-pencil-square"></i>
                         </button>
 
-                        <!-- Delete Form -->
+                        <!-- Delete Icon -->
                         <form action="{{ route('admin.users.destroy', $user->id_user) }}" method="POST"
                             style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Anda yakin akan menghapus pengguna ini?')">
-                                Delete
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </td>

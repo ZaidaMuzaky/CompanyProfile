@@ -11,8 +11,8 @@
                 <div class="col-md-3">
                     <div class="card mb-3 shadow-sm" style="cursor: pointer;"
                         onclick="window.location='{{ route('user.files.manage', $subfolder->id_folder) }}'">
-                        <img src="{{ $subfolder->icon_path ? asset('storage/' . $subfolder->icon_path) : asset('assets/img/folder-icon.png') }}"
-                            class="card-img-top" alt="Folder Icon" style="width: 100%; height: auto;">
+                        <img src="{{ $subfolder->icon_path ? asset('storage/' . $subfolder->icon_path) : asset('assets/img/LogoUtama.png') }}"
+                            class="card-img-top" alt="Folder Icon">
                         <div class="card-body text-center">
                             <h5 class="card-title">{{ $subfolder->nama }}</h5>
                             <small class="text-muted">{{ $subfolder->files->count() }} items</small>

@@ -222,6 +222,10 @@ h6 {
   border: none;
   border-radius: 5px;
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+  height: 100%; /* Pastikan kartu menyesuaikan tinggi konten */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card-header,
@@ -252,6 +256,18 @@ h6 {
 
 .card-img-overlay {
   background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Pastikan semua gambar di dalam kartu memiliki ukuran tetap */
+.card-img-top {
+    width: 100%; /* Gambar memenuhi lebar kartu */
+    max-width: 250px; /* Atur lebar maksimum gambar */
+    height: 200px; /* Atur tinggi tetap untuk gambar */
+    object-fit: contain; /* Pastikan gambar tetap proporsional dan memenuhi area */
+    border-top-left-radius: 5px; /* Sesuaikan dengan radius kartu */
+    border-top-right-radius: 5px; /* Sesuaikan dengan radius kartu */
+    background-color: #ffffff; /* Tambahkan latar belakang jika gambar tidak memenuhi area */
+    margin: 0 auto; /* Pusatkan gambar jika ukurannya lebih kecil */
 }
 
 /* Alerts */

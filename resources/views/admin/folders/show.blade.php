@@ -6,7 +6,8 @@
 @section('content')
     <div class="container">
         <h2>Subfolders of {{ $parentFolder->nama }}</h2>
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSubfolderModal">Add Subfolder</button>
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSubfolderModal"><i
+                class="bi bi-folder-plus"></i> Add Subfolder</button>
 
         <!-- Subfolders Table -->
         <table class="table mt-3">
@@ -30,20 +31,20 @@
                         @endif
                     </td>
                     <td>
-                        <!-- Button to open Edit Modal -->
+                        <!-- Edit Icon -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSubfolderModal"
                             onclick="editSubfolder('{{ $subfolder->id_folder }}', '{{ $subfolder->nama }}', '{{ $subfolder->icon_path }}')">
-                            Edit
+                            <i class="bi bi-pencil-square"></i>
                         </button>
 
-                        <!-- Delete Form -->
+                        <!-- Delete Icon -->
                         <form action="{{ route('admin.folders.destroy', $subfolder->id_folder) }}" method="POST"
                             style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Anda yakin akan menghapus subfolder ini?')">
-                                Delete
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </td>

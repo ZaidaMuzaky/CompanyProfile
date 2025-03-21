@@ -4,7 +4,8 @@
 
 @section('content')
     <div class="container">
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addFolderModal">Add Folder</button>
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addFolderModal"><i
+                class="bi bi-folder-plus"></i> Add Folder</button>
 
         <!-- Parent Folders Table -->
         <table class="table mt-3">
@@ -29,20 +30,20 @@
                         @endif
                     </td>
                     <td>
-                        <!-- Button to open Edit Modal -->
+                        <!-- Edit Icon -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFolderModal"
                             onclick="event.stopPropagation(); editFolder('{{ $folder->id_folder }}', '{{ $folder->nama }}', '{{ $folder->parent_id }}', '{{ $folder->icon_path }}')">
-                            Edit
+                            <i class="bi bi-pencil-square"></i>
                         </button>
 
-                        <!-- Delete Form -->
+                        <!-- Delete Icon -->
                         <form action="{{ route('admin.folders.destroy', ['id' => $folder->id_folder]) }}" method="POST"
                             style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Anda yakin akan menghapus folder ini?'); event.stopPropagation();">
-                                Delete
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </td>

@@ -7,12 +7,16 @@
     <div class="container">
         <h2>Files in {{ $folder->nama }}</h2>
         <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFileModal">Add File</button>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFileModal">
+                <i class="bi bi-plus-circle"></i> Add File
+            </button>
             <form method="GET" action="{{ route('user.files.manage', $folder->id_folder) }}" class="d-flex mx-auto"
                 style="width: 50%;">
                 <input type="text" name="search" class="form-control" placeholder="Search files..."
                     value="{{ request()->query('search') }}">
-                <button type="submit" class="btn btn-primary ms-2">Search</button>
+                <button type="submit" class="btn btn-primary ms-2">
+                    <i class="bi bi-search"></i>
+                </button>
             </form>
         </div>
         <table class="table">
@@ -26,37 +30,39 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $file->nama_file }}</td>
                     <td>
-                        <!-- Button to open Edit Modal -->
+                        <!-- Edit Icon -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFileModal"
                             onclick="editFile('{{ $file->id_file }}', '{{ $file->nama_file }}', '{{ $file->id_folder }}')">
-                            Edit
+                            <i class="bi bi-pencil-square"></i>
                         </button>
 
-                        <!-- Button to open Detail Modal -->
+                        <!-- Detail Icon -->
                         <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailFileModal"
                             onclick="detailFile('{{ $file->nama_file }}', '{{ $folder->nama }}', '{{ $file->user->username }}', '{{ $file->created_at }}', '{{ $file->updated_at }}')">
-                            Detail
+                            <i class="bi bi-info-circle"></i>
                         </button>
 
-                        <!-- Button to open View Modal -->
+                        <!-- View Icon -->
                         <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#viewFileModal"
                             onclick="viewFile('{{ asset('storage/' . $file->path) }}')">
-                            View
+                            <i class="bi bi-eye"></i>
                         </button>
 
-                        <!-- Delete Form -->
+                        <!-- Delete Icon -->
                         <form action="{{ route('user.files.destroy', $file->id_file) }}" method="POST"
                             style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
-                                Delete
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Anda Yakin Ingin Menghapus File Ini?')">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
 
-                        <!-- Download Link -->
-                        <a href="{{ route('user.files.download', $file->id_file) }}"
-                            class="btn btn-primary btn-sm">Download</a>
+                        <!-- Download Icon -->
+                        <a href="{{ route('user.files.download', $file->id_file) }}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-download"></i>
+                        </a>
                     </td>
                 </tr>
             @endforeach
