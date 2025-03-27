@@ -3,11 +3,17 @@
 
 @section('title', 'Manage Subfolders of ' . $parentFolder->nama)
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('admin.folders.index') }}">Folders</a></li>
+    <li class="breadcrumb-item active">{{ $parentFolder->nama }}</li>
+@endsection
+
 @section('content')
     <div class="container">
         <h2>Subfolders of {{ $parentFolder->nama }}</h2>
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSubfolderModal"><i
-                class="bi bi-folder-plus"></i> Add Subfolder</button>
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSubfolderModal">
+            <i class="bi bi-folder-plus"></i> Add Subfolder
+        </button>
 
         <!-- Subfolders Table -->
         <table class="table mt-3">

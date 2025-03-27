@@ -3,13 +3,18 @@
 
 @section('title', 'Managemen Files PDF - ' . $folder->nama)
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Folders</a></li>
+    <li class="breadcrumb-item active">{{ $folder->nama }}</li>
+@endsection
+
 @section('content')
     <div class="container mt-4">
         <h2>Select Subfolder in {{ $folder->nama }}</h2>
         <div class="row justify-content-center">
             @foreach ($subfolders as $subfolder)
-                <div class="col-md-3">
-                    <div class="card mb-3 shadow-sm" style="cursor: pointer;"
+                <div class="col-6 col-sm-6 col-md-3 mb-3">
+                    <div class="card shadow-sm" style="cursor: pointer;"
                         onclick="window.location='{{ route('user.files.manage', $subfolder->id_folder) }}'">
                         <img src="{{ $subfolder->icon_path ? asset('storage/' . $subfolder->icon_path) : asset('assets/img/LogoUtama.png') }}"
                             class="card-img-top" alt="Folder Icon">

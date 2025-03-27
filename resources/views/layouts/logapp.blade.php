@@ -44,7 +44,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item active">@yield('title')</li>
+                        @yield('breadcrumb')
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
@@ -71,3 +71,6 @@
     </body>
 
     </html>
+</body>
+
+</html>

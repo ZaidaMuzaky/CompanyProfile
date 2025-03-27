@@ -2,10 +2,15 @@
 
 @section('title', 'Manage Folders')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Folders</li>
+@endsection
+
 @section('content')
     <div class="container">
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addFolderModal"><i
-                class="bi bi-folder-plus"></i> Add Folder</button>
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addFolderModal">
+            <i class="bi bi-folder-plus"></i> Add Folder
+        </button>
 
         <!-- Parent Folders Table -->
         <table class="table mt-3">

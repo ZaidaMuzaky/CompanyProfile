@@ -3,6 +3,10 @@
 
 @section('title', 'Edit Google Form Link')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Edit Google Form</li>
+@endsection
+
 @section('content')
     <div class="container mt-4">
         <h2>Edit Google Form Link</h2>

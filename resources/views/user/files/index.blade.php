@@ -2,14 +2,17 @@
 
 @section('title', 'Managemen Files PDF')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Folders</li>
+@endsection
+
 @section('content')
     <div class="container">
-        <h2>Select Folder</h2>
-        <div class="row">
+        <h2 class="fs-5">Select Folder</h2> <!-- Tambahkan fs-5 untuk ukuran font -->
+        <div class="row g-3"> <!-- Tambahkan g-3 untuk margin antar card -->
             @foreach ($folders as $folder)
-                <div class="col-md-4">
-                    <div class="card mb-3 shadow-sm"
-                        onclick="window.location='{{ route('user.files.show', $folder->id_folder) }}'"
+                <div class="col-6 col-sm-6 col-md-4"> <!-- 2 kolom di smartphone -->
+                    <div class="card shadow-sm" onclick="window.location='{{ route('user.files.show', $folder->id_folder) }}'"
                         style="cursor: pointer;">
                         <div class="card-body d-flex align-items-center">
                             <div class="me-3">
@@ -21,8 +24,9 @@
                                 @endif
                             </div>
                             <div>
-                                <h5 class="card-title mb-1">{{ $folder->nama }}</h5>
-                                <small class="text-muted">{{ $folder->subfolders->count() }} subfolders</small>
+                                <h5 class="card-title mb-1 fs-6">{{ $folder->nama }}</h5> <!-- Tambahkan fs-6 -->
+                                <small class="text-muted d-block fs-7">{{ $folder->subfolders->count() }} subfolders</small>
+                                <!-- Tambahkan fs-7 -->
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,25 @@
 
 @section('title', 'Managemen Files PDF - ' . $folder->nama)
 
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Folders</a></li>
+    @php
+        $currentFolder = $folder;
+        $breadcrumbFolders = [];
+        while ($currentFolder->parent) {
+            $breadcrumbFolders[] = $currentFolder->parent;
+            $currentFolder = $currentFolder->parent;
+        }
+        $breadcrumbFolders = array_reverse($breadcrumbFolders);
+    @endphp
+    @foreach ($breadcrumbFolders as $breadcrumbFolder)
+        <li class="breadcrumb-item">
+            <a href="{{ route('user.files.show', $breadcrumbFolder->id_folder) }}">{{ $breadcrumbFolder->nama }}</a>
+        </li>
+    @endforeach
+    <li class="breadcrumb-item active">{{ $folder->nama }}</li>
+@endsection
+
 @section('content')
     <div class="container">
         <h2>Files in {{ $folder->nama }}</h2>

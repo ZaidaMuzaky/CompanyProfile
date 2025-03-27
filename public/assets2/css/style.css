@@ -1271,3 +1271,13 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+@media (max-width: 576px) {
+    h5.card-title {
+        font-size: 0.9rem; /* Ukuran font lebih kecil untuk smartphone */
+    }
+
+    small.text-muted {
+        font-size: 0.8rem; /* Ukuran font lebih kecil untuk teks tambahan */
+    }
+}

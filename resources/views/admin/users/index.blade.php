@@ -2,7 +2,12 @@
 
 @section('title', 'Manage Users')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Users</li>
+@endsection
+
 @section('content')
+
     <div class="container">
         <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
             <i class="bi bi-plus-circle"></i> Add User
@@ -60,7 +65,10 @@
 
                         <div class="mb-3">
                             <label for="addUserPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="addUserPassword" name="password" required>
+                            <input type="password" class="form-control" id="addUserPassword" name="password" minlength="8"
+                                required>
+                            <small class="text-danger d-none" id="addPasswordError">Password setidaknya harus 8
+                                karakter</small>
                         </div>
 
                         <div class="mb-3">
@@ -71,7 +79,8 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Add User</button>
+                        <button type="submit" class="btn btn-primary" onclick="return validateAddPassword()">Add
+                            User</button>
                     </form>
                 </div>
             </div>
@@ -99,7 +108,10 @@
 
                         <div class="mb-3">
                             <label for="editUserPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="editUserPassword" name="password">
+                            <input type="password" class="form-control" id="editUserPassword" name="password"
+                                minlength="8">
+                            <small class="text-danger d-none" id="editPasswordError">Password setidaknya harus 8
+                                karakter</small>
                         </div>
 
                         <div class="mb-3">
@@ -110,7 +122,8 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary"
+                            onclick="return validateEditPassword()">Update</button>
                     </form>
                 </div>
             </div>
@@ -138,6 +151,33 @@
                 });
             @endif
         });
+    </script>
+    <script>
+        function validateAddPassword() {
+            const password = document.getElementById('addUserPassword').value;
+            const error = document.getElementById('addPasswordError');
+
+            if (password.length < 8) {
+                error.classList.remove('d-none');
+                return false;
+            }
+
+            error.classList.add('d-none');
+            return true;
+        }
+
+        function validateEditPassword() {
+            const password = document.getElementById('editUserPassword').value;
+            const error = document.getElementById('editPasswordError');
+
+            if (password && password.length < 8) {
+                error.classList.remove('d-none');
+                return false;
+            }
+
+            error.classList.add('d-none');
+            return true;
+        }
     </script>
 
 @endsection
