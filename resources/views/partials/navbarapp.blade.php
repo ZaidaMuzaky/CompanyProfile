@@ -26,6 +26,12 @@
                 <i class="bi bi-file-earmark-pdf"></i> <span>Managemen Files PDF</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{ config('app.google_form_link', 'https://forms.gle/') }}"
+                target="_blank">
+                <i class="bi bi-google"></i> <span>Google Form</span>
+            </a>
+        </li>
         @if (Auth::check() && Auth::user()->type === 'admin')
             <li class="nav-item">
                 <span class="nav-link">Admin</span>
@@ -40,6 +46,12 @@
                 <a class="nav-link {{ request()->routeIs('admin.folders.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.folders.index') }}">
                     <i class="bi bi-folder"></i> <span>Managemen Folders</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.google-form.*') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.google-form.edit') }}">
+                    <i class="bi bi-pencil"></i> <span>Edit Google Form Link</span>
                 </a>
             </li>
         @endif

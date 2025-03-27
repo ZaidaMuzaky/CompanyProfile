@@ -232,4 +232,6 @@ return [
 
     ],
 
+    'google_form_link' => env('GOOGLE_FORM_LINK', 'https://forms.gle/'),
+
 ];

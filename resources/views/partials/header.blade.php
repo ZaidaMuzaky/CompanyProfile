@@ -1,7 +1,7 @@
 <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-        <a href="{{ url('/') }}" class="logo d-flex align-items-center me-auto">
+        <a href="{{ url('/home') }}" class="logo d-flex align-items-center me-auto">
             <!-- Uncomment the line below if you also wish to use an image logo -->
             <img src="{{ asset('assets/img/Logo-Utama.png') }}" alt="Logo" style="width:150px; height: auto;">
             {{-- <h1>Hasta Panca Mandiri Utama</h1> --}}

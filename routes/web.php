@@ -40,6 +40,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/folders', [FoldersController::class, 'store'])->name('admin.folders.store');
     Route::put('/admin/folders/{id}', [FoldersController::class, 'update'])->name('admin.folders.update');
     Route::delete('/admin/folders/{id}', [FoldersController::class, 'destroy'])->name('admin.folders.destroy');
+
+    // google form
+    Route::get('/admin/google-form', [App\Http\Controllers\GformController::class, 'editGoogleForm'])->name('admin.google-form.edit');
+    Route::post('/admin/google-form', [App\Http\Controllers\GformController::class, 'updateGoogleForm'])->name('admin.google-form.update');
 });
 
 // file management for authenticated users

@@ -779,6 +779,23 @@ h6 {
   background-color: #4154f1;
 }
 
+/* Kelas untuk menu tanpa latar belakang aktif */
+.nav-link-no-active {
+    color: #333; /* Warna teks */
+    text-decoration: none; /* Hilangkan garis bawah */
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link-no-active:hover {
+    color: #007bff; /* Warna teks saat hover */
+    background-color: transparent; /* Tidak ada latar belakang saat hover */
+}
+
+.nav-link-no-active i {
+    margin-right: 10px; /* Spasi antara ikon dan teks */
+}
 
 /*--------------------------------------------------------------
 # Dashboard

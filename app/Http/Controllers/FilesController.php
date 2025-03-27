@@ -23,10 +23,13 @@ class FilesController extends Controller
         return view('user.files.show', compact('folder', 'subfolders', 'files'));
     }
 
-    public function manage($id_folder)
+    public function manage($id_folder, Request $request)
     {
         $folder = Folder::findOrFail($id_folder);
-        $files = $folder->files;
+        $search = $request->query('search');
+        $files = $folder->files()->when($search, function ($query, $search) {
+            return $query->where('nama_file', 'like', '%' . $search . '%');
+        })->get();
         return view('user.files.file', compact('folder', 'files'));
     }
 
