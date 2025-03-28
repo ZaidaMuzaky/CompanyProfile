@@ -188,12 +188,29 @@
                     <h5 class="modal-title" id="viewFileModalLabel">View File</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <iframe id="pdfViewer" src="" width="100%" height="600px"></iframe>
+                <div class="modal-body position-relative">
+                    <!-- Floating Zoom Buttons -->
+                    <div class="zoom-controls position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                        <button id="zoomOut" class="btn btn-secondary btn-sm mb-2" title="Zoom Out">
+                            <i class="bi bi-zoom-out"></i>
+                        </button>
+                        <button id="zoomIn" class="btn btn-secondary btn-sm" title="Zoom In">
+                            <i class="bi bi-zoom-in"></i>
+                        </button>
+                    </div>
+                    <!-- PDF Container -->
+                    <div id="pdfContainer" style="overflow-y: auto; max-height: 600px;"></div>
+                    <!-- Fallback Message -->
+                    <div id="fallbackMessage" style="display: none;">
+                        <p>Your browser does not support viewing PDF files. <a id="downloadLink" href="#" target="_blank">Click here to download the file.</a></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
 
     <script>
         function editFile(id, name, folderId) {
@@ -209,8 +226,80 @@
             document.getElementById("detailUpdatedAt").innerText = updatedAt;
         }
 
+        let currentScale = 1.0; // Default zoom scale
+
         function viewFile(fileUrl) {
-            document.getElementById("pdfViewer").src = fileUrl;
+            const pdfContainer = document.getElementById("pdfContainer");
+            const fallbackMessage = document.getElementById("fallbackMessage");
+            const downloadLink = document.getElementById("downloadLink");
+
+            // Save the file URL for zoom functionality
+            pdfContainer.setAttribute("data-file-url", fileUrl);
+
+            // Clear previous content
+            pdfContainer.innerHTML = "";
+
+            const loadingTask = pdfjsLib.getDocument(fileUrl);
+            loadingTask.promise.then(function (pdf) {
+                fallbackMessage.style.display = "none";
+
+                // Render all pages
+                for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                    pdf.getPage(pageNumber).then(function (page) {
+                        const canvas = document.createElement("canvas");
+                        canvas.style.marginBottom = "10px";
+                        pdfContainer.appendChild(canvas);
+
+                        const context = canvas.getContext("2d");
+                        const viewport = page.getViewport({ scale: currentScale });
+
+                        // Adjust for high DPI screens
+                        const outputScale = window.devicePixelRatio || 1;
+                        canvas.width = Math.floor(viewport.width * outputScale);
+                        canvas.height = Math.floor(viewport.height * outputScale);
+                        canvas.style.width = `${viewport.width}px`;
+                        canvas.style.height = `${viewport.height}px`;
+
+                        const transform = outputScale !== 1
+                            ? [outputScale, 0, 0, outputScale, 0, 0]
+                            : null;
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                            transform: transform,
+                        };
+                        page.render(renderContext);
+                    });
+                }
+            }).catch(function (error) {
+                console.error("Error loading PDF:", error);
+                fallbackMessage.style.display = "block";
+                downloadLink.href = fileUrl;
+            });
+        }
+
+        // Zoom In and Zoom Out functionality
+        document.getElementById("zoomIn").addEventListener("click", function () {
+            currentScale += 0.1; // Increase scale
+            applyZoom(currentScale); // Apply zoom without reloading
+        });
+
+        document.getElementById("zoomOut").addEventListener("click", function () {
+            if (currentScale > 0.5) {
+                currentScale -= 0.1; // Decrease scale
+                applyZoom(currentScale); // Apply zoom without reloading
+            }
+        });
+
+        function applyZoom(scale) {
+            const pdfContainer = document.getElementById("pdfContainer");
+            const canvases = pdfContainer.querySelectorAll("canvas");
+
+            canvases.forEach((canvas) => {
+                canvas.style.transform = `scale(${scale})`;
+                canvas.style.transformOrigin = "top left"; // Set origin for scaling
+            });
         }
     </script>
     <script>

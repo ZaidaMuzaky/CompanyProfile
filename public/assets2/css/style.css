@@ -1281,3 +1281,13 @@ h6 {
         font-size: 0.8rem; /* Ukuran font lebih kecil untuk teks tambahan */
     }
 }
+
+.zoom-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.zoom-controls button {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
