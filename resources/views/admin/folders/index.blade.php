@@ -8,9 +8,18 @@
 
 @section('content')
     <div class="container">
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addFolderModal">
-            <i class="bi bi-folder-plus"></i> Add Folder
-        </button>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFolderModal">
+                <i class="bi bi-folder-plus"></i> Add Folder
+            </button>
+            <form method="GET" action="{{ route('admin.folders.index') }}" class="d-flex mx-auto" style="width: 50%;">
+                <input type="text" name="search" class="form-control" placeholder="Search folders..."
+                    value="{{ request()->query('search') }}">
+                <button type="submit" class="btn btn-primary ms-2">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
 
         <!-- Parent Folders Table -->
         <table class="table mt-3">

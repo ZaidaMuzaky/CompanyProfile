@@ -11,9 +11,22 @@
 @section('content')
     <div class="container mt-4">
         <h2>Select Subfolder in {{ $folder->nama }}</h2>
+        
+        <!-- Search Bar -->
+        <div class="d-flex justify-content-center mb-3">
+            <form method="GET" action="{{ route('user.files.show', $folder->id_folder) }}" class="d-flex"
+                style="width: 50%;">
+                <input type="text" id="subfolderSearch" name="search" class="form-control" placeholder="Search subfolders..."
+                    value="{{ request()->query('search') }}">
+                <button type="submit" class="btn btn-primary ms-2">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+        
         <div class="row justify-content-center">
             @foreach ($subfolders as $subfolder)
-                <div class="col-6 col-sm-6 col-md-3 mb-3">
+                <div class="col-6 col-sm-6 col-md-3 mb-3 subfolder-item">
                     <div class="card shadow-sm" style="cursor: pointer;"
                         onclick="window.location='{{ route('user.files.manage', $subfolder->id_folder) }}'">
                         <img src="{{ $subfolder->icon_path ? asset('storage/' . $subfolder->icon_path) : asset('assets/img/LogoUtama.png') }}"
@@ -27,6 +40,16 @@
             @endforeach
         </div>
     </div>
+
+    <script>
+        document.getElementById('subfolderSearch').addEventListener('input', function() {
+            const searchValue = this.value.toLowerCase();
+            document.querySelectorAll('.subfolder-item').forEach(function(item) {
+                const subfolderName = item.querySelector('.card-title').textContent.toLowerCase();
+                item.style.display = subfolderName.includes(searchValue) ? '' : 'none';
+            });
+        });
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

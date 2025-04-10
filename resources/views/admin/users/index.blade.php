@@ -9,9 +9,20 @@
 @section('content')
 
     <div class="container">
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
-            <i class="bi bi-plus-circle"></i> Add User
-        </button>
+        <h2>Manage Users</h2>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="bi bi-plus-circle"></i> Add User
+            </button>
+            <form method="GET" action="{{ route('admin.users') }}" class="d-flex mx-auto" style="width: 50%;">
+                <input type="text" name="search" class="form-control" placeholder="Search usernames..."
+                    value="{{ request()->query('search') }}">
+                <button type="submit" class="btn btn-primary ms-2">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+
         <table class="table">
             <tr>
                 <th>No</th>

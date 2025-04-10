@@ -8,9 +8,14 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all(); // Ambil semua user
+        $search = $request->input('search');
+
+        $users = User::when($search, function ($query, $search) {
+            return $query->where('username', 'like', '%' . $search . '%');
+        })->get();
+
         return view('admin.users.index', compact('users'));
     }
 

@@ -9,16 +9,26 @@ use Illuminate\Support\Facades\Auth;
 
 class FilesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $folders = Folder::whereNull('parent_id')->get();
+        $search = $request->query('search');
+        $folders = Folder::whereNull('parent_id')
+            ->when($search, function ($query, $search) {
+                return $query->where('nama', 'like', '%' . $search . '%');
+            })
+            ->get();
         return view('user.files.index', compact('folders'));
     }
 
-    public function show($id_folder)
+    public function show($id_folder, Request $request)
     {
         $folder = Folder::findOrFail($id_folder);
-        $subfolders = $folder->subfolders;
+        $search = $request->query('search');
+        $subfolders = $folder->subfolders()
+            ->when($search, function ($query, $search) {
+                return $query->where('nama', 'like', '%' . $search . '%');
+            })
+            ->get();
         $files = $folder->files;
         return view('user.files.show', compact('folder', 'subfolders', 'files'));
     }

@@ -8,16 +8,30 @@ use Illuminate\Support\Facades\Storage;
 
 class FoldersController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $folders = Folder::whereNull('parent_id')->get(); // Ambil semua folder parent
+        $search = $request->input('search');
+
+        $folders = Folder::whereNull('parent_id')
+            ->when($search, function ($query, $search) {
+                return $query->where('nama', 'like', '%' . $search . '%');
+            })
+            ->get();
+
         return view('admin.folders.index', compact('folders'));
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $search = $request->input('search');
+
         $parentFolder = Folder::findOrFail($id);
-        $subfolders = $parentFolder->subfolders; // Ambil subfolder dari folder parent
+        $subfolders = $parentFolder->subfolders()
+            ->when($search, function ($query, $search) {
+                return $query->where('nama', 'like', '%' . $search . '%');
+            })
+            ->get();
+
         return view('admin.folders.show', compact('parentFolder', 'subfolders'));
     }
 

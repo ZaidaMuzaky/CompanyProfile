@@ -11,9 +11,19 @@
 @section('content')
     <div class="container">
         <h2>Subfolders of {{ $parentFolder->nama }}</h2>
-        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSubfolderModal">
-            <i class="bi bi-folder-plus"></i> Add Subfolder
-        </button>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubfolderModal">
+                <i class="bi bi-folder-plus"></i> Add Subfolder
+            </button>
+            <form method="GET" action="{{ route('admin.folders.show', $parentFolder->id_folder) }}" class="d-flex mx-auto"
+                style="width: 50%;">
+                <input type="text" name="search" class="form-control" placeholder="Search subfolders..."
+                    value="{{ request()->query('search') }}">
+                <button type="submit" class="btn btn-primary ms-2">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
 
         <!-- Subfolders Table -->
         <table class="table mt-3">

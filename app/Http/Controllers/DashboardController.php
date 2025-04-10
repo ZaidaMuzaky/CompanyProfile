@@ -17,14 +17,28 @@ class DashboardController extends Controller
         $totalFiles = File::count();
 
         $perPage = $request->input('per_page', 5); // Default to 5 items per page
-        $onlineUsers = User::where('is_online', true)->paginate($perPage, ['*'], 'online_page');
-        $offlineUsers = User::where('is_online', false)->paginate($perPage, ['*'], 'offline_page');
-        $totalOnlineUsers = $onlineUsers->total();
-        $totalOfflineUsers = $offlineUsers->total();
+
+        // Fetch online and offline users
+        $onlineUsers = User::where('is_online', true)->take($perPage)->get();
+        $remainingSlots = max(0, $perPage - $onlineUsers->count());
+        $offlineUsers = User::where('is_online', false)->take($remainingSlots)->get();
+
+        $totalOnlineUsers = User::where('is_online', true)->count();
+        $totalOfflineUsers = User::where('is_online', false)->count();
 
         $today = Carbon::today();
         $loggedInTodayUsers = User::whereDate('last_login_at', $today)->get();
 
-        return view('dashboard', compact('totalFolders', 'totalSubfolders', 'totalFiles', 'onlineUsers', 'offlineUsers', 'totalOnlineUsers', 'totalOfflineUsers', 'perPage', 'loggedInTodayUsers'));
+        return view('dashboard', compact(
+            'totalFolders',
+            'totalSubfolders',
+            'totalFiles',
+            'onlineUsers',
+            'offlineUsers',
+            'totalOnlineUsers',
+            'totalOfflineUsers',
+            'perPage',
+            'loggedInTodayUsers'
+        ));
     }
 }

@@ -7,12 +7,13 @@
         <div class="row">
             <!-- Total Folders Card -->
             <div class="col-12 col-sm-6 col-md-4 mb-4">
-                <div class="card info-card sales-card shadow-sm">
+                <div class="card info-card sales-card shadow-sm hover-effect">
                     <div class="card-body">
                         <h5 class="card-title text-primary">Total Folders</h5>
                         <div class="d-flex align-items-center">
                             <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white">
+                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
+                                data-bs-toggle="tooltip" title="Total Folders">
                                 <i class="bi bi-folder"></i>
                             </div>
                             <div class="ps-3">
@@ -26,12 +27,13 @@
 
             <!-- Total Subfolders Card -->
             <div class="col-12 col-sm-6 col-md-4 mb-4">
-                <div class="card info-card sales-card shadow-sm">
+                <div class="card info-card sales-card shadow-sm hover-effect">
                     <div class="card-body">
                         <h5 class="card-title text-success">Total Subfolders</h5>
                         <div class="d-flex align-items-center">
                             <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white">
+                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
+                                data-bs-toggle="tooltip" title="Total Subfolders">
                                 <i class="bi bi-folder2"></i>
                             </div>
                             <div class="ps-3">
@@ -45,12 +47,13 @@
 
             <!-- Total Files Card -->
             <div class="col-12 col-sm-6 col-md-4 mb-4">
-                <div class="card info-card sales-card shadow-sm">
+                <div class="card info-card sales-card shadow-sm hover-effect">
                     <div class="card-body">
                         <h5 class="card-title text-info">Total Files</h5>
                         <div class="d-flex align-items-center">
                             <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white">
+                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white"
+                                data-bs-toggle="tooltip" title="Total Files">
                                 <i class="bi bi-file-earmark"></i>
                             </div>
                             <div class="ps-3">
@@ -68,39 +71,58 @@
             <div class="col-12 mb-4">
                 <div class="card recent-sales overflow-auto shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">User Status <span>| Sekarang</span></h5>
+                        <h5 class="card-title">User Status <span>| Realtime</span></h5>
 
-                        <div class="d-flex align-items-center mb-3">
-                            <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white">
-                                <i class="bi bi-people"></i>
+                        <div class="row mb-3">
+                            <!-- Online Users -->
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
+                                        data-bs-toggle="tooltip" title="Online Users">
+                                        <i class="bi bi-person-check"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6 class="fs-5">Online Users</h6>
+                                        <h6 class="fs-4">{{ $totalOnlineUsers }}</h6>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="ps-3">
-                                <h6 class="fs-4">{{ $totalOnlineUsers }} Online</h6>
-                                <h6 class="fs-4">{{ $totalOfflineUsers }} Offline</h6>
+                            <!-- Offline Users -->
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white"
+                                        data-bs-toggle="tooltip" title="Offline Users">
+                                        <i class="bi bi-person-x"></i>
+                                    </div>
+                                    <div class="ps-3">
+                                        <h6 class="fs-5">Offline Users</h6>
+                                        <h6 class="fs-4">{{ $totalOfflineUsers }}</h6>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div class="mt-3">
-                            <form method="GET" action="{{ route('dashboard') }}">
-                                <label for="per_page">Show</label>
-                                <select name="per_page" id="per_page" class="form-select d-inline w-auto"
+                            <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center">
+                                <label for="per_page" class="me-2 mb-0">Show</label>
+                                <select name="per_page" id="per_page" class="form-select d-inline w-auto me-2"
                                     onchange="this.form.submit()">
-                                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="15" {{ $perPage == 15 ? 'selected' : '' }}>15</option>
-                                    <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                                    @for ($i = 5; $i <= 50; $i += 5)
+                                        <option value="{{ $i }}" {{ $perPage == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                    @endfor
                                 </select>
-                                <label for="per_page">entries</label>
+                                <span class="ms-2">entries</span>
                             </form>
                         </div>
 
                         <table class="table table-borderless datatable mt-3">
-                            <thead>
+                            <thead class="table-light">
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">User</th>
-                                    <th scope="col">Status</h>
+                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,18 +135,13 @@
                                 @endforeach
                                 @foreach ($offlineUsers as $index => $user)
                                     <tr>
-                                        <th scope="row">{{ $index + 1 + count($onlineUsers) }}</th>
+                                        <th scope="row">{{ $index + 1 + $onlineUsers->count() }}</th>
                                         <td>{{ $user->username }}</td>
                                         <td><span class="badge bg-secondary">Offline</span></td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
-                        <div class="d-flex justify-content-center">
-                            {{ $onlineUsers->appends(['offline_page' => $offlineUsers->currentPage(), 'per_page' => $perPage])->links() }}
-                            {{ $offlineUsers->appends(['online_page' => $onlineUsers->currentPage(), 'per_page' => $perPage])->links() }}
-                        </div>
                     </div>
                 </div>
             </div>
@@ -138,7 +155,7 @@
                         <h5 class="card-title">Users Logged In Today</h5>
 
                         <table class="table table-borderless datatable mt-3">
-                            <thead>
+                            <thead class="table-light">
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">User</th>
