@@ -17,28 +17,47 @@ class DashboardController extends Controller
         $totalFiles = File::count();
 
         $perPage = $request->input('per_page', 5); // Default to 5 items per page
+        $currentPage = $request->input('page', 1); // Default to page 1
 
-        // Fetch online and offline users
-        $onlineUsers = User::where('is_online', true)->take($perPage)->get();
-        $remainingSlots = max(0, $perPage - $onlineUsers->count());
-        $offlineUsers = User::where('is_online', false)->take($remainingSlots)->get();
+        // Fetch all online and offline users
+        $onlineUsers = User::where('is_online', true)->get();
+        $offlineUsers = User::where('is_online', false)->get();
 
-        $totalOnlineUsers = User::where('is_online', true)->count();
-        $totalOfflineUsers = User::where('is_online', false)->count();
+        // Combine online and offline users, prioritizing online users
+        $allUsers = $onlineUsers->concat($offlineUsers);
+
+        // Calculate the range of users to display
+        $totalUsers = $allUsers->count();
+        $start = ($currentPage - 1) * $perPage;
+        $displayedUsers = $allUsers->slice($start, $perPage)->values(); // Ensure consistent indexing
+
+        $totalOnlineUsers = $onlineUsers->count();
+        $totalOfflineUsers = $offlineUsers->count();
+
+        // Pagination for "Users Logged In Today"
+        $perPageLoggedIn = $request->input('per_page_logged_in', 5); // Default to 5 items per page
+        $currentLoggedInPage = $request->input('logged_in_page', 1); // Default to page 1
 
         $today = Carbon::today();
         $loggedInTodayUsers = User::whereDate('last_login_at', $today)->get();
+        $totalLoggedInTodayUsers = $loggedInTodayUsers->count();
+        $startLoggedIn = ($currentLoggedInPage - 1) * $perPageLoggedIn;
+        $displayedLoggedInTodayUsers = $loggedInTodayUsers->slice($startLoggedIn, $perPageLoggedIn)->values(); // Ensure consistent indexing
 
         return view('dashboard', compact(
             'totalFolders',
             'totalSubfolders',
             'totalFiles',
-            'onlineUsers',
-            'offlineUsers',
+            'displayedUsers',
+            'totalUsers',
             'totalOnlineUsers',
             'totalOfflineUsers',
             'perPage',
-            'loggedInTodayUsers'
+            'currentPage',
+            'displayedLoggedInTodayUsers',
+            'totalLoggedInTodayUsers',
+            'perPageLoggedIn',
+            'currentLoggedInPage'
         ));
     }
 }

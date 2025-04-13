@@ -11,8 +11,7 @@
                     <div class="card-body">
                         <h5 class="card-title text-primary">Total Folders</h5>
                         <div class="d-flex align-items-center">
-                            <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
                                 data-bs-toggle="tooltip" title="Total Folders">
                                 <i class="bi bi-folder"></i>
                             </div>
@@ -31,8 +30,7 @@
                     <div class="card-body">
                         <h5 class="card-title text-success">Total Subfolders</h5>
                         <div class="d-flex align-items-center">
-                            <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
                                 data-bs-toggle="tooltip" title="Total Subfolders">
                                 <i class="bi bi-folder2"></i>
                             </div>
@@ -51,8 +49,7 @@
                     <div class="card-body">
                         <h5 class="card-title text-info">Total Files</h5>
                         <div class="d-flex align-items-center">
-                            <div
-                                class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white"
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white"
                                 data-bs-toggle="tooltip" title="Total Files">
                                 <i class="bi bi-file-earmark"></i>
                             </div>
@@ -76,31 +73,13 @@
                         <div class="row mb-3">
                             <!-- Online Users -->
                             <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <div
-                                        class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
-                                        data-bs-toggle="tooltip" title="Online Users">
-                                        <i class="bi bi-person-check"></i>
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 class="fs-5">Online Users</h6>
-                                        <h6 class="fs-4">{{ $totalOnlineUsers }}</h6>
-                                    </div>
-                                </div>
+                                <h6 class="fs-5">Online Users</h6>
+                                <h6 class="fs-4">{{ $totalOnlineUsers }}</h6>
                             </div>
                             <!-- Offline Users -->
                             <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                    <div
-                                        class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white"
-                                        data-bs-toggle="tooltip" title="Offline Users">
-                                        <i class="bi bi-person-x"></i>
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 class="fs-5">Offline Users</h6>
-                                        <h6 class="fs-4">{{ $totalOfflineUsers }}</h6>
-                                    </div>
-                                </div>
+                                <h6 class="fs-5">Offline Users</h6>
+                                <h6 class="fs-4">{{ $totalOfflineUsers }}</h6>
                             </div>
                         </div>
 
@@ -110,7 +89,8 @@
                                 <select name="per_page" id="per_page" class="form-select d-inline w-auto me-2"
                                     onchange="this.form.submit()">
                                     @for ($i = 5; $i <= 50; $i += 5)
-                                        <option value="{{ $i }}" {{ $perPage == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                        <option value="{{ $i }}" {{ $perPage == $i ? 'selected' : '' }}>
+                                            {{ $i }}</option>
                                     @endfor
                                 </select>
                                 <span class="ms-2">entries</span>
@@ -126,22 +106,57 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($onlineUsers as $index => $user)
+                                @foreach ($displayedUsers as $index => $user)
                                     <tr>
-                                        <th scope="row">{{ $index + 1 }}</th>
+                                        <th scope="row">{{ $index + 1 + ($currentPage - 1) * $perPage }}</th>
                                         <td>{{ $user->username }}</td>
-                                        <td><span class="badge bg-success">Online</span></td>
-                                    </tr>
-                                @endforeach
-                                @foreach ($offlineUsers as $index => $user)
-                                    <tr>
-                                        <th scope="row">{{ $index + 1 + $onlineUsers->count() }}</th>
-                                        <td>{{ $user->username }}</td>
-                                        <td><span class="badge bg-secondary">Offline</span></td>
+                                        <td>
+                                            <span class="badge {{ $user->is_online ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ $user->is_online ? 'Online' : 'Offline' }}
+                                            </span>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            @php
+                                $totalPages = ceil($totalUsers / $perPage);
+                            @endphp
+                            <ul class="pagination pagination-sm">
+                                <!-- Previous Button -->
+                                <li class="page-item {{ $currentPage == 1 ? 'disabled' : '' }}">
+                                    <form method="GET" action="{{ route('dashboard') }}" class="d-inline">
+                                        <input type="hidden" name="per_page" value="{{ $perPage }}">
+                                        <button class="page-link" name="page" value="{{ max(1, $currentPage - 1) }}" {{ $currentPage == 1 ? 'disabled' : '' }}>
+                                            <i class="bi bi-chevron-left"></i> Previous
+                                        </button>
+                                    </form>
+                                </li>
+
+                                <!-- Page Numbers -->
+                                @for ($page = 1; $page <= $totalPages; $page++)
+                                    <li class="page-item {{ $page == $currentPage ? 'active' : '' }}">
+                                        <form method="GET" action="{{ route('dashboard') }}" class="d-inline">
+                                            <input type="hidden" name="per_page" value="{{ $perPage }}">
+                                            <button class="page-link" name="page"
+                                                value="{{ $page }}">{{ $page }}</button>
+                                        </form>
+                                    </li>
+                                @endfor
+
+                                <!-- Next Button -->
+                                <li class="page-item {{ $currentPage * $perPage >= $totalUsers ? 'disabled' : '' }}">
+                                    <form method="GET" action="{{ route('dashboard') }}" class="d-inline">
+                                        <input type="hidden" name="per_page" value="{{ $perPage }}">
+                                        <button class="page-link" name="page" value="{{ $currentPage + 1 }}" {{ $currentPage * $perPage >= $totalUsers ? 'disabled' : '' }}>
+                                            Next <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,6 +169,21 @@
                     <div class="card-body">
                         <h5 class="card-title">Users Logged In Today</h5>
 
+                        <div class="mt-3">
+                            <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center">
+                                <label for="per_page_logged_in" class="me-2 mb-0">Show</label>
+                                <select name="per_page_logged_in" id="per_page_logged_in"
+                                    class="form-select d-inline w-auto me-2" onchange="this.form.submit()">
+                                    @for ($i = 5; $i <= 50; $i += 5)
+                                        <option value="{{ $i }}"
+                                            {{ $perPageLoggedIn == $i ? 'selected' : '' }}>
+                                            {{ $i }}</option>
+                                    @endfor
+                                </select>
+                                <span class="ms-2">entries</span>
+                            </form>
+                        </div>
+
                         <table class="table table-borderless datatable mt-3">
                             <thead class="table-light">
                                 <tr>
@@ -163,15 +193,56 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($loggedInTodayUsers as $index => $user)
+                                @foreach ($displayedLoggedInTodayUsers as $index => $user)
                                     <tr>
-                                        <th scope="row">{{ $index + 1 }}</th>
+                                        <th scope="row">
+                                            {{ $index + 1 + ($currentLoggedInPage - 1) * $perPageLoggedIn }}</th>
                                         <td>{{ $user->username }}</td>
                                         <td>{{ $user->last_login_at }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+
+                        <div class="d-flex justify-content-center mt-4">
+                            @php
+                                $totalLoggedInPages = ceil($totalLoggedInTodayUsers / $perPageLoggedIn);
+                            @endphp
+                            <ul class="pagination pagination-sm">
+                                <!-- Previous Button -->
+                                <li class="page-item {{ $currentLoggedInPage == 1 ? 'disabled' : '' }}">
+                                    <form method="GET" action="{{ route('dashboard') }}" class="d-inline">
+                                        <input type="hidden" name="per_page_logged_in" value="{{ $perPageLoggedIn }}">
+                                        <button class="page-link" name="logged_in_page" value="{{ max(1, $currentLoggedInPage - 1) }}" {{ $currentLoggedInPage == 1 ? 'disabled' : '' }}>
+                                            <i class="bi bi-chevron-left"></i> Previous
+                                        </button>
+                                    </form>
+                                </li>
+
+                                <!-- Page Numbers -->
+                                @for ($page = 1; $page <= $totalLoggedInPages; $page++)
+                                    <li class="page-item {{ $page == $currentLoggedInPage ? 'active' : '' }}">
+                                        <form method="GET" action="{{ route('dashboard') }}" class="d-inline">
+                                            <input type="hidden" name="per_page_logged_in"
+                                                value="{{ $perPageLoggedIn }}">
+                                            <button class="page-link" name="logged_in_page"
+                                                value="{{ $page }}">{{ $page }}</button>
+                                        </form>
+                                    </li>
+                                @endfor
+
+                                <!-- Next Button -->
+                                <li
+                                    class="page-item {{ $currentLoggedInPage * $perPageLoggedIn >= $totalLoggedInTodayUsers ? 'disabled' : '' }}">
+                                    <form method="GET" action="{{ route('dashboard') }}" class="d-inline">
+                                        <input type="hidden" name="per_page_logged_in" value="{{ $perPageLoggedIn }}">
+                                        <button class="page-link" name="logged_in_page" value="{{ $currentLoggedInPage + 1 }}" {{ $currentLoggedInPage * $perPageLoggedIn >= $totalLoggedInTodayUsers ? 'disabled' : '' }}>
+                                            Next <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
