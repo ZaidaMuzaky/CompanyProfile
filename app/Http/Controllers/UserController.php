@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\User;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -70,5 +72,19 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('admin.users')->with('success', 'User created successfully.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            Excel::import(new UsersImport, $request->file('file'));
+            return redirect()->route('admin.users')->with('success', 'Users imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.users')->with('error', 'Failed to import users: ' . $e->getMessage());
+        }
     }
 }

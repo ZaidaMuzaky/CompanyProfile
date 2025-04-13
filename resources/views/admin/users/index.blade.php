@@ -11,9 +11,14 @@
     <div class="container">
         <h2>Manage Users</h2>
         <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                <i class="bi bi-plus-circle"></i> Add User
-            </button>
+            <div>
+                <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="bi bi-plus-circle"></i> Add User
+                </button>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importUserModal">
+                    <i class="bi bi-file-earmark-excel"></i> Import Users
+                </button>
+            </div>
             <form method="GET" action="{{ route('admin.users') }}" class="d-flex mx-auto" style="width: 50%;">
                 <input type="text" name="search" class="form-control" placeholder="Search usernames..."
                     value="{{ request()->query('search') }}">
@@ -22,6 +27,7 @@
                 </button>
             </form>
         </div>
+
 
         <table class="table">
             <tr>
@@ -92,6 +98,28 @@
 
                         <button type="submit" class="btn btn-primary" onclick="return validateAddPassword()">Add
                             User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import User Modal -->
+    <div class="modal fade" id="importUserModal" tabindex="-1" aria-labelledby="importUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importUserModalLabel">Import Users</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="importUserForm" method="POST" action="{{ route('admin.users.import') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="importUserFile" class="form-label">Upload Excel File</label>
+                            <input type="file" class="form-control" id="importUserFile" name="file" accept=".xlsx, .xls" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Import</button>
                     </form>
                 </div>
             </div>

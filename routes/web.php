@@ -32,7 +32,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/users/{id}/update', [UserController::class, 'update'])->name('admin.users.update');
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
-
+    Route::post('/admin/users/import', [UserController::class, 'import'])->name('admin.users.import');
 
     // folder management
     Route::get('/admin/folders', [FoldersController::class, 'index'])->name('admin.folders.index');
