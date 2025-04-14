@@ -1,58 +1,48 @@
 <footer id="footer" class="footer">
-
     <div class="container footer-top">
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6 footer-about">
                 <a href="{{ url('/') }}" class="d-flex align-items-center">
-                    <span class="sitename">FlexStart</span>
+                    <span class="sitename">PT. HPMU - Site KDA</span>
                 </a>
                 <div class="footer-contact pt-3">
-                    <p>A108 Adam Street</p>
-                    <p>New York, NY 535022</p>
-                    <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                    <p><strong>Email:</strong> <span>info@example.com</span></p>
+                    <p>Desa Karya Baru</p>
+                    <p>Kec. Marau, Kab. Ketapang</p>
+                    <p>Kalimantan Barat 78863</p>
+                    <p class="mt-3"><strong>Phone:</strong> <span>+62 821-4800-0417</span></p>
+                    <p><strong>Email:</strong> <span>kda.ins.plt@hpmu-mining.com</span></p>
                 </div>
             </div>
 
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Useful Links</h4>
-                <ul>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/') }}">Home</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/about') }}">About us</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/services') }}">Services</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/terms') }}">Terms of service</a></li>
-                </ul>
-            </div>
+        
 
             <div class="col-lg-2 col-md-3 footer-links">
                 <h4>Our Services</h4>
                 <ul>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/web-design') }}">Web Design</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/web-development') }}">Web Development</a>
-                    </li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/product-management') }}">Product
-                            Management</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="{{ url('/marketing') }}">Marketing</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#">Mining Operations</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#">Community Development</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#">Environmental Care</a></li>
+                    <li><i class="bi bi-chevron-right"></i> <a href="#">Safety & Health</a></li>
                 </ul>
             </div>
 
+            <div class="col-lg-2 d-none d-lg-block"></div>
+            
+            <!-- Media Sosial -->
             <div class="col-lg-4 col-md-12">
                 <h4>Follow Us</h4>
-                <p>Stay connected with us through social media platforms.</p>
-                <div class="social-links d-flex">
-                    <a href="https://twitter.com" target="_blank"><i class="bi bi-twitter-x"></i></a>
-                    <a href="https://facebook.com" target="_blank"><i class="bi bi-facebook"></i></a>
-                    <a href="https://instagram.com" target="_blank"><i class="bi bi-instagram"></i></a>
-                    <a href="https://linkedin.com" target="_blank"><i class="bi bi-linkedin"></i></a>
+                <p>Stay connected with us through social media platforms.</p></p>
+                <div class="social-links d-flex gap-2">
+                    <a href="https://www.instagram.com/kda.plt_hpmu?igsh=MWwxamtmZ2ppdXFldQ==" target="_blank">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    {{-- Tambahkan sosial media lainnya jika ada --}}
                 </div>
             </div>
-
         </div>
     </div>
 
-    {{-- <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">FlexStart</strong> <span>All Rights Reserved</span>
-        </p>
-    </div> --}}
-
+    <div class="container copyright text-center mt-4">
+        <p>© <strong class="px-1 sitename">PT. HPMU Site KDA</strong> - All Rights Reserved</p>
+    </div>
 </footer>
