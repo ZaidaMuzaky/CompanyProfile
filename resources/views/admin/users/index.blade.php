@@ -113,6 +113,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <p>Pastikan file Excel yang Anda upload sesuai dengan format yang ditentukan.</p>
+                    <p>Anda dapat mengunduh template Excel di bawah ini:</p>
+                    <a href="{{ asset('templates/user_import_template.xlsx') }}" class="btn btn-outline-success mb-3" download>
+                        <i class="bi bi-download"></i> Download Template
+                    </a>
+
+
                     <form id="importUserForm" method="POST" action="{{ route('admin.users.import') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
@@ -122,6 +129,7 @@
                         <button type="submit" class="btn btn-primary">Import</button>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
