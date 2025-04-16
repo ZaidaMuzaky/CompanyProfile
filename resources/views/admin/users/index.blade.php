@@ -9,7 +9,6 @@
 @section('content')
 
     <div class="container">
-        <h2>Manage Users</h2>
         <div class="d-flex justify-content-between mb-3">
             <div>
                 <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addUserModal">

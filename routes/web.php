@@ -44,6 +44,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // google form
     Route::get('/admin/google-form', [App\Http\Controllers\GformController::class, 'editGoogleForm'])->name('admin.google-form.edit');
     Route::post('/admin/google-form', [App\Http\Controllers\GformController::class, 'updateGoogleForm'])->name('admin.google-form.update');
+    Route::post('/admin/google-form/{id}', [App\Http\Controllers\GformController::class, 'updateSpecificGoogleForm'])->name('admin.google-form.updateSpecific');
+    Route::delete('/admin/google-form/{id}', [App\Http\Controllers\GformController::class, 'deleteGoogleForm'])->name('admin.google-form.delete');
 });
 
 // file management for authenticated users
@@ -56,6 +58,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/user/files/{id}', [FilesController::class, 'destroy'])->name('user.files.destroy');
     Route::get('/user/files/download/{id}', [FilesController::class, 'download'])->name('user.files.download');
 
-    //  dasboard
+    // Google Form for users
+    Route::get('/user/google-forms', [App\Http\Controllers\GformController::class, 'userIndex'])->name('user.gform.index');
+
+    // dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

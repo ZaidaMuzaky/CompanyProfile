@@ -27,8 +27,8 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ config('app.google_form_link', 'https://forms.gle/') }}"
-                target="_blank">
+            <a class="nav-link {{ request()->routeIs('user.gform.index') ? '' : 'collapsed' }}"
+                href="{{ route('user.gform.index') }}">
                 <i class="bi bi-google"></i> <span>Google Form</span>
             </a>
         </li>
