@@ -46,21 +46,22 @@ class FilesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:pdf|max:2048',
+            'files.*' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:25600', // Validate each file
             'id_folder' => 'required|exists:folders,id_folder',
         ]);
 
-        $file = new File();
-        $file->id_folder = $request->id_folder;
-        $file->nama_file = $request->file('file')->getClientOriginalName();
-        $file->id_user_upload = Auth::id();
-        if ($request->file('file')) {
-            $filePath = $request->file('file')->store('files', 'public');
-            $file->path = $filePath;
+        foreach ($request->file('files') as $file) {
+            $newFile = new File();
+            $newFile->id_folder = $request->id_folder;
+            $newFile->nama_file = $file->getClientOriginalName();
+            $newFile->file_type = $file->getClientOriginalExtension();
+            $newFile->id_user_upload = Auth::id();
+            $filePath = $file->store('files', 'public');
+            $newFile->path = $filePath;
+            $newFile->save();
         }
-        $file->save();
 
-        return redirect()->route('user.files.manage', $request->id_folder)->with('success', 'File uploaded successfully.');
+        return redirect()->route('user.files.manage', $request->id_folder)->with('success', 'Files uploaded successfully.');
     }
 
     public function update(Request $request, $id)
@@ -68,12 +69,13 @@ class FilesController extends Controller
         $file = File::findOrFail($id);
 
         $request->validate([
-            'file' => 'required|mimes:pdf|max:2048',
+            'file' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:25600', // Include all Word and PowerPoint MIME types
             'id_folder' => 'required|exists:folders,id_folder',
         ]);
 
         $file->id_folder = $request->id_folder;
         $file->nama_file = $request->file('file')->getClientOriginalName();
+        $file->file_type = $request->file('file')->getClientOriginalExtension(); // Ensure file_type is set
         $file->id_user_upload = Auth::id();
         if ($request->file('file')) {
             $filePath = $request->file('file')->store('files', 'public');

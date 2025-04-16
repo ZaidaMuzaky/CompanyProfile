@@ -17,6 +17,7 @@ class CreateFilesTable extends Migration
             $table->id('id_file');
             $table->unsignedBigInteger('id_folder');
             $table->string('nama_file');
+            $table->string('file_type')->nullable()->after('nama_file'); // Ensure this column exists
             $table->string('path'); // Tambahkan kolom path
             $table->unsignedBigInteger('id_user_upload')->nullable();
             $table->timestamps();

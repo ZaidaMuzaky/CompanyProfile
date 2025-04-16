@@ -12,7 +12,7 @@ class File extends Model
     protected $table = 'files';
     protected $primaryKey = 'id_file';
 
-    protected $fillable = ['id_folder', 'nama_file', 'path', 'id_user_upload'];
+    protected $fillable = ['id_folder', 'nama_file', 'path', 'id_user_upload', 'file_type'];
 
     public function folder(): BelongsTo
     {
