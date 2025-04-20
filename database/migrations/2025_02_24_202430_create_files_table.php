@@ -17,13 +17,13 @@ class CreateFilesTable extends Migration
             $table->id('id_file');
             $table->unsignedBigInteger('id_folder');
             $table->string('nama_file');
-            $table->string('file_type')->nullable()->after('nama_file'); // Ensure this column exists
-            $table->string('path'); // Tambahkan kolom path
+            $table->string('file_type')->nullable();
+            $table->string('path');
             $table->unsignedBigInteger('id_user_upload')->nullable();
             $table->timestamps();
 
             $table->foreign('id_folder')->references('id_folder')->on('folders')->onDelete('cascade');
-            $table->foreign('id_user_upload')->references('id_user')->on('users')->onDelete('set null'); // Sesuaikan kunci asing
+            $table->foreign('id_user_upload')->references('id_user')->on('users')->onDelete('set null');
         });
     }
 

@@ -13,14 +13,16 @@ class CreateGooleFormsTable extends Migration
      */
     public function up()
     {
-        Schema::create('google_forms', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->text('description');
-            $table->enum('status', ['active', 'inactive']);
-            $table->string('url');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('google_forms')) {
+            Schema::create('google_forms', function (Blueprint $table) {
+                $table->id();
+                $table->string('title');
+                $table->text('description');
+                $table->enum('status', ['active', 'inactive']);
+                $table->string('url');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -30,6 +32,6 @@ class CreateGooleFormsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('goole_forms');
+        Schema::dropIfExists('google_forms');
     }
 }

@@ -8,15 +8,17 @@ class AddFileTypeToFilesTable extends Migration
 {
     public function up()
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->string('file_type')->nullable()->after('nama_file');
-        });
+        // Remove the redundant addition of the 'file_type' column.
+        // Schema::table('files', function (Blueprint $table) {
+        //     $table->string('file_type')->nullable()->after('nama_file');
+        // });
     }
 
     public function down()
     {
-        Schema::table('files', function (Blueprint $table) {
-            $table->dropColumn('file_type');
-        });
+        // Optionally, you can leave this empty or remove the column if needed.
+        // Schema::table('files', function (Blueprint $table) {
+        //     $table->dropColumn('file_type');
+        // });
     }
 }
