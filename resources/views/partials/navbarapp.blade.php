@@ -45,7 +45,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.folders.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.folders.index') }}">
-                    <i class="bi bi-folder"></i> <span>Managemen Folders</span>
+                    <i class="bi bi-folder"></i> <span>Managemen Section</span>
                 </a>
             </li>
             <li class="nav-item">

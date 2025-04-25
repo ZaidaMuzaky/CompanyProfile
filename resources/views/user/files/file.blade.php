@@ -1,10 +1,9 @@
-<!-- filepath: /d:/dp/CompanyD/resources/views/user/files/file.blade.php -->
 @extends('layouts.logapp')
 
 @section('title', 'Managemen Files PDF - ' . $folder->nama)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Folders</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Section</a></li>
     @php
         $currentFolder = $folder;
         $breadcrumbFolders = [];
@@ -63,13 +62,12 @@
 
                         <!-- View Icon -->
                         <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#viewFileModal"
-                            onclick="viewFile('{{ asset('storage/' . $file->path) }}', '{{ pathinfo($file->path, PATHINFO_EXTENSION) }}')">
+                            onclick="viewFile('{{ asset('storage/' . $file->path) }}')">
                             <i class="bi bi-eye"></i>
                         </button>
 
                         <!-- Delete Icon -->
-                        <form action="{{ route('user.files.destroy', $file->id_file) }}" method="POST"
-                            style="display:inline;">
+                        <form action="{{ route('user.files.destroy', $file->id_file) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"
@@ -97,37 +95,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addFileForm" method="POST" action="{{ route('user.files.store') }}" enctype="multipart/form-data">
+                    <form id="addFileForm" method="POST" action="{{ route('user.files.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id_folder" value="{{ $folder->id_folder }}">
                         <div class="mb-3">
-                            <label for="addFile" class="form-label">Files (PDF, Word, PPT)</label>
-                            <input type="file" class="form-control" id="addFile" name="files[]" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple required>
-                        </div>
-                        <!-- Progress bar -->
-                        <div class="progress mb-2" style="height: 20px; display: none;" id="uploadProgressContainer">
-                            <div class="progress-bar" id="uploadProgressBar" role="progressbar" style="width: 0%">0%</div>
+                            <label for="addFile" class="form-label">File PDF</label>
+                            <input type="file" class="form-control" id="addFile" name="file" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Add File</button>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Progress Bar Modal -->
-    <div class="modal fade" id="progressBarModal" tabindex="-1" aria-labelledby="progressBarModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="progressBarModalLabel">Uploading Files</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="progress">
-                        <div id="uploadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                    </div>
-                    <p class="mt-2 text-center" id="uploadStatus">Preparing upload...</p>
                 </div>
             </div>
         </div>
@@ -149,8 +126,8 @@
                         <input type="hidden" name="id_folder" value="{{ $folder->id_folder }}">
 
                         <div class="mb-3">
-                            <label for="editFile" class="form-label">Files (PDF, Word, PPT)</label>
-                            <input type="file" class="form-control" id="editFile" name="files[]" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple required>
+                            <label for="editFile" class="form-label">File PDF</label>
+                            <input type="file" class="form-control" id="editFile" name="file" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
@@ -160,8 +137,7 @@
     </div>
 
     <!-- Detail File Modal -->
-    <div class="modal fade" id="detailFileModal" tabindex="-1" aria-labelledby="detailFileModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="detailFileModal" tabindex="-1" aria-labelledby="detailFileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -203,18 +179,36 @@
 
     <!-- View File Modal -->
     <div class="modal fade" id="viewFileModal" tabindex="-1" aria-labelledby="viewFileModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl"> <!-- Changed to modal-xl for full width -->
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="viewFileModalLabel">View File</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body position-relative">
-                    <!-- Content dynamically added by viewFile function -->
+                    <!-- Floating Zoom Buttons -->
+                    <div class="zoom-controls position-absolute" style="top: 10px; right: 10px; z-index: 10;">
+                        <button id="zoomOut" class="btn btn-secondary btn-sm mb-2" title="Zoom Out">
+                            <i class="bi bi-zoom-out"></i>
+                        </button>
+                        <button id="zoomIn" class="btn btn-secondary btn-sm" title="Zoom In">
+                            <i class="bi bi-zoom-in"></i>
+                        </button>
+                    </div>
+                    <!-- PDF Container -->
+                    <div id="pdfContainer" style="overflow-y: auto; max-height: 800px;"></div> <!-- Constrained height -->
+                    <!-- Fallback Message -->
+                    <div id="fallbackMessage" style="display: none;">
+                        <p>Your browser does not support viewing PDF files. <a id="downloadLink" href="#"
+                                target="_blank">Click here to download the file.</a></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
 
     <script>
         function editFile(id, name, folderId) {
@@ -230,62 +224,111 @@
             document.getElementById("detailUpdatedAt").innerText = updatedAt;
         }
 
-        function viewFile(fileUrl, fileType) {
-            const modalBody = document.querySelector("#viewFileModal .modal-body");
-            modalBody.innerHTML = ""; // Clear previous content
+        let currentScale = 1.0; // Default zoom scale
 
-            if (fileType === "pdf") {
-                modalBody.innerHTML = `<iframe src="${fileUrl}" width="100%" height="800px" style="border: none;"></iframe>`;
-            } else if (["doc", "docx", "ppt", "pptx"].includes(fileType)) {
-                modalBody.innerHTML = `
-                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" 
-                            width="100%" height="800px" style="border: none;"></iframe>`;
-            } else {
-                modalBody.innerHTML = `<span class="text-muted">Unsupported file format</span>`;
-            }
+        function viewFile(fileUrl) {
+            const pdfContainer = document.getElementById("pdfContainer");
+            const fallbackMessage = document.getElementById("fallbackMessage");
+            const downloadLink = document.getElementById("downloadLink");
+
+            // Save the file URL for zoom functionality
+            pdfContainer.setAttribute("data-file-url", fileUrl);
+
+            // Clear previous content
+            pdfContainer.innerHTML = "";
+
+            const loadingTask = pdfjsLib.getDocument(fileUrl);
+            loadingTask.promise.then(function (pdf) {
+                fallbackMessage.style.display = "none";
+
+                // Render all pages
+                for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+                    pdf.getPage(pageNumber).then(function (page) {
+                        const canvas = document.createElement("canvas");
+                        canvas.style.marginBottom = "10px";
+                        pdfContainer.appendChild(canvas);
+
+                        const context = canvas.getContext("2d");
+                        const viewport = page.getViewport({ scale: currentScale });
+
+                        // Adjust for high DPI screens and improve quality
+                        const outputScale = window.devicePixelRatio || 2; // Increase resolution
+                        canvas.width = Math.floor(viewport.width * outputScale);
+                        canvas.height = Math.floor(viewport.height * outputScale);
+                        canvas.style.width = `${viewport.width}px`;
+                        canvas.style.height = `${viewport.height}px`;
+
+                        const transform = outputScale !== 1
+                            ? [outputScale, 0, 0, outputScale, 0, 0]
+                            : null;
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                            transform: transform,
+                        };
+                        page.render(renderContext);
+                    });
+                }
+            }).catch(function (error) {
+                console.error("Error loading PDF:", error);
+                fallbackMessage.style.display = "block";
+                downloadLink.href = fileUrl;
+            });
         }
 
-        document.getElementById("addFileForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const form = e.target;
-            const formData = new FormData(form);
-            const xhr = new XMLHttpRequest();
-
-            const progressBar = document.getElementById("uploadProgressBar");
-            const progressContainer = document.getElementById("uploadProgressContainer");
-
-            xhr.open("POST", form.action, true);
-            xhr.setRequestHeader("X-CSRF-TOKEN", '{{ csrf_token() }}');
-
-            // Show progress bar
-            progressContainer.style.display = "block";
-
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    progressBar.style.width = percent + "%";
-                    progressBar.innerText = percent + "%";
-                }
-            };
-
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    progressBar.innerText = "Upload complete!";
-                    setTimeout(() => location.reload(), 1000); // Refresh page
-                } else {
-                    Swal.fire('Upload Failed', 'Terjadi kesalahan saat mengunggah file.', 'error');
-                }
-            };
-
-            xhr.onerror = function() {
-                Swal.fire('Upload Failed', 'Koneksi terputus atau server tidak merespon.', 'error');
-            };
-
-            xhr.send(formData);
+        // Zoom In and Zoom Out functionality
+        document.getElementById("zoomIn").addEventListener("click", function () {
+            currentScale += 0.1; // Increase scale
+            applyZoom(currentScale); // Apply zoom without reloading
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("zoomOut").addEventListener("click", function () {
+            if (currentScale > 0.5) {
+                currentScale -= 0.1; // Decrease scale
+                applyZoom(currentScale); // Apply zoom without reloading
+            }
+        });
+
+        function applyZoom(scale) {
+            const pdfContainer = document.getElementById("pdfContainer");
+            const canvases = pdfContainer.querySelectorAll("canvas");
+
+            canvases.forEach((canvas) => {
+                const context = canvas.getContext("2d");
+                const fileUrl = pdfContainer.getAttribute("data-file-url");
+
+                // Clear the canvas and re-render the PDF page with the new scale
+                const loadingTask = pdfjsLib.getDocument(fileUrl);
+                loadingTask.promise.then(function (pdf) {
+                    const pageNumber = Array.from(pdfContainer.children).indexOf(canvas) + 1;
+                    pdf.getPage(pageNumber).then(function (page) {
+                        const viewport = page.getViewport({ scale: scale });
+
+                        // Adjust canvas size for the new scale
+                        const outputScale = window.devicePixelRatio || 1;
+                        canvas.width = Math.floor(viewport.width * outputScale);
+                        canvas.height = Math.floor(viewport.height * outputScale);
+                        canvas.style.width = `${viewport.width}px`;
+                        canvas.style.height = `${viewport.height}px`;
+
+                        const transform = outputScale !== 1
+                            ? [outputScale, 0, 0, outputScale, 0, 0]
+                            : null;
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                            transform: transform,
+                        };
+                        page.render(renderContext);
+                    });
+                });
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -295,6 +338,6 @@
                     timer: 2000
                 });
             @endif
-        });
+            });
     </script>
 @endsection

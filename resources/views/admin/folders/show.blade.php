@@ -1,10 +1,10 @@
 <!-- filepath: /d:/dp/CompanyD/resources/views/admin/folders/show.blade.php -->
 @extends('layouts.logapp')
 
-@section('title', 'Manage Subfolders of ' . $parentFolder->nama)
+@section('title', 'Manage Unit of Section ' . $parentFolder->nama)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.folders.index') }}">Folders</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.folders.index') }}">Section</a></li>
     <li class="breadcrumb-item active">{{ $parentFolder->nama }}</li>
 @endsection
 
@@ -13,11 +13,11 @@
         <h2>Subfolders of {{ $parentFolder->nama }}</h2>
         <div class="d-flex justify-content-between mb-3">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubfolderModal">
-                <i class="bi bi-folder-plus"></i> Add Subfolder
+                <i class="bi bi-folder-plus"></i> Add Unit
             </button>
             <form method="GET" action="{{ route('admin.folders.show', $parentFolder->id_folder) }}" class="d-flex mx-auto"
                 style="width: 50%;">
-                <input type="text" name="search" class="form-control" placeholder="Search subfolders..."
+                <input type="text" name="search" class="form-control" placeholder="Search Unit..."
                     value="{{ request()->query('search') }}">
                 <button type="submit" class="btn btn-primary ms-2">
                     <i class="bi bi-search"></i>
@@ -29,7 +29,7 @@
         <table class="table mt-3">
             <tr>
                 <th>No</th>
-                <th>Nama Subfolder</th>
+                <th>Nama Unit</th>
                 <th>Icon</th>
                 <th>Actions</th>
             </tr>

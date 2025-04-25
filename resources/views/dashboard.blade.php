@@ -9,7 +9,7 @@
             <div class="col-12 col-sm-6 col-md-4 mb-4">
                 <div class="card info-card sales-card shadow-sm hover-effect">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">Total Folders</h5>
+                        <h5 class="card-title text-primary">Total Section</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
                                 data-bs-toggle="tooltip" title="Total Folders">
@@ -28,7 +28,7 @@
             <div class="col-12 col-sm-6 col-md-4 mb-4">
                 <div class="card info-card sales-card shadow-sm hover-effect">
                     <div class="card-body">
-                        <h5 class="card-title text-success">Total Subfolders</h5>
+                        <h5 class="card-title text-success">Total Unit</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
                                 data-bs-toggle="tooltip" title="Total Subfolders">

@@ -43,8 +43,8 @@
     <section id="departemen" class="values section">
         <div class="container">
             <div class="section-title" data-aos="fade-up">
-                <h2>Departemen Kami</h2>
-                <p>Departemen kunci yang mendukung operasi penambangan kami</p>
+                <h2>Section Kami</h2>
+                <p>Section yang mendukung operasi penambangan kami</p>
             </div>
             <div class="row gy-4"> <!-- Tambahkan gy-4 untuk margin antar card -->
                 <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">

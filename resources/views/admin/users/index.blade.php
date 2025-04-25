@@ -9,13 +9,15 @@
 @section('content')
 
     <div class="container">
-        <div class="d-flex justify-content-between mb-3">
-            <div>
-                <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                    <i class="bi bi-plus-circle"></i> Add User
+        <div class="d-flex justify-content-between mb-3 flex-wrap">
+            <div class="d-flex flex-wrap">
+                <button class="btn btn-success me-2 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="bi bi-plus-circle"></i>
+                    <span class="d-none d-sm-inline ms-1">Add User</span>
                 </button>
-                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importUserModal">
-                    <i class="bi bi-file-earmark-excel"></i> Import Users
+                <button class="btn btn-info d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#importUserModal">
+                    <i class="bi bi-file-earmark-excel"></i>
+                    <span class="d-none d-sm-inline ms-1">Import Users</span>
                 </button>
             </div>
             <form method="GET" action="{{ route('admin.users') }}" class="d-flex mx-auto" style="width: 50%;">

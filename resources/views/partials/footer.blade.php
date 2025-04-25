@@ -16,15 +16,7 @@
 
         
 
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Our Services</h4>
-                <ul>
-                    <li><i class="bi bi-chevron-right"></i> <a href="#">Mining Operations</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="#">Community Development</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="#">Environmental Care</a></li>
-                    <li><i class="bi bi-chevron-right"></i> <a href="#">Safety & Health</a></li>
-                </ul>
-            </div>
+            <div class="col-lg-2 col-md-3 footer-links"></div>
 
             <div class="col-lg-2 d-none d-lg-block"></div>
             

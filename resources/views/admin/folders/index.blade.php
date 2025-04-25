@@ -1,9 +1,9 @@
 @extends('layouts.logapp')
 
-@section('title', 'Manage Folders')
+@section('title', 'Manage Section')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Folders</li>
+    <li class="breadcrumb-item active">Section</li>
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
                 <i class="bi bi-folder-plus"></i> Add Folder
             </button>
             <form method="GET" action="{{ route('admin.folders.index') }}" class="d-flex mx-auto" style="width: 50%;">
-                <input type="text" name="search" class="form-control" placeholder="Search folders..."
+                <input type="text" name="search" class="form-control" placeholder="Search Section..."
                     value="{{ request()->query('search') }}">
                 <button type="submit" class="btn btn-primary ms-2">
                     <i class="bi bi-search"></i>
@@ -25,7 +25,7 @@
         <table class="table mt-3">
             <tr>
                 <th>No</th>
-                <th>Nama Folder</th>
+                <th>Nama Section</th>
                 <th>Icon</th>
                 <th>Actions</th>
             </tr>

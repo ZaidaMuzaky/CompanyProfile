@@ -8,12 +8,12 @@
 
 @section('content')
     <div class="container">
-        <h2 class="fs-5">Select Folder</h2> <!-- Tambahkan fs-5 untuk ukuran font -->
+        <h2 class="fs-5">Select Section</h2> <!-- Tambahkan fs-5 untuk ukuran font -->
         
         <!-- Search Bar -->
         <div class="d-flex justify-content-center mb-3">
             <form method="GET" action="{{ route('user.files.index') }}" class="d-flex" style="width: 50%;">
-                <input type="text" id="folderSearch" name="search" class="form-control" placeholder="Search folders..."
+                <input type="text" id="folderSearch" name="search" class="form-control" placeholder="Search Section..."
                     value="{{ request()->query('search') }}">
                 <button type="submit" class="btn btn-primary ms-2">
                     <i class="bi bi-search"></i>

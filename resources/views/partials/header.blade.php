@@ -11,7 +11,7 @@
             <ul>
                 <li><a href="#home" class="active">Home</a></li>
                 <li><a href="#tentang">Tentang Perusahaan</a></li>
-                <li><a href="#departemen">Departemen</a></li>
+                <li><a href="#departemen">Section</a></li>
                 <li><a href="#footer">Informasi Lainnya</a></li>
                 <li><a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a></li>
             </ul>

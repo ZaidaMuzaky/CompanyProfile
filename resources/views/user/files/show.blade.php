@@ -4,19 +4,19 @@
 @section('title', 'Managemen Files PDF - ' . $folder->nama)
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Folders</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Section</a></li>
     <li class="breadcrumb-item active">{{ $folder->nama }}</li>
 @endsection
 
 @section('content')
     <div class="container mt-4">
-        <h2>Select Subfolder in {{ $folder->nama }}</h2>
+        <h2>Select Unit in Section {{ $folder->nama }}</h2>
         
         <!-- Search Bar -->
         <div class="d-flex justify-content-center mb-3">
             <form method="GET" action="{{ route('user.files.show', $folder->id_folder) }}" class="d-flex"
                 style="width: 50%;">
-                <input type="text" id="subfolderSearch" name="search" class="form-control" placeholder="Search subfolders..."
+                <input type="text" id="subfolderSearch" name="search" class="form-control" placeholder="Search Section..."
                     value="{{ request()->query('search') }}">
                 <button type="submit" class="btn btn-primary ms-2">
                     <i class="bi bi-search"></i>
