@@ -18,7 +18,7 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('/home', function () {
+Route::get('/', function () {
     return view('home');
 })->name('home');
 // login page
