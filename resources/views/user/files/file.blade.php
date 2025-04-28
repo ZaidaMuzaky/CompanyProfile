@@ -154,8 +154,11 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
 
                         <div class="mb-3">
                             <label for="editFile" class="form-label">Files (PDF, Word, PPT)</label>
-                            <input type="file" class="form-control" id="editFile" name="files[]" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple
-                                required>
+                            <input type="file" class="form-control" id="editFile" name="files[]" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple required>
+                        </div>
+                        <!-- Progress bar -->
+                        <div class="progress mb-2" style="height: 20px; display: none;" id="editProgressContainer">
+                            <div class="progress-bar" id="editProgressBar" role="progressbar" style="width: 0%">0%</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
@@ -284,11 +287,59 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
 
             xhr.send(formData);
         });
+
+        document.getElementById("editFileForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const xhr = new XMLHttpRequest();
+
+            const progressBar = document.getElementById("editProgressBar");
+            const progressContainer = document.getElementById("editProgressContainer");
+
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader("X-CSRF-TOKEN", '{{ csrf_token() }}');
+
+            // Show progress bar
+            progressContainer.style.display = "block";
+            progressBar.style.width = "0%";
+            progressBar.innerText = "0%";
+
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percent + "%";
+                    progressBar.innerText = percent + "%";
+                }
+            };
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    progressBar.style.width = "100%";
+                    progressBar.innerText = "Upload complete!";
+                    setTimeout(() => location.reload(), 1000); // Refresh page after upload
+                } else {
+                    progressBar.style.width = "0%";
+                    progressBar.innerText = "0%";
+                    Swal.fire('Update Failed', 'Terjadi kesalahan saat memperbarui file.', 'error');
+                }
+            };
+
+            xhr.onerror = function () {
+                progressBar.style.width = "0%";
+                progressBar.innerText = "0%";
+                Swal.fire('Update Failed', 'Koneksi terputus atau server tidak merespon.', 'error');
+            };
+
+            xhr.send(formData);
+        });
     </script>
     <script>
         function editFile(id, name, folderId) {
             document.getElementById("editFileId").value = id;
-            document.getElementById("editFileForm").action = "/user/files/" + id + "/update";
+            document.getElementById("editFileForm").action = "{{ url('user/files') }}/" + id; // Corrected action URL
+            document.getElementById("editFile").value = ""; // Clear file input
         }
 
         function detailFile(fileName, folderName, username, createdAt, updatedAt) {

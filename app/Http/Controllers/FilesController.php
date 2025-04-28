@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\File;
 use App\Models\Folder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class FilesController extends Controller
 {
@@ -69,18 +70,20 @@ class FilesController extends Controller
         $file = File::findOrFail($id);
 
         $request->validate([
-            'file' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:102400', // Updated max size to 100 MB
+            'files.*' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:102400', // Updated max size to 100 MB
             'id_folder' => 'required|exists:folders,id_folder',
         ]);
 
         $file->id_folder = $request->id_folder;
-        $file->nama_file = $request->file('file')->getClientOriginalName();
-        $file->file_type = $request->file('file')->getClientOriginalExtension(); // Ensure file_type is set
+        $file->nama_file = $request->file('files')[0]->getClientOriginalName(); // Handle single file
+        $file->file_type = $request->file('files')[0]->getClientOriginalExtension();
         $file->id_user_upload = Auth::id();
-        if ($request->file('file')) {
-            $filePath = $request->file('file')->store('files', 'public');
+
+        if ($request->file('files')) {
+            $filePath = $request->file('files')[0]->store('files', 'public'); // Store the file
             $file->path = $filePath;
         }
+
         $file->save();
 
         return redirect()->route('user.files.manage', $request->id_folder)->with('success', 'File updated successfully.');
@@ -89,10 +92,16 @@ class FilesController extends Controller
     public function destroy($id)
     {
         $file = File::findOrFail($id);
-        $file->delete();
 
-        return redirect()->route('user.files.manage', $file->id_folder)->with('success', 'File deleted successfully.');
+    // Delete the file from storage
+    Storage::delete("public/{$file->path}");
+
+    // Now delete the file record
+    $file->delete();
+
+    return redirect()->route('user.files.manage', $file->id_folder)->with('success', 'File deleted successfully.');
     }
+    
 
     public function download($id)
     {

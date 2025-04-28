@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/files/{id_folder}', [FilesController::class, 'show'])->name('user.files.show');
     Route::get('/user/files/manage/{id_folder}', [FilesController::class, 'manage'])->name('user.files.manage');
     Route::post('/user/files', [FilesController::class, 'store'])->name('user.files.store');
-    Route::put('/user/files/{id}/update', [FilesController::class, 'update'])->name('user.files.update');
+    Route::put('/user/files/{id}', [FilesController::class, 'update'])->name('user.files.update');
     Route::delete('/user/files/{id}', [FilesController::class, 'destroy'])->name('user.files.destroy');
     Route::get('/user/files/download/{id}', [FilesController::class, 'download'])->name('user.files.download');
 
