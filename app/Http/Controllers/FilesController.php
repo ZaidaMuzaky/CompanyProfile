@@ -46,7 +46,7 @@ class FilesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'files.*' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:25600', // Validate each file
+            'files.*' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:102400', // Updated max size to 100 MB
             'id_folder' => 'required|exists:folders,id_folder',
         ]);
 
@@ -69,7 +69,7 @@ class FilesController extends Controller
         $file = File::findOrFail($id);
 
         $request->validate([
-            'file' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:25600', // Include all Word and PowerPoint MIME types
+            'file' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:102400', // Updated max size to 100 MB
             'id_folder' => 'required|exists:folders,id_folder',
         ]);
 

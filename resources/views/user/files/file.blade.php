@@ -25,7 +25,7 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
     <div class="container">
         <h2 class="fs-5">Files in {{ $folder->nama }}</h2>
         <div class="d-flex justify-content-between mb-3">
-            @if (auth()->user()->role === 'administrator')
+            @if (auth()->user()->type === 'admin')
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFileModal">
                     <i class="bi bi-plus-circle"></i> Add File
                 </button>
@@ -50,7 +50,7 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $file->nama_file }}</td>
                     <td>
-                        @if (auth()->user()->role === 'administrator')
+                        @if (auth()->user()->type === 'admin')
                             <!-- Edit Icon -->
                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFileModal"
                                 onclick="editFile('{{ $file->id_file }}', '{{ $file->nama_file }}', '{{ $file->id_folder }}')">
@@ -90,7 +90,7 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
         </table>
     </div>
 
-    <!-- Add File Modal -->
+    < <!-- Add File Modal -->
     <div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="addFileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -99,13 +99,17 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addFileForm" method="POST" action="{{ route('user.files.store') }}"
-                        enctype="multipart/form-data">
+                    <form id="addFileForm" method="POST" action="{{ route('user.files.store') }}" enctype="multipart/form-data">
+
                         @csrf
                         <input type="hidden" name="id_folder" value="{{ $folder->id_folder }}">
                         <div class="mb-3">
-                            <label for="addFile" class="form-label">File PDF</label>
-                            <input type="file" class="form-control" id="addFile" name="file" required>
+                            <label for="addFile" class="form-label">Files (PDF, Word, PPT)</label>
+                            <input type="file" class="form-control" id="addFile" name="files[]" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple required>
+                        </div>
+                        <!-- Progress bar -->
+                        <div class="progress mb-2" style="height: 20px; display: none;" id="uploadProgressContainer">
+                            <div class="progress-bar" id="uploadProgressBar" role="progressbar" style="width: 0%">0%</div>
                         </div>
                         <button type="submit" class="btn btn-primary">Add File</button>
                     </form>
@@ -113,6 +117,25 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
             </div>
         </div>
     </div>
+
+    <!-- Progress Bar Modal -->
+    <div class="modal fade" id="progressBarModal" tabindex="-1" aria-labelledby="progressBarModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="progressBarModalLabel">Uploading Files</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div id="uploadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <p class="mt-2 text-center" id="uploadStatus">Preparing upload...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Edit File Modal -->
     <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
@@ -130,8 +153,9 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
                         <input type="hidden" name="id_folder" value="{{ $folder->id_folder }}">
 
                         <div class="mb-3">
-                            <label for="editFile" class="form-label">File PDF</label>
-                            <input type="file" class="form-control" id="editFile" name="file" required>
+                            <label for="editFile" class="form-label">Files (PDF, Word, PPT)</label>
+                            <input type="file" class="form-control" id="editFile" name="files[]" accept=".pdf,.doc,.docx,.ppt,.pptx" multiple
+                                required>
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
@@ -213,7 +237,54 @@ $breadcrumbFolders = array_reverse($breadcrumbFolders);
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
+    <script>
+        document.getElementById("addFileForm").addEventListener("submit", function (e) {
+            e.preventDefault();
 
+            const form = e.target;
+            const formData = new FormData(form);
+            const xhr = new XMLHttpRequest();
+
+            const progressBar = document.getElementById("uploadProgressBar");
+            const progressContainer = document.getElementById("uploadProgressContainer");
+
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader("X-CSRF-TOKEN", '{{ csrf_token() }}');
+
+            // Show progress bar
+            progressContainer.style.display = "block";
+            progressBar.style.width = "0%";
+            progressBar.innerText = "0%";
+
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percent + "%";
+                    progressBar.innerText = percent + "%";
+                }
+            };
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    progressBar.style.width = "100%";
+                    progressBar.innerText = "Upload complete!";
+                    setTimeout(() => location.reload(), 1000); // Refresh page after upload
+                } else {
+                    progressBar.style.width = "0%";
+                    progressBar.innerText = "0%";
+                    Swal.fire('Upload Failed', 'Terjadi kesalahan saat mengunggah file.', 'error');
+                }
+            };
+
+            xhr.onerror = function () {
+                progressBar.style.width = "0%";
+                progressBar.innerText = "0%";
+                Swal.fire('Upload Failed', 'Koneksi terputus atau server tidak merespon.', 'error');
+            };
+
+            xhr.send(formData);
+        });
+    </script>
     <script>
         function editFile(id, name, folderId) {
             document.getElementById("editFileId").value = id;
