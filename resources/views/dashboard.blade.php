@@ -17,7 +17,7 @@
                             </div>
                             <div class="ps-3">
                                 <h6 class="fs-4">{{ $totalFolders }}</h6>
-                                <span class="text-muted small pt-2 ps-1">Total number of folders</span>
+                                <span class="text-muted small pt-2 ps-1">Total number of Section</span>
                             </div>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                             </div>
                             <div class="ps-3">
                                 <h6 class="fs-4">{{ $totalSubfolders }}</h6>
-                                <span class="text-muted small pt-2 ps-1">Total number of subfolders</span>
+                                <span class="text-muted small pt-2 ps-1">Total number of Unit</span>
                             </div>
                         </div>
                     </div>
