@@ -167,9 +167,13 @@
             <div class="col-12">
                 <div class="card recent-sales overflow-auto shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Users Logged In Today</h5>
-
+                        <h5 class="card-title">Users yang Login Hari ini</h5>
                         <div class="mt-3">
+                            <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center mb-3">
+                                <input type="text" name="search_logged_in" id="search_logged_in" class="form-control w-auto me-2"
+                                    value="{{ request('search_logged_in') }}" placeholder="Search by username...">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
                             <form method="GET" action="{{ route('dashboard') }}" class="d-flex align-items-center">
                                 <label for="per_page_logged_in" class="me-2 mb-0">Show</label>
                                 <select name="per_page_logged_in" id="per_page_logged_in"

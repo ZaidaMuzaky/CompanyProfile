@@ -11,15 +11,19 @@
     </div>
 </header><!-- End Header -->
 
+
+
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
+        @if (Auth::check() && Auth::user()->type === 'admin')
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}"
                 href="{{ route('dashboard') }}">
                 <i class="bi bi-grid"></i> <span>Dashboard</span>
             </a>
         </li>
+        @endif
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.files.*') ? '' : 'collapsed' }}"
                 href="{{ route('user.files.index') }}">

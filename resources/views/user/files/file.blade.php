@@ -5,13 +5,13 @@
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('user.files.index') }}">Section</a></li>
     @php
-        $currentFolder = $folder;
-        $breadcrumbFolders = [];
-        while ($currentFolder->parent) {
-            $breadcrumbFolders[] = $currentFolder->parent;
-            $currentFolder = $currentFolder->parent;
-        }
-        $breadcrumbFolders = array_reverse($breadcrumbFolders);
+$currentFolder = $folder;
+$breadcrumbFolders = [];
+while ($currentFolder->parent) {
+    $breadcrumbFolders[] = $currentFolder->parent;
+    $currentFolder = $currentFolder->parent;
+}
+$breadcrumbFolders = array_reverse($breadcrumbFolders);
     @endphp
     @foreach ($breadcrumbFolders as $breadcrumbFolder)
         <li class="breadcrumb-item">
@@ -23,11 +23,13 @@
 
 @section('content')
     <div class="container">
-        <h2>Files in {{ $folder->nama }}</h2>
+        <h2 class="fs-5">Files in {{ $folder->nama }}</h2>
         <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFileModal">
-                <i class="bi bi-plus-circle"></i> Add File
-            </button>
+            @if (auth()->user()->role === 'administrator')
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFileModal">
+                    <i class="bi bi-plus-circle"></i> Add File
+                </button>
+            @endif
             <form method="GET" action="{{ route('user.files.manage', $folder->id_folder) }}" class="d-flex mx-auto"
                 style="width: 50%;">
                 <input type="text" name="search" class="form-control" placeholder="Search files..."
@@ -48,11 +50,23 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $file->nama_file }}</td>
                     <td>
-                        <!-- Edit Icon -->
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFileModal"
-                            onclick="editFile('{{ $file->id_file }}', '{{ $file->nama_file }}', '{{ $file->id_folder }}')">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
+                        @if (auth()->user()->role === 'administrator')
+                            <!-- Edit Icon -->
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFileModal"
+                                onclick="editFile('{{ $file->id_file }}', '{{ $file->nama_file }}', '{{ $file->id_folder }}')">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <!-- Delete Icon -->
+                            <form action="{{ route('user.files.destroy', $file->id_file) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Anda Yakin Ingin Menghapus File Ini?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        @endif
 
                         <!-- Detail Icon -->
                         <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailFileModal"
@@ -65,16 +79,6 @@
                             onclick="viewFile('{{ asset('storage/' . $file->path) }}')">
                             <i class="bi bi-eye"></i>
                         </button>
-
-                        <!-- Delete Icon -->
-                        <form action="{{ route('user.files.destroy', $file->id_file) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Anda Yakin Ingin Menghapus File Ini?')">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
 
                         <!-- Download Icon -->
                         <a href="{{ route('user.files.download', $file->id_file) }}" class="btn btn-primary btn-sm">

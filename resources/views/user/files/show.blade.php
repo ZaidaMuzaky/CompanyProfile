@@ -10,8 +10,8 @@
 
 @section('content')
     <div class="container mt-4">
-        <h2>Select Unit in Section {{ $folder->nama }}</h2>
-        
+        <h2 class="fs-5">Select Unit in Section {{ $folder->nama }}</h2>
+
         <!-- Search Bar -->
         <div class="d-flex justify-content-center mb-3">
             <form method="GET" action="{{ route('user.files.show', $folder->id_folder) }}" class="d-flex"
@@ -23,7 +23,7 @@
                 </button>
             </form>
         </div>
-        
+
         <div class="row justify-content-center">
             @foreach ($subfolders as $subfolder)
                 <div class="col-6 col-sm-6 col-md-3 mb-3 subfolder-item">

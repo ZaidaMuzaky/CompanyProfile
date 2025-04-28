@@ -1,6 +1,6 @@
 @extends('layouts.logapp')
 
-@section('title', 'Select Google Form')
+@section('title', 'Google Form')
 
 @section('breadcrumb')
     <li class="breadcrumb-item active">Google Forms</li>

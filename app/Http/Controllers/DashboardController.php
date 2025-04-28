@@ -39,7 +39,12 @@ class DashboardController extends Controller
         $currentLoggedInPage = $request->input('logged_in_page', 1); // Default to page 1
 
         $today = Carbon::today();
-        $loggedInTodayUsers = User::whereDate('last_login_at', $today)->get();
+        $searchLoggedIn = $request->input('search_logged_in', ''); // Get search query
+        $loggedInTodayUsers = User::whereDate('last_login_at', $today)
+            ->when($searchLoggedIn, function ($query, $searchLoggedIn) {
+                return $query->where('username', 'like', '%' . $searchLoggedIn . '%');
+            })
+            ->get();
         $totalLoggedInTodayUsers = $loggedInTodayUsers->count();
         $startLoggedIn = ($currentLoggedInPage - 1) * $perPageLoggedIn;
         $displayedLoggedInTodayUsers = $loggedInTodayUsers->slice($startLoggedIn, $perPageLoggedIn)->values(); // Ensure consistent indexing
