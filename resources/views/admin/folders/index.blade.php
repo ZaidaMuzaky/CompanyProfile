@@ -10,7 +10,7 @@
     <div class="container">
         <div class="d-flex justify-content-between mb-3">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFolderModal">
-                <i class="bi bi-folder-plus"></i> Add Folder
+                <i class="bi bi-folder-plus"></i> Add Section
             </button>
             <form method="GET" action="{{ route('admin.folders.index') }}" class="d-flex mx-auto" style="width: 50%;">
                 <input type="text" name="search" class="form-control" placeholder="Search Section..."
