@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="container">
-        <h2>Subfolders of {{ $parentFolder->nama }}</h2>
+        <h2>Unit dari {{ $parentFolder->nama }}</h2>
         <div class="d-flex justify-content-between mb-3">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubfolderModal">
                 <i class="bi bi-folder-plus"></i> Add Unit
