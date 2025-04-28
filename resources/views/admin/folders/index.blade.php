@@ -71,7 +71,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addFolderModalLabel">Add Folder</h5>
+                    <h5 class="modal-title" id="addFolderModalLabel">Add Section</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -79,14 +79,14 @@
                         enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
-                            <label for="addFolderName" class="form-label">Nama Folder</label>
+                            <label for="addFolderName" class="form-label">Nama Section</label>
                             <input type="text" class="form-control" id="addFolderName" name="nama" required>
                         </div>
                         <div class="mb-3">
-                            <label for="addFolderIcon" class="form-label">Folder Icon</label>
+                            <label for="addFolderIcon" class="form-label">Section icon</label>
                             <input type="file" class="form-control" id="addFolderIcon" name="icon">
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Folder</button>
+                        <button type="submit" class="btn btn-primary">Add Section</button>
                     </form>
                 </div>
             </div>

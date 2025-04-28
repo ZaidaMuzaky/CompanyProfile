@@ -75,7 +75,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSubfolderModalLabel">Add Subfolder</h5>
+                    <h5 class="modal-title" id="addSubfolderModalLabel">Add Unit</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -84,14 +84,14 @@
                         @csrf
                         <input type="hidden" name="parent_id" value="{{ $parentFolder->id_folder }}">
                         <div class="mb-3">
-                            <label for="addSubfolderName" class="form-label">Nama Subfolder</label>
+                            <label for="addSubfolderName" class="form-label">Nama Unit</label>
                             <input type="text" class="form-control" id="addSubfolderName" name="nama" required>
                         </div>
                         <div class="mb-3">
-                            <label for="addSubfolderIcon" class="form-label">Subfolder Icon</label>
+                            <label for="addSubfolderIcon" class="form-label">Unit Icon</label>
                             <input type="file" class="form-control" id="addSubfolderIcon" name="icon">
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Subfolder</button>
+                        <button type="submit" class="btn btn-primary">Add Unit</button>
                     </form>
                 </div>
             </div>

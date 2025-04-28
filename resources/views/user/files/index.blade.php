@@ -3,7 +3,7 @@
 @section('title', 'Managemen Files PDF')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Folders</li>
+    <li class="breadcrumb-item active">Section</li>
 @endsection
 
 @section('content')
