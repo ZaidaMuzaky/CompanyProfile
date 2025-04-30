@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -28,6 +31,34 @@ class AuthController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Username atau password salah!'], 401);
     }
+
+    public function apiLogin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('username', $request->username)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Username atau password salah!'], 401);
+        }
+
+        // Update status online dan login terakhir
+        $user->is_online = true;
+        $user->last_login_at = now();
+        $user->save();
+
+        // Generate token (pakai Sanctum)
+        $token = $user->createToken('mobile_token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'user' => $user,
+        ]);
+    }
+
 
     public function logout(Request $request)
     {
