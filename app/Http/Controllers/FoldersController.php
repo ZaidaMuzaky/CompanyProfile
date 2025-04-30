@@ -48,7 +48,7 @@ class FoldersController extends Controller
         // Validasi input
         $request->validate([
             'nama' => 'required|string|max:255',
-            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'icon' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
         ]);
 
         // Update data folder
@@ -66,23 +66,29 @@ class FoldersController extends Controller
         $folder->save();
 
         if ($folder->parent_id) {
-            return redirect()->route('admin.folders.show', $folder->parent_id)->with('success', 'Subfolder updated successfully');
+            return redirect()->route('admin.folders.show', $folder->parent_id)->with('success', 'Unit updated successfully');
         } else {
-            return redirect()->route('admin.folders.index')->with('success', 'Folder updated successfully');
+            return redirect()->route('admin.folders.index')->with('success', 'Section updated successfully');
         }
     }
 
     public function destroy($id)
     {
-        $folder = Folder::findOrFail($id);
-        $parentId = $folder->parent_id;
-        $folder->delete();
+            $folder = Folder::findOrFail($id);
+    $parentId = $folder->parent_id;
 
-        if ($parentId) {
-            return redirect()->route('admin.folders.show', $parentId)->with('success', 'Subfolder deleted successfully');
-        } else {
-            return redirect()->route('admin.folders.index')->with('success', 'Folder deleted successfully');
-        }
+    // Hapus ikon jika ada
+    if ($folder->icon_path && Storage::disk('public')->exists($folder->icon_path)) {
+        Storage::disk('public')->delete($folder->icon_path);
+    }
+
+    $folder->delete();
+
+    if ($parentId) {
+        return redirect()->route('admin.folders.show', $parentId)->with('success', 'Unit deleted successfully');
+    } else {
+        return redirect()->route('admin.folders.index')->with('success', 'Section deleted successfully');
+    }
     }
 
     public function store(Request $request)
@@ -104,9 +110,9 @@ class FoldersController extends Controller
         $folder->save();
 
         if ($folder->parent_id) {
-            return redirect()->route('admin.folders.show', $folder->parent_id)->with('success', 'Subfolder created successfully.');
+            return redirect()->route('admin.folders.show', $folder->parent_id)->with('success', 'Unit created successfully.');
         } else {
-            return redirect()->route('admin.folders.index')->with('success', 'Folder created successfully.');
+            return redirect()->route('admin.folders.index')->with('success', 'Section created successfully.');
         }
     }
 }
