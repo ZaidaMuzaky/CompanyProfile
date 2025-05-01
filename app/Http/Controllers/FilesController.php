@@ -47,7 +47,7 @@ class FilesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'files.*' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:102400', // Updated max size to 100 MB
+            'files.*' => 'required|mimetypes:application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation|max:512000', 
             'id_folder' => 'required|exists:folders,id_folder',
         ]);
 
