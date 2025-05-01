@@ -28,7 +28,7 @@
             <div class="col-12 col-sm-6 col-md-4 mb-4">
                 <div class="card info-card sales-card shadow-sm hover-effect">
                     <div class="card-body">
-                        <h5 class="card-title text-success">Total Unit</h5>
+                        <h5 class="card-title text-success">Total Model</h5>
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
                                 data-bs-toggle="tooltip" title="Total Subfolders">
@@ -36,7 +36,7 @@
                             </div>
                             <div class="ps-3">
                                 <h6 class="fs-4">{{ $totalSubfolders }}</h6>
-                                <span class="text-muted small pt-2 ps-1">Total number of Unit</span>
+                                <span class="text-muted small pt-2 ps-1">Total number of Model</span>
                             </div>
                         </div>
                     </div>

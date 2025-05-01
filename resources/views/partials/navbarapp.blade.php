@@ -17,48 +17,85 @@
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
         @if (Auth::check() && Auth::user()->type === 'admin')
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}"
-                href="{{ route('dashboard') }}">
-                <i class="bi bi-grid"></i> <span>Dashboard</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}"
+                    href="{{ route('dashboard') }}">
+                    <i class="bi bi-grid"></i> <span>Dashboard</span>
+                </a>
+            </li>
         @endif
+
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.files.*') ? '' : 'collapsed' }}"
                 href="{{ route('user.files.index') }}">
                 <i class="bi bi-file-earmark-pdf"></i> <span>Managemen Files PDF</span>
             </a>
         </li>
+
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.gform.index') ? '' : 'collapsed' }}"
                 href="{{ route('user.gform.index') }}">
                 <i class="bi bi-google"></i> <span>Google Form</span>
             </a>
         </li>
-        @if (Auth::check() && Auth::user()->type === 'admin')
+
+        @php
+$menus = \App\Models\Menu::with('submenus')->get();
+        @endphp
+
+        @if ($menus->count() > 0)
             <li class="nav-item">
-                <span class="nav-link">Admin</span>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.users') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.users') }}">
-                    <i class="bi bi-people"></i> <span>Managemen Users</span>
+                <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-folder"></i> <span>Menus</span> <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.folders.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.folders.index') }}">
-                    <i class="bi bi-folder"></i> <span>Managemen Section</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.google-form.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.google-form.edit') }}">
-                    <i class="bi bi-pencil"></i> <span>Edit Google Form Link</span>
-                </a>
+                <ul id="menu-database" class="nav-content collapse {{ request()->routeIs('menus.view') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+                    @foreach ($menus as $menu)
+                        <li>
+                            <a href="{{ route('menus.view', $menu->id_menu) }}" class="{{ request()->routeIs('menus.view', $menu->id_menu) ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i><span>{{ $menu->nama }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
             </li>
         @endif
+
+        @if (Auth::check() && Auth::user()->type === 'admin')
+            {{-- admin side --}}
+            <li class="nav-item">
+                <span class="nav-link text-muted" style="font-size: 0.9rem; font-weight: bold; text-transform: uppercase;">
+                    Admin Menu
+                </span>
+            </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.users') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.users') }}">
+                        <i class="bi bi-people"></i> <span>Managemen Users</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.folders.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.folders.index') }}">
+                        <i class="bi bi-folder"></i> <span>Managemen Section</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.google-form.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.google-form.edit') }}">
+                        <i class="bi bi-pencil"></i> <span>Edit Google Form Link</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.menus.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.menus.index') }}">
+                        <i class="bi bi-folder"></i> <span>Manage Meca</span>
+                    </a>
+                </li>
+        @endif
+
         <li class="nav-item">
             <form action="{{ route('logout') }}" method="POST" id="logoutForm">
                 @csrf

@@ -6,6 +6,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MenuViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +48,41 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/google-form', [App\Http\Controllers\GformController::class, 'updateGoogleForm'])->name('admin.google-form.update');
     Route::post('/admin/google-form/{id}', [App\Http\Controllers\GformController::class, 'updateSpecificGoogleForm'])->name('admin.google-form.updateSpecific');
     Route::delete('/admin/google-form/{id}', [App\Http\Controllers\GformController::class, 'deleteGoogleForm'])->name('admin.google-form.delete');
+
+    // menu management
+    Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+        Route::resource('menus', MenuController::class)->except(['create', 'edit', 'update']);
+
+        // Tambahkan route untuk store dan destroy gambar
+        Route::post('menus/{id}/images', [MenuController::class, 'storeImage'])->name('menus.images.store');
+        Route::delete('menus/{id}/images/{imageName}', [MenuController::class, 'destroyImage'])->name('menus.images.destroy');
+        Route::put('menus/{id}', [MenuController::class, 'update'])->name('menus.update');
+        Route::get('menus/{id}', [MenuController::class, 'show'])->name('admin.menus.show');
+        Route::get('menus/{id}/view', [MenuController::class, 'view'])->name('admin.menus.view');
+    });
+
+    Route::prefix('admin/menus/{menu}')->name('admin.menus.')->group(function () {
+        Route::get('sub', [MenuController::class, 'sub'])->name('sub'); // Route untuk halaman submenu
+        Route::post('sub', [MenuController::class, 'storeSubmenu'])->name('submenus.store'); // Tambah submenu
+        Route::delete('sub/{submenu}', [MenuController::class, 'destroySubmenu'])->name('submenus.destroy'); // Hapus submenu
+        Route::get('sub', [MenuController::class, 'sub'])->name('sub'); // Route untuk halaman sub
+        Route::post('sub', [MenuController::class, 'storeSubmenu'])->name('submenus.store'); // Route untuk menambah submenu
+        Route::delete('sub/{submenu}', [MenuController::class, 'destroySubmenu'])->name('submenus.destroy'); // Route untuk menghapus submenu
+        Route::get('sub/{submenu}/show', [MenuController::class, 'show'])->name('show'); // Halaman gambar
+        Route::put('sub/{submenu}', [MenuController::class, 'updateSubmenu'])->name('submenus.update'); // Update submenu
+    });
+
+    Route::prefix('admin/menus/{menu}/sub/{submenu}')->name('admin.menus.sub.')->group(function () {
+        Route::post('images', [MenuController::class, 'storeImage'])->name('images.store'); // Simpan gambar submenu
+        Route::delete('images/{image}', [MenuController::class, 'destroyImage'])->name('images.destroy'); // Hapus gambar submenu
+        Route::put('images/{image}', [MenuController::class, 'updateImage'])->name('images.update'); // Edit gambar
+        Route::post('images', [MenuController::class, 'storeImage'])->name('admin.menus.sub.images.store'); // Simpan gambar submenu
+        Route::post('admin/menus/{menu}/sub/{submenu}/images', [MenuController::class, 'storeImage'])->name('admin.menus.sub.images.store');
+        Route::put('admin/menus/{menu}/sub/{submenu}/images/{image}', [MenuController::class, 'updateImage'])->name('admin.menus.sub.images.update');
+    });
+
+    Route::post('admin/menus/{menu}/sub/{submenu}/images', [MenuController::class, 'storeImage'])->name('admin.menus.sub.images.store');
+    Route::get('admin/menus/{menu}/sub/{submenu}/show', [MenuController::class, 'show'])->name('admin.menus.show');
 });
 
 // file management for authenticated users
@@ -64,3 +101,12 @@ Route::middleware(['auth'])->group(function () {
     // dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
+
+// Route untuk menampilkan submenu (dapat diakses oleh user dan admin)
+Route::get('menus/{menu}/view', [MenuViewController::class, 'view'])->name('menus.view');
+
+// Route untuk menampilkan submenu (khusus user)
+Route::get('menus/{menu}/view', [MenuViewController::class, 'view'])->name('menus.view');
+
+// Route untuk menampilkan gambar submenu (khusus user)
+Route::get('menus/{menu}/sub/{submenu}/show', [MenuViewController::class, 'show'])->name('menus.sub.show');
