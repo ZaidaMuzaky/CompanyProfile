@@ -56,6 +56,10 @@
                 #achievementCarousel .carousel-indicators [data-bs-target] {
                     background-color: black;
                 }
+
+                .card {
+                    border: none; /* Remove border line from cards */
+                }
             </style>
 
             <div id="achievementCarousel" class="carousel slide" data-bs-ride="carousel">

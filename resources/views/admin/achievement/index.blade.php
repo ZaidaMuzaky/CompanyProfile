@@ -155,6 +155,11 @@
             document.getElementById('editAchievementDescription').value = description;
 
             const imageInput = document.getElementById('editAchievementImage');
+            const existingPreview = imageInput.parentNode.querySelector('img');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+
             if (imageUrl) {
                 const preview = document.createElement('img');
                 preview.src = imageUrl;
