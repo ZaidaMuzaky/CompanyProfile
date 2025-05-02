@@ -8,6 +8,8 @@ use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuViewController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,12 +79,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::delete('images/{image}', [MenuController::class, 'destroyImage'])->name('images.destroy'); // Hapus gambar submenu
         Route::put('images/{image}', [MenuController::class, 'updateImage'])->name('images.update'); // Edit gambar
         Route::post('images', [MenuController::class, 'storeImage'])->name('admin.menus.sub.images.store'); // Simpan gambar submenu
-        Route::post('admin/menus/{menu}/sub/{submenu}/images', [MenuController::class, 'storeImage'])->name('admin.menus.sub.images.store');
-        Route::put('admin/menus/{menu}/sub/{submenu}/images/{image}', [MenuController::class, 'updateImage'])->name('admin.menus.sub.images.update');
     });
 
     Route::post('admin/menus/{menu}/sub/{submenu}/images', [MenuController::class, 'storeImage'])->name('admin.menus.sub.images.store');
+    Route::put('admin/menus/{menu}/sub/{submenu}/images/{image}', [MenuController::class, 'updateImage'])->name('admin.menus.sub.images.update');
     Route::get('admin/menus/{menu}/sub/{submenu}/show', [MenuController::class, 'show'])->name('admin.menus.show');
+
+    // news management
+    Route::prefix('admin/news')->name('admin.news.')->middleware(['auth', 'admin'])->group(function () {
+        Route::get('/', [NewsController::class, 'index'])->name('index'); // List berita
+        Route::get('/create-or-edit/{id?}', [NewsController::class, 'createOrEdit'])->name('createOrEdit'); // Form tambah/edit berita
+        Route::post('/store-or-update', [NewsController::class, 'storeOrUpdate'])->name('storeOrUpdate'); // Simpan atau update berita
+        Route::delete('/{id}', [NewsController::class, 'destroy'])->name('destroy'); // Hapus berita
+    });
 });
 
 // file management for authenticated users
@@ -110,3 +119,9 @@ Route::get('menus/{menu}/view', [MenuViewController::class, 'view'])->name('menu
 
 // Route untuk menampilkan gambar submenu (khusus user)
 Route::get('menus/{menu}/sub/{submenu}/show', [MenuViewController::class, 'show'])->name('menus.sub.show');
+
+// Route untuk menampilkan berita (khusus user)
+Route::prefix('news')->name('user.newsview.')->group(function () {
+    Route::get('/', [NewsViewController::class, 'index'])->name('index'); // Halaman daftar berita
+    Route::get('/{id}', [NewsViewController::class, 'detail'])->name('detail'); // Halaman detail berita
+});

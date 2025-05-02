@@ -26,7 +26,11 @@ class AuthController extends Controller
             $user->last_login_at = now();
             $user->save();
 
+            if ($user->type === 'admin') {
             return response()->json(['success' => true, 'redirect' => route('dashboard')]);
+        } else {
+            return response()->json(['success' => true, 'redirect' => route('user.newsview.index')]);
+        }
         }
 
         return response()->json(['success' => false, 'message' => 'Username atau password salah!'], 401);

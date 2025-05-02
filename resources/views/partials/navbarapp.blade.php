@@ -24,6 +24,12 @@
                 </a>
             </li>
         @endif
+        <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('user.newsview.*') ? '' : 'collapsed' }}"
+                href="{{ route('user.newsview.index') }}">
+                <i class="bi bi-newspaper"></i> <span>Berita</span>
+            </a>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.files.*') ? '' : 'collapsed' }}"
@@ -91,7 +97,13 @@ $menus = \App\Models\Menu::with('submenus')->get();
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.menus.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.menus.index') }}">
-                        <i class="bi bi-folder"></i> <span>Manage Meca</span>
+                        <i class="bi bi-folder"></i> <span>Managemen Meca</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.news.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.news.index') }}">
+                        <i class="bi bi-newspaper"></i> <span>Managemen Berita</span>
                     </a>
                 </li>
         @endif

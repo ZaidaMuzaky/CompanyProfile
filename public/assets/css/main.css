@@ -848,7 +848,7 @@ section,
   padding: 80px 0 60px 0;
   display: flex;
   align-items: center;
-  background: url(../img/backgroundweb1.jpg) top center no-repeat;
+  background: url(../img/bgwebcp1.jpg) top center no-repeat;
   background-size: cover;
 }
 
@@ -2776,4 +2776,29 @@ section,
   padding-left: 5px;
   color: color-mix(in srgb, var(--default-color), transparent 60%);
   font-size: 14px;
+}
+.card {
+    width: auto;
+    max-width: 100%; /* Pastikan card tidak melebihi lebar kolom */
+}
+/* Ukuran card lebih kecil untuk layar handphone */
+@media (max-width: 576px) {
+    .card.card-small {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+
+    .card.card-small img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .card.card-small h3 {
+        font-size: 0.95rem;
+    }
+
+    .card.card-small p {
+        font-size: 0.8rem;
+    }
 }
