@@ -106,6 +106,12 @@ $menus = \App\Models\Menu::with('submenus')->get();
                         <i class="bi bi-newspaper"></i> <span>Managemen Berita</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.achievement.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.achievement.index') }}">
+                        <i class="bi bi-award"></i> <span>Managemen Penghargaan</span>
+                    </a>
+                </li>
         @endif
 
         <li class="nav-item">

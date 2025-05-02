@@ -38,6 +38,58 @@
             </div>
         </div>
     </section>
+    
+    <!-- Achievements Section -->
+    <section id="achievements" class="achievements section">
+        <div class="container" data-aos="fade-up">
+            <div class="section-title">
+                <h2>Achievements</h2>
+                <p>Pencapain dan Prestasi Kami</p>
+            </div>
+
+            <style>
+                #achievementCarousel .carousel-control-prev-icon,
+                #achievementCarousel .carousel-control-next-icon {
+                    background-color: black;
+                }
+
+                #achievementCarousel .carousel-indicators [data-bs-target] {
+                    background-color: black;
+                }
+            </style>
+
+            <div id="achievementCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach ($achievements->chunk(3) as $chunkIndex => $chunk)
+                        <div class="carousel-item @if ($chunkIndex === 0) active @endif">
+                            <div class="row">
+                                @foreach ($chunk as $achievement)
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <img src="{{ asset('storage/' . $achievement->gambar) }}" class="card-img-top" alt="{{ $achievement->judul }}">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ $achievement->judul }}</h5>
+                                                <p class="card-text">{{ $achievement->deskripsi }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#achievementCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#achievementCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </section>
 
     <!-- Layanan Section -->
     <section id="departemen" class="values section">
@@ -106,4 +158,33 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal for Image Zoom -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" alt="Preview" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalImage = document.getElementById('modalImage');
+            const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+
+            document.querySelectorAll('.card-img-top').forEach(img => {
+                img.addEventListener('click', function () {
+                    modalImage.src = this.src;
+                    imageModal.show();
+                });
+            });
+        });
+    </script>
 @endsection

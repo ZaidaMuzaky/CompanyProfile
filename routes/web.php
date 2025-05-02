@@ -10,6 +10,8 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsViewController;
+use App\Http\Controllers\AchivementsController;
+use App\Models\Achivements;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +25,8 @@ use App\Http\Controllers\NewsViewController;
 */
 
 Route::get('/', function () {
-    return view('home');
+    $achievements = Achivements::all();
+    return view('home', compact('achievements'));
 })->name('home');
 // login page
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -91,6 +94,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/create-or-edit/{id?}', [NewsController::class, 'createOrEdit'])->name('createOrEdit'); // Form tambah/edit berita
         Route::post('/store-or-update', [NewsController::class, 'storeOrUpdate'])->name('storeOrUpdate'); // Simpan atau update berita
         Route::delete('/{id}', [NewsController::class, 'destroy'])->name('destroy'); // Hapus berita
+    });
+
+    // achievement management
+    Route::prefix('admin/achievement')->name('admin.achievement.')->middleware('auth')->group(function () {
+        Route::get('/', [AchivementsController::class, 'index'])->name('index');
+        Route::get('/create', [AchivementsController::class, 'create'])->name('create');
+        Route::post('/store', [AchivementsController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [AchivementsController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [AchivementsController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [AchivementsController::class, 'destroy'])->name('destroy');
     });
 });
 
