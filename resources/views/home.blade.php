@@ -2,16 +2,107 @@
 
 @section('content')
     <!-- Home Section -->
-    <section id="home" class="hero section">
-        <div class="container">
+    <section id="home" class="hero section position-relative overflow-hidden" style="min-height: 100vh;">
+        <!-- Background Slide Container -->
+        <div class="bg-slider-container">
+            <div class="bg-slide active" style="background-image: url('{{ asset('assets/img/bgwebcp1.jpg') }}');"></div>
+            <div class="bg-slide next" style="background-image: url('{{ asset('assets/img/bgwebp2.jpg') }}');"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="container position-relative" style="z-index: 10;">
             <div class="row gy-4 align-items-center">
                 <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up">
                     <h1>PT. Hasta Panca Mandiri Utama Site KDA</h1>
-                    <p data-aos="fade-up" data-aos-delay="100">Mitra terpercaya Anda dalam layanan penambangan sejak 2016.</p>
+                    <p data-aos="fade-up" data-aos-delay="100">Mitra terpercaya Anda dalam layanan penambangan sejak 2016.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Styles -->
+    <style>
+        .hero {
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .bg-slider-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 1s ease-in-out;
+            z-index: 1;
+        }
+
+        .bg-slide.active {
+            transform: translateX(0);
+            z-index: 2;
+        }
+
+        .bg-slide.next {
+            transform: translateX(100%);
+            z-index: 1;
+        }
+    </style>
+
+    <!-- Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const images = [
+                "{{ asset('assets/img/bgwebcp1.jpg') }}",
+                "{{ asset('assets/img/bgwebp2.jpg') }}",
+                "{{ asset('assets/img/backgroundweb1.jpg') }}"
+            ];
+
+            let currentIndex = 0;
+            const container = document.querySelector('.bg-slider-container');
+
+            setInterval(() => {
+                const currentSlide = container.querySelector('.bg-slide.active');
+                const nextSlide = container.querySelector('.bg-slide.next');
+
+                const nextIndex = (currentIndex + 1) % images.length;
+                nextSlide.style.backgroundImage = `url(${images[nextIndex]})`;
+
+                // Animate both slides simultaneously
+                currentSlide.style.transform = 'translateX(-100%)';
+                nextSlide.style.transform = 'translateX(0)';
+
+                setTimeout(() => {
+                    // After animation, reset positions
+                    currentSlide.classList.remove('active');
+                    currentSlide.classList.add('next');
+                    currentSlide.style.transform = 'translateX(100%)';
+
+                    nextSlide.classList.remove('next');
+                    nextSlide.classList.add('active');
+
+                    currentIndex = nextIndex;
+                }, 1000);
+            }, 5000); // Adjust the interval to control the speed of the transition
+        });
+    </script>
+
+
+
+
 
     <!-- Tentang Perusahaan Section -->
     <section id="tentang" class="about section">
@@ -38,7 +129,7 @@
             </div>
         </div>
     </section>
-    
+
     <!-- Achievements Section -->
     <section id="achievements" class="achievements section">
         <div class="container" data-aos="fade-up">
