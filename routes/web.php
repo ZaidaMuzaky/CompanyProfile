@@ -28,6 +28,12 @@ Route::get('/', function () {
     $achievements = Achivements::all();
     return view('home', compact('achievements'));
 })->name('home');
+
+// Route for About Us page
+Route::get('/about-us', function () {
+    return view('about_us');
+})->name('about-us');
+
 // login page
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
