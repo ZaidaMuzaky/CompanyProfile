@@ -49,6 +49,16 @@ class DashboardController extends Controller
         $startLoggedIn = ($currentLoggedInPage - 1) * $perPageLoggedIn;
         $displayedLoggedInTodayUsers = $loggedInTodayUsers->slice($startLoggedIn, $perPageLoggedIn)->values(); // Ensure consistent indexing
 
+        // Calculate login recap
+        $weeklyLogins = User::whereBetween('last_login_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $monthlyLogins = User::whereBetween('last_login_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+        $yearlyLogins = User::whereBetween('last_login_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])->count();
+
+        // Calculate visitor recap
+        $weeklyVisitors = User::whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $monthlyVisitors = User::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+        $yearlyVisitors = User::whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])->count();
+
         return view('dashboard', compact(
             'totalFolders',
             'totalSubfolders',
@@ -62,7 +72,13 @@ class DashboardController extends Controller
             'displayedLoggedInTodayUsers',
             'totalLoggedInTodayUsers',
             'perPageLoggedIn',
-            'currentLoggedInPage'
+            'currentLoggedInPage',
+            'weeklyLogins',
+            'monthlyLogins',
+            'yearlyLogins',
+            'weeklyVisitors',
+            'monthlyVisitors',
+            'yearlyVisitors'
         ));
     }
 }

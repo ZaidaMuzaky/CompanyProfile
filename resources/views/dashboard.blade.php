@@ -13,7 +13,7 @@
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
                                 data-bs-toggle="tooltip" title="Total Folders">
-                                <i class="bi bi-folder"></i>
+                                <i class="fas fa-folder-open"></i>
                             </div>
                             <div class="ps-3">
                                 <h6 class="fs-4">{{ $totalFolders }}</h6>
@@ -32,7 +32,7 @@
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white"
                                 data-bs-toggle="tooltip" title="Total Subfolders">
-                                <i class="bi bi-folder2"></i>
+                                <i class="fas fa-folder"></i>
                             </div>
                             <div class="ps-3">
                                 <h6 class="fs-4">{{ $totalSubfolders }}</h6>
@@ -51,11 +51,99 @@
                         <div class="d-flex align-items-center">
                             <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white"
                                 data-bs-toggle="tooltip" title="Total Files">
-                                <i class="bi bi-file-earmark"></i>
+                                <i class="fas fa-file-alt"></i>
                             </div>
                             <div class="ps-3">
                                 <h6 class="fs-4">{{ $totalFiles }}</h6>
                                 <span class="text-muted small pt-2 ps-1">Total number of files</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Recap Card -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card recent-sales overflow-auto shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Rekap Login <span>| Minggu, Bulan, Tahun</span></h5>
+
+                        <div class="row mb-3">
+                            <!-- Weekly Logins -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-primary text-white me-3">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fs-5">Login Minggu Ini</h6>
+                                    <h6 class="fs-4">{{ $weeklyLogins }}</h6>
+                                </div>
+                            </div>
+                            <!-- Monthly Logins -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-success text-white me-3">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fs-5">Login Bulan Ini</h6>
+                                    <h6 class="fs-4">{{ $monthlyLogins }}</h6>
+                                </div>
+                            </div>
+                            <!-- Yearly Logins -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-info text-white me-3">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fs-5">Login Tahun Ini</h6>
+                                    <h6 class="fs-4">{{ $yearlyLogins }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visitor Recap Card -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card recent-sales overflow-auto shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Rekap Pengunjung <span>| Minggu, Bulan, Tahun</span></h5>
+
+                        <div class="row mb-3">
+                            <!-- Weekly Visitors -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-warning text-white me-3">
+                                    <i class="fas fa-user-clock"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fs-5">Pengunjung Minggu Ini</h6>
+                                    <h6 class="fs-4">{{ $weeklyVisitors }}</h6>
+                                </div>
+                            </div>
+                            <!-- Monthly Visitors -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-danger text-white me-3">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fs-5">Pengunjung Bulan Ini</h6>
+                                    <h6 class="fs-4">{{ $monthlyVisitors }}</h6>
+                                </div>
+                            </div>
+                            <!-- Yearly Visitors -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white me-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fs-5">Pengunjung Tahun Ini</h6>
+                                    <h6 class="fs-4">{{ $yearlyVisitors }}</h6>
+                                </div>
                             </div>
                         </div>
                     </div>
