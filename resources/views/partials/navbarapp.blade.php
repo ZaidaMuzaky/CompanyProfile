@@ -52,7 +52,7 @@ $menus = \App\Models\Menu::with('submenus')->get();
         @if ($menus->count() > 0)
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-folder"></i> <span>Menus</span> <i class="bi bi-chevron-down ms-auto"></i>
+                    <i class="bi bi-folder"></i> <span>KPI Plant</span> <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="menu-database" class="nav-content collapse {{ request()->routeIs('menus.view') ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
                     @foreach ($menus as $menu)
