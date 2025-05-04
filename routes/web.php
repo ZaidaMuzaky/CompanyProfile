@@ -1,17 +1,19 @@
 <?php
 
+use App\Models\Achivements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\FoldersController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuViewController;
-use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsViewController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AchivementsController;
-use App\Models\Achivements;
+use App\Http\Controllers\PeopleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +35,29 @@ Route::get('/', function () {
 Route::get('/about-us', function () {
     return view('about_us');
 })->name('about-us');
+
+// Route for Services page
+Route::get('/services', function () {
+    return view('services');
+})->name('services');
+
+// Route for Services page
+Route::get('/career', function () {
+    return view('career');
+})->name('career');
+
+// Route untuk halaman Community
+Route::get('/community', function () {
+    $communities = \App\Models\Community::all();
+    return view('community', compact('communities'));
+})->name('community');
+
+// Route untuk halaman people
+Route::get('/people', function () {
+    $people = \App\Models\People::all();
+    return view('our-people', compact('people'));
+})->name('people');
+
 
 // login page
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -76,9 +101,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('sub', [MenuController::class, 'sub'])->name('sub'); // Route untuk halaman submenu
         Route::post('sub', [MenuController::class, 'storeSubmenu'])->name('submenus.store'); // Tambah submenu
         Route::delete('sub/{submenu}', [MenuController::class, 'destroySubmenu'])->name('submenus.destroy'); // Hapus submenu
-        Route::get('sub', [MenuController::class, 'sub'])->name('sub'); // Route untuk halaman sub
-        Route::post('sub', [MenuController::class, 'storeSubmenu'])->name('submenus.store'); // Route untuk menambah submenu
-        Route::delete('sub/{submenu}', [MenuController::class, 'destroySubmenu'])->name('submenus.destroy'); // Route untuk menghapus submenu
         Route::get('sub/{submenu}/show', [MenuController::class, 'show'])->name('show'); // Halaman gambar
         Route::put('sub/{submenu}', [MenuController::class, 'updateSubmenu'])->name('submenus.update'); // Update submenu
     });
@@ -110,6 +132,22 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/edit/{id}', [AchivementsController::class, 'edit'])->name('edit');
         Route::put('/update/{id}', [AchivementsController::class, 'update'])->name('update');
         Route::delete('/destroy/{id}', [AchivementsController::class, 'destroy'])->name('destroy');
+    });
+
+    // Community management routes
+    Route::prefix('admin/community')->name('admin.community.')->middleware(['auth', 'admin'])->group(function () {
+        Route::get('/', [CommunityController::class, 'index'])->name('index');
+        Route::post('/store', [CommunityController::class, 'store'])->name('store');
+        Route::put('/update/{id}', [CommunityController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [CommunityController::class, 'destroy'])->name('destroy');
+    });
+
+    // Route for managing People
+    Route::prefix('admin/people')->name('admin.people.')->middleware(['auth', 'admin'])->group(function () {
+        Route::get('/', [PeopleController::class, 'index'])->name('index');
+        Route::post('/store', [PeopleController::class, 'store'])->name('store');
+        Route::put('/update/{id}', [PeopleController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [PeopleController::class, 'destroy'])->name('destroy');
     });
 });
 

@@ -75,6 +75,10 @@ class AchivementsController extends Controller
         if ($request->hasFile('gambar')) {
             // Hapus gambar lama jika ada
             if ($achievement->gambar) {
+                $oldImagePath = public_path('storage/' . $achievement->gambar);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
                 Storage::disk('public')->delete($achievement->gambar);
             }
             $data['gambar'] = $request->file('gambar')->store('achievements', 'public');

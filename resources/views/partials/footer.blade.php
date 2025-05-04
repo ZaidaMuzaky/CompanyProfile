@@ -10,7 +10,7 @@
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('about-us') }}">Strength</a></li>
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('about-us') }}">Our System</a></li>
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('about-us') }}">Awards & Recognition</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="/careers/">Career</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('career') }}">Career</a></li>
                     <li><i class="fas fa-angle-right"></i> <a href="/news/">News</a></li>
                 </ul>
             </div>
@@ -19,10 +19,10 @@
             <div class="col-lg-3 col-md-6 footer-services">
                 <h2>Our Services</h2>
                 <ul>
-                    <li><i class="fas fa-angle-right"></i> <a href="/services/">Mine Planning & Design</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="/services/">Mining Development</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="/services/">Mining Operation</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="/services/">Customer Solution Management</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('services') }}">Mine Planning & Design</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('services') }}">Mining Development</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('services') }}">Mining Operation</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('services') }}">Customer Solution Management</a></li>
                 </ul>
             </div>
 
@@ -30,8 +30,8 @@
             <div class="col-lg-3 col-md-6 footer-living">
                 <h2>Living at HPU</h2>
                 <ul>
-                    <li><i class="fas fa-angle-right"></i> <a href="/living-with-our-people/">Our People</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="/living-with-our-community/">Our Community</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('people') }}">Our People</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('community') }}">Our Community</a></li>
                 </ul>
             </div>
 
@@ -53,8 +53,16 @@
             </div>
         </div>
     </div>
-
-    <div class="container copyright text-center mt-4">
-        <p>Copyright ©2025 PT Harmoni Panca Utama. All Rights Reserved</p>
-    </div>
 </footer>
+    <!-- Copyright Section -->
+    <div class="w-100" style="
+          background: url('{{ asset('assets/img/Footer.jpg') }}') no-repeat center center;
+          background-size: cover;
+        ">
+        <!-- Boks container untuk teks agar tidak terlalu melebar -->
+        <div class="container text-center py-5">
+            <p class="mb-0 text-white">
+                Copyright ©2025 PT Harmoni Panca Utama. All Rights Reserved
+            </p>
+        </div>
+    </div>

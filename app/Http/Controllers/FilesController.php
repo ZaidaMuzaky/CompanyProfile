@@ -80,7 +80,11 @@ class FilesController extends Controller
         $file->id_user_upload = Auth::id();
 
         if ($request->file('files')) {
-            $filePath = $request->file('files')[0]->store('files', 'public'); // Store the file
+            // Delete the old file from storage
+            Storage::delete("public/{$file->path}");
+
+            // Store the new file
+            $filePath = $request->file('files')[0]->store('files', 'public');
             $file->path = $filePath;
         }
 

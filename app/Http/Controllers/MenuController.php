@@ -62,6 +62,13 @@ class MenuController extends Controller
         // Hapus semua gambar terkait menu di storage
         Storage::deleteDirectory("public/menu-images/{$menu->id_menu}");
 
+        // Hapus semua file di public/storage/menu-images
+        $publicPath = public_path("storage/menu-images/{$menu->id_menu}");
+        if (is_dir($publicPath)) {
+            array_map('unlink', glob("{$publicPath}/*.*"));
+            rmdir($publicPath);
+        }
+
         $menu->delete();
 
         return redirect()->route('admin.menus.index')->with('success', 'Menu berhasil dihapus.');

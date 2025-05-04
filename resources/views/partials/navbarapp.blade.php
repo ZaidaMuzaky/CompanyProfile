@@ -112,6 +112,18 @@ $menus = \App\Models\Menu::with('submenus')->get();
                         <i class="bi bi-award"></i> <span>Managemen Penghargaan</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.community.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.community.index') }}">
+                        <i class="bi bi-people"></i> <span>Managemen Community</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.people.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.people.index') }}">
+                        <i class="bi bi-people"></i> <span>Managemen Our People</span>
+                    </a>
+                </li>
         @endif
 
         <li class="nav-item">

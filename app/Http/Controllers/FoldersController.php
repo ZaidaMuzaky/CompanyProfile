@@ -55,8 +55,12 @@ class FoldersController extends Controller
         $folder->nama = $request->nama;
 
         if ($request->hasFile('icon')) {
-            // Hapus ikon lama jika ada
+            // Hapus ikon lama jika ada di public
             if ($folder->icon_path) {
+                $iconPath = public_path('storage/' . $folder->icon_path);
+                if (file_exists($iconPath)) {
+                    unlink($iconPath);
+                }
                 Storage::disk('public')->delete($folder->icon_path);
             }
             // Simpan ikon baru
@@ -74,21 +78,25 @@ class FoldersController extends Controller
 
     public function destroy($id)
     {
-            $folder = Folder::findOrFail($id);
-    $parentId = $folder->parent_id;
+        $folder = Folder::findOrFail($id);
+        $parentId = $folder->parent_id;
 
-    // Hapus ikon jika ada
-    if ($folder->icon_path && Storage::disk('public')->exists($folder->icon_path)) {
-        Storage::disk('public')->delete($folder->icon_path);
-    }
+        // Hapus ikon jika ada di public
+        if ($folder->icon_path) {
+            $iconPath = public_path('storage/' . $folder->icon_path);
+            if (file_exists($iconPath)) {
+                unlink($iconPath);
+            }
+            Storage::disk('public')->delete($folder->icon_path);
+        }
 
-    $folder->delete();
+        $folder->delete();
 
-    if ($parentId) {
-        return redirect()->route('admin.folders.show', $parentId)->with('success', 'Unit deleted successfully');
-    } else {
-        return redirect()->route('admin.folders.index')->with('success', 'Section deleted successfully');
-    }
+        if ($parentId) {
+            return redirect()->route('admin.folders.show', $parentId)->with('success', 'Unit deleted successfully');
+        } else {
+            return redirect()->route('admin.folders.index')->with('success', 'Section deleted successfully');
+        }
     }
 
     public function store(Request $request)
