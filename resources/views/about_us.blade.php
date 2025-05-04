@@ -28,8 +28,8 @@
             font-family: 'Roboto', Arial, sans-serif;
             letter-spacing: 1px;
             text-shadow: 0 4px 40px rgba(0, 0, 0, 0.19);
-            margin-left: 362px;
-            margin-bottom: -250px;
+             margin-left: 20%;     /* geser ke kanan sekitar 20% dari lebar parent */
+    margin-bottom: -15%; 
             text-align: left;
             line-height: 1.05;
         }

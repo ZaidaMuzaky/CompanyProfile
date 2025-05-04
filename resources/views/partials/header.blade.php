@@ -9,11 +9,17 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="#home" class="active">Home</a></li>
-                <li><a href="#tentang">Tentang Perusahaan</a></li>
-                <li><a href="#tentang">Achievements</a></li>
-                <li><a href="#departemen">Section</a></li>
-                <li><a href="#footer">Informasi Lainnya</a></li>
+                <li><a href="{{ url('/') }}" class="active">Home</a></li>
+                <li><a href="{{ route('about-us') }}">About Us</a></li>
+                <li><a href="{{ route('services') }}">Our Services</a></li>
+                <li class="dropdown"><a href="#"><span>Living at HPU</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a> 
+                <ul>
+                    <li><a href="{{ route('people') }}">Living With Our People</a></li>
+                    <li><a href="{{ route('community') }}">Living With Our Community</a></li>
+                </ul>
+                </li>
+                <li><a href="{{ route('newsvisit.index') }}">News</a></li>
+                <li><a href="{{ route('career') }}">Career</a></li>
                 <li><a href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a></li>
             </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>

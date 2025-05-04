@@ -22,11 +22,12 @@
         }
 
         .hpu-hero-text {
-            position: relative;
+            position: absolute;
+            left: 24%;        /* geser sedikit ke kanan dari sisi kiri */
+            bottom: 10%;     /* geser ke bawah dari bawah hero */
             color: #fff;
             font-size: 2.6rem;
             font-weight: 700;
-            margin-left: 48px;
             z-index: 1;
             text-shadow: 1px 2px 8px rgba(0, 0, 0, 0.20);
         }

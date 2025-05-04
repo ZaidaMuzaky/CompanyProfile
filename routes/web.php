@@ -13,6 +13,7 @@ use App\Http\Controllers\NewsViewController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\NewsVisitController;
 use App\Http\Controllers\PeopleController;
 
 /*
@@ -57,6 +58,18 @@ Route::get('/people', function () {
     $people = \App\Models\People::all();
     return view('our-people', compact('people'));
 })->name('people');
+
+// Route untuk menampilkan berita visitor
+Route::prefix('newsvisit')
+     ->name('newsvisit.')   
+     ->group(function () {
+        Route::get('/',         [NewsVisitController::class, 'index'])
+             ->name('index');  
+
+        Route::get('/{id}',     [NewsVisitController::class, 'detail'])
+             ->name('detail'); 
+            });
+
 
 
 // login page

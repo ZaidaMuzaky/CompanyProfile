@@ -11,7 +11,7 @@
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('about-us') }}">Our System</a></li>
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('about-us') }}">Awards & Recognition</a></li>
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('career') }}">Career</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="/news/">News</a></li>
+                    <li><i class="fas fa-angle-right"></i><a href="{{ route('newsvisit.index') }}">News</a></li>
                 </ul>
             </div>
 
