@@ -32,21 +32,6 @@ Route::get('/', function () {
     return view('home', compact('achievements'));
 })->name('home');
 
-// Route for About Us page
-Route::get('/about-us', function () {
-    return view('about_us');
-})->name('about-us');
-
-// Route for Services page
-Route::get('/services', function () {
-    return view('services');
-})->name('services');
-
-// Route for Services page
-Route::get('/career', function () {
-    return view('career');
-})->name('career');
-
 // Route untuk halaman Community
 Route::get('/community', function () {
     $communities = \App\Models\Community::all();
