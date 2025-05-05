@@ -26,7 +26,7 @@
             <div class="col-lg-3 col-md-6 footer-contact">
                 <h2>Contact Us</h2>
                 <p>PT. Hasta Panca Mandiri Utama Site KDA</p>
-                <p>Desa Karya Baru, Kec. Marau, Kab. Ketapang, Prov. Kalimantan Barat 78863</p>
+                <p>Desa Karya Baru, Kec. Marau,<br> Kab. Ketapang, Prov. Kalimantan Barat<br>78863</p>
                 <p><strong>Telp.:</strong> <a href="tel:6282148000417"> +62 82148000417‬</a></p>
                 <p><strong>Email :</strong> kda.ins.plt@hpmu-mining.com</p>
                 <div class="social-links">
