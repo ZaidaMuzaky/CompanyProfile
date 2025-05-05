@@ -46,7 +46,7 @@
         <!-- Boks container untuk teks agar tidak terlalu melebar -->
         <div class="container text-center py-5">
             <p class="mb-0 text-white">
-                Copyright ©2025 PT Hasta Panca Mandiri Utama. All Rights Reserved
+                Copyright ©2025 PT Hasta Panca Mandiri Utama All Rights Reserved
             </p>
         </div>
     </div>
