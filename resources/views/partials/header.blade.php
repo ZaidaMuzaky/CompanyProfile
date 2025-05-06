@@ -13,7 +13,7 @@
                 <li class="dropdown"><a href="#"><span>Living at HPMU</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a> 
                 <ul>
                     <li><a href="{{ route('people') }}">Living With Our People</a></li>
-                    <li><a href="{{ route('community') }}">Living With Our Community</a></li>
+                    <li><a href="{{ route('community') }}">Our Poster</a></li>
                 </ul>
                 </li>
                 <li><a href="{{ route('newsvisit.index') }}">News</a></li>

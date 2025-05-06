@@ -18,7 +18,7 @@
                 <h2>Living at HPMU</h2>
                 <ul>
                     <li><i class="fas fa-angle-right"></i> <a href="{{ route('people') }}">Our People</a></li>
-                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('community') }}">Our Community</a></li>
+                    <li><i class="fas fa-angle-right"></i> <a href="{{ route('community') }}">Our Poster</a></li>
                 </ul>
             </div>
 

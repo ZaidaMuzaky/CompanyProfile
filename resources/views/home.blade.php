@@ -310,56 +310,57 @@
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/sdt.jpg') }}" alt="Gear Plant">
                                 <h3>Section SDT</h3>
-                                <p>Bertanggung jawab atas survei, pemetaan, dan penyediaan data teknis untuk mendukung kegiatan operasional tambang.</p>
+                                <p>Bertanggungjawab atas maintenance unit side dump trailer (PATRiA & CCI)</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/dt1.png') }}" alt="dt">
                                 <h3>Section DT</h3>
-                                <p>Bertanggung jawab atas pemeliharaan peralatan berat.</p>
+                                <p>Bertanggungjawab atas maintenance unit dump truck (HINO , XCMG, FAW, IZUZU)</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/a2b.png') }}" alt="cr">
                                 <h3>Section A2B</h3>
-                                <p>Fokus pada dukungan operasional kegiatan penambangan.</p>
+                                <p>Bertanggungjawab atas maintenance unit track <br>( BULDOSER, COMPECTOR, DOOSAN, EXCAVATOR, MOTOR GRADER )</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/wt.png') }}" alt="sp">
                                 <h3>Section Support</h3>
-                                <p>Memberikan layanan dukungan penting untuk operasi penambangan.</p>
+                                <p>Bertanggungjawab atas maintenance unit support ( FUEL TRUCK, WATER TRUCK, LOBOY, LV, TOWER LAMP, GENSET, POMPA, TRUCK
+                                SUPPORT )</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/wp.png') }}" alt="hr">
                                 <h3>Section WP</h3>
-                                <p>Menangani pemeliharaan fasilitas bengkel.</p>
+                                <p>Bertanggungjawab atas unit fixed plant yang mendukung proses kegiatan penambangan</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/fabrikasi.jpg') }}" alt="hrp">
                                 <h3>Section Fabrikasi</h3>
-                                <p>Bertanggung jawab atas fabrikasi dan perbaikan peralatan penambangan.</p>
+                                <p>Bertanggungjawab atas proses maintenance dengan pengelasan dan machinening</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="700">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/comex.png') }}" alt="box">
                                 <h3>Section Comex</h3>
-                                <p>Fokus pada kegiatan komersial dan ekspor.</p>
+                                <p>Bertanggungjawab atas overhaul komponen unit <br>( ENGINE, TRANSMISI, DIFERENSIAL, <br>FINAL DRAVE )</p>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="800">
                             <div class="card card-small">
                                 <img src="{{ asset('assets/img/tyre.png') }}" alt="tr">
                                 <h3>Section Tyre</h3>
-                                <p>Spesialis dalam pemeliharaan dan manajemen ban untuk peralatan berat.</p>
+                                <p>Bertanggungjawab atas pemeliharaan tyre pada unit dump truck</p>
                             </div>
                         </div>
                     </div>

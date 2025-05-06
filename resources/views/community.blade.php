@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'HPMU Community')
+@section('title', 'HPMU Poster')
 
 @section('content')
             <style>
@@ -105,7 +105,7 @@
             <div class="hpu-hero">
                 <div class="hpu-hero-overlay"></div>
                 <div class="hpu-hero-text">
-                    Living with<br>Our Community
+                    Poster
                 </div>
             </div>
 

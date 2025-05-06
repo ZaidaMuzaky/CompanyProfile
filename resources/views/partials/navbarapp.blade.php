@@ -115,7 +115,7 @@ $menus = \App\Models\Menu::with('submenus')->get();
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.community.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.community.index') }}">
-                        <i class="bi bi-people"></i> <span>Managemen Community</span>
+                        <i class="bi bi-people"></i> <span>Managemen Poster</span>
                     </a>
                 </li>
                 <li class="nav-item">

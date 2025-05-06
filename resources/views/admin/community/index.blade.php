@@ -1,9 +1,9 @@
 @extends('layouts.logapp')
 
-@section('title', 'Manage Community')
+@section('title', 'Manage Poster')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Community</li>
+    <li class="breadcrumb-item active">Poster</li>
 @endsection
 
 @section('content')
@@ -14,7 +14,7 @@
                 <!-- Add Community Button -->
                 <button class="btn btn-success me-2 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addCommunityModal">
                     <i class="bi bi-plus-circle"></i>
-                    <span class="d-none d-sm-inline ms-1">Add Community</span>
+                    <span class="d-none d-sm-inline ms-1">Add poster</span>
                 </button>
             </div>
             <!-- Search Form -->
@@ -61,7 +61,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Are you sure you want to delete this community item?')">
+                                    onclick="return confirm('Anda yakin akan menghapus poster ini?')">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -77,7 +77,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCommunityModalLabel">Add Community</h5>
+                    <h5 class="modal-title" id="addCommunityModalLabel">Add Poster</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -103,7 +103,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCommunityModalLabel">Edit Community</h5>
+                    <h5 class="modal-title" id="editCommunityModalLabel">Edit PosterS</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
