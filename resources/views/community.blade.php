@@ -110,8 +110,7 @@
             </div>
 
             <div class="hpu-intro">
-                We are implementing our Philosophy by Aligning with mining owner in implementing proper community development
-                programs to promote positive impact to the community and ensure a sustainable project.
+
             </div>
 
             <div class="projects-grid">
