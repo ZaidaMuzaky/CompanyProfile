@@ -5,16 +5,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilesController;
+use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\NewsViewController;
+use App\Http\Controllers\PartItemController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\FormImageController;
 use App\Http\Controllers\NewsVisitController;
-use App\Http\Controllers\PeopleController;
+use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\PartsViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -164,6 +168,29 @@ Route::middleware(['auth'])->group(function () {
 
     // dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // parts management
+    Route::get('/admin/parts', [App\Http\Controllers\PartController::class, 'index'])->name('admin.parts.index');   
+    route::get('/admin/parts/create', [App\Http\Controllers\PartController::class, 'create'])->name('admin.parts.create');
+    route::post('/admin/parts/store', [App\Http\Controllers\PartController::class, 'store'])->name('admin.parts.store');    
+    route::get('/admin/parts/{id}/edit', [App\Http\Controllers\PartController::class, 'edit'])->name('admin.parts.edit');
+    route::put('/admin/parts/{id}/update', [App\Http\Controllers\PartController::class, 'update'])->name('admin.parts.update');
+    route::delete('/admin/parts/{id}/destroy', [App\Http\Controllers\PartController::class, 'destroy'])->name('admin.parts.destroy');
+    // sub parts management
+    Route::get('/admin/parts/{id}', [PartController::class, 'show'])->name('admin.parts.show');
+    Route::post('admin/subcategories/store', [PartController::class, 'storeSubcategory'])->name('admin.subcategories.store');
+    Route::put('admin/parts/{category_id}/subcategories/{id}', [PartController::class, 'updateSubcategory'])->name('admin.subcategories.update');
+    Route::delete('admin/subcategories/{id}', [PartController::class, 'destroySubcategory'])->name('admin.subcategories.destroy');
+    Route::get('admin/subcategories/{id}/edit', [PartController::class, 'editSubcategory'])->name('admin.subcategories.edit');
+    Route::get('/admin/parts/{category_id}/subcategories', [PartController::class, 'listByCategory'])->name('admin.subcategories.index');
+    // main parts management
+    Route::get('admin/parts/subcategory/{sub_id}', [PartController::class, 'partList'])->name('admin.parts.main');
+    Route::post('admin/parts/item', [PartController::class, 'storePart'])->name('admin.parts.item.store');
+    Route::put('admin/parts/item/{id}', [PartController::class, 'updatePart'])->name('admin.parts.item.update');
+    Route::delete('admin/parts/item/{id}', [PartController::class, 'destroyPart'])->name('admin.parts.item.destroy');
+    Route::post('/admin/parts/import', [PartController::class, 'import'])->name('admin.parts.import');
+
+
 });
 
 // Route untuk menampilkan submenu (dapat diakses oleh user dan admin)
@@ -180,3 +207,11 @@ Route::prefix('news')->name('user.newsview.')->group(function () {
     Route::get('/', [NewsViewController::class, 'index'])->name('index'); // Halaman daftar berita
     Route::get('/{id}', [NewsViewController::class, 'detail'])->name('detail'); // Halaman detail berita
 });
+
+// upload image route
+Route::post('/upload-image', [FormImageController::class, 'upload']);
+
+// view Parts
+Route::get('/user/parts/{id}', [PartsViewController::class, 'index'])->name('user.parts.index');
+
+
