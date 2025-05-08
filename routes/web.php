@@ -235,4 +235,5 @@ Route::get('/user/parts/{id}', [PartsViewController::class, 'index'])->name('use
 
 Route::prefix('user')->middleware('auth')->group(function () {
     Route::get('partunschedule', [PartUnscheduleViewController::class, 'index'])->name('user.partunschedule.index');
+    Route::post('/part-unschedule/import', [PartUnscheduleController::class, 'import'])->name('admin.parts.import');
 });

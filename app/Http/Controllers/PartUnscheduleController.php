@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\PartUnschedule; // Pastikan model diimpor dengan benar
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PartUnscheduleImport;
 
 class PartUnscheduleController extends Controller
 {
@@ -58,5 +60,16 @@ class PartUnscheduleController extends Controller
         $partunschedule->delete();
 
         return redirect()->route('admin.partunschedule.index')->with('success', 'Part Unschedule has been deleted.');
+    }
+       public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        // Menggunakan Maatwebsite Excel untuk import
+        Excel::import(new PartUnscheduleImport, $request->file('file'));
+
+        return back()->with('success', 'Data Part Unschedule berhasil diimport!');
     }
 }
