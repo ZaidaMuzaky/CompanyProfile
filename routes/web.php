@@ -12,13 +12,14 @@ use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\NewsViewController;
-use App\Http\Controllers\PartItemController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormImageController;
 use App\Http\Controllers\NewsVisitController;
-use App\Http\Controllers\AchivementsController;
 use App\Http\Controllers\PartsViewController;
+use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\PartUnscheduleController;
+use App\Http\Controllers\PartUnscheduleViewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -190,6 +191,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('admin/parts/item/{id}', [PartController::class, 'destroyPart'])->name('admin.parts.item.destroy');
     Route::post('/admin/parts/import', [PartController::class, 'import'])->name('admin.parts.import');
 
+    // unscheduled parts management
+    Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+    // Index route to show the part unschedules list
+    Route::get('partunschedule', [PartUnscheduleController::class, 'index'])->name('partunschedule.index');
+
+    // Store route for adding a new part unschedule
+    Route::post('partunschedule', [PartUnscheduleController::class, 'store'])->name('partunschedule.store');
+
+    // Update route for editing a part unschedule
+    Route::put('partunschedule/{id}/update', [PartUnscheduleController::class, 'update'])->name('partunschedule.update');
+
+    // Delete route for deleting a part unschedule
+    Route::delete('partunschedule/{id}', [PartUnscheduleController::class, 'destroy'])->name('partunschedule.destroy');
+});
+
+
 
 });
 
@@ -215,3 +232,7 @@ Route::post('/upload-image', [FormImageController::class, 'upload']);
 Route::get('/user/parts/{id}', [PartsViewController::class, 'index'])->name('user.parts.index');
 
 
+
+Route::prefix('user')->middleware('auth')->group(function () {
+    Route::get('partunschedule', [PartUnscheduleViewController::class, 'index'])->name('user.partunschedule.index');
+});

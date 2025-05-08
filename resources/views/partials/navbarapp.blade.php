@@ -45,7 +45,7 @@
             </a>
         </li>
         @php
-            $categories = \App\Models\Category::with('subcategories')->get();
+$categories = \App\Models\Category::with('subcategories')->get();
         @endphp
         
         @if ($categories->count() > 0)
@@ -54,6 +54,14 @@
                     <i class="bi bi-folder"></i> <span>Data GMM</span> <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="menu-category" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                    <li class="nav-item">
+                        <a href="{{ route('user.partunschedule.index') }}"
+                            class="nav-link {{ request()->routeIs('user.partunschedule.index') ? 'active' : '' }}">
+                            <i class="bi bi-wrench-adjustable-circle"></i>
+                            <span>Part Unschedule</span>
+                        </a>
+                    </li>
+
                     @foreach ($categories as $category)
                         <li>
                             <a data-bs-toggle="collapse" href="#subcategory-{{ $category->id }}" class="nav-link collapsed">
@@ -161,6 +169,12 @@ $menus = \App\Models\Menu::with('submenus')->get();
                     <a class="nav-link {{ request()->routeIs('admin.parts.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.parts.index') }}">
                         <i class="bi bi-tools"></i> <span>Manage Parts</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.partunschedule.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.partunschedule.index') }}">
+                        <i class="bi bi-calendar-x"></i> <span>Manage Part Unschedule</span>
                     </a>
                 </li>
 
