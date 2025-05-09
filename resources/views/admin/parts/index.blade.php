@@ -29,18 +29,20 @@
                 <th>Actions</th>
             </tr>
             @foreach ($categories as $index => $category)
-                <tr style="cursor: pointer;" onclick="window.location='{{ route('admin.parts.show', ['id' => $category->id]) }}'">
+                <tr style="cursor: pointer;"
+                    onclick="window.location='{{ route('admin.parts.show', ['id' => $category->id]) }}'">
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $category->name }}</td>
                     <td>
                         <!-- Edit Button -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editPartModal"
-                            onclick="editPart('{{ $category->id }}', '{{ $category->name }}')">
+                            onclick="event.stopPropagation(); editPart('{{ $category->id }}', '{{ $category->name }}')">
                             <i class="bi bi-pencil-square"></i>
                         </button>
 
                         <!-- Delete Button -->
-                        <form action="{{ route('admin.parts.destroy', $category->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('admin.parts.destroy', $category->id) }}" method="POST" style="display:inline;"
+                            onsubmit="event.stopPropagation();">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"
@@ -111,6 +113,7 @@
             document.getElementById('editPartForm').action = "/admin/parts/" + id + "/update";
         }
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             @if (session('success'))

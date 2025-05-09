@@ -25,7 +25,6 @@
                     <i class="bi bi-search"></i>
                 </button>
             </form>
-
         </div>
 
         <!-- Sub-kategori Table -->
@@ -36,26 +35,29 @@
                 <th>Actions</th>
             </tr>
             @foreach ($subcategories as $index => $sub)
-                <tr style="cursor: pointer;" onclick="window.location='{{ route('admin.parts.main', ['sub_id' => $sub->id]) }}'">
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $sub->name }}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSubModal"
-                                onclick="editSub('{{ $sub->id }}', '{{ $sub->name }}')">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
+                <tr style="cursor: pointer;"
+                    onclick="window.location='{{ route('admin.parts.main', ['sub_id' => $sub->id]) }}'">
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $sub->name }}</td>
+                    <td>
+                        <!-- Edit Button -->
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editSubModal"
+                            onclick="event.stopPropagation(); editSub('{{ $sub->id }}', '{{ $sub->name }}')">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
 
-                            <form action="{{ route('admin.subcategories.destroy', $sub->id) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Hapus sub-kategori ini?');">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                        <!-- Delete Button -->
+                        <form action="{{ route('admin.subcategories.destroy', $sub->id) }}" method="POST"
+                            style="display:inline;" onsubmit="event.stopPropagation();">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Hapus sub-kategori ini?');">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
             @endforeach
         </table>
     </div>
@@ -116,8 +118,7 @@
             document.getElementById('editSubId').value = id;
             document.getElementById('editSubName').value = name;
             document.getElementById('editSubForm').action = "{{ route('admin.subcategories.update', ['category_id' => $category->id, 'id' => '__id__']) }}".replace('__id__', id);
-            }
-
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
             @if (session('success'))
