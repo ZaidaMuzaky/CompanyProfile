@@ -17,4 +17,8 @@ class Submenu extends Model
     {
         return $this->belongsTo(Menu::class, 'menu_id', 'id_menu');
     }
+    public function images()
+    {
+        return $this->hasMany(SubmenuImage::class, 'submenu_id', 'id_submenu');
+    }
 }

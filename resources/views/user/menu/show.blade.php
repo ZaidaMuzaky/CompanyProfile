@@ -13,14 +13,18 @@
     <div class="row mt-4">
         @if (count($images) > 0)
             @foreach ($images as $image)
-                <div class="col-md-3 mb-4">
-                    <div class="card">
-                        <img src="{{ asset(str_replace('public', 'storage', $image)) }}" class="card-img-top" alt="Image"
-                             style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal"
-                             onclick="showImageModal('{{ asset(str_replace('public', 'storage', $image)) }}')">
-                    </div>
-                </div>
-            @endforeach
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <img src="{{ asset(str_replace('public', 'storage', $image->path)) }}" class="card-img-top" alt="Image"
+                 style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal"
+                 onclick="showImageModal('{{ asset(str_replace('public', 'storage', $image->path)) }}')">
+            <div class="card-body">
+                <p class="card-text" style="text-align: center; margin-top: 3%;">{{ $image->description }}</p>
+            </div>
+        </div>
+    </div>
+@endforeach
+
         @else
             <p>No images available for this submenu.</p>
         @endif

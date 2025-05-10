@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Submenu;
+use App\Models\SubmenuImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -34,12 +35,15 @@ class MenuController extends Controller
 
     public function show($menuId, $submenuId)
     {
-        $menu = Menu::findOrFail($menuId); // Ambil menu berdasarkan ID
-        $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId); // Ambil submenu terkait
-        $images = Storage::files("public/submenu-images/{$submenu->id_submenu}"); // Ambil gambar terkait submenu
-
-        return view('admin.menus.show', compact('menu', 'submenu', 'images')); // Kirim data ke view
+        $menu = Menu::findOrFail($menuId);
+        $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
+        
+        // Ambil gambar dari database, bukan dari storage langsung
+        $images = $submenu->images; // relasi hasMany dari submenu ke submenu_images
+    
+        return view('admin.menus.show', compact('menu', 'submenu', 'images'));
     }
+    
 
     public function update(Request $request, $id)
     {
@@ -77,54 +81,71 @@ class MenuController extends Controller
     public function storeImage(Request $request, $menuId, $submenuId)
     {
         $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
-
+    
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:51200', // Validasi file gambar
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:51200',
+            'description' => 'nullable|string',
         ]);
-
-        // Simpan gambar ke folder storage
+    
         $path = $request->file('image')->store("submenu-images/{$submenu->id_submenu}", 'public');
-
+    
+        // Simpan ke database
+        SubmenuImage::create([
+            'submenu_id' => $submenu->id_submenu,
+            'image_path' => $path,
+            'description' => $request->input('description'),
+        ]);
+    
         return redirect()->back()->with('success', 'Gambar berhasil ditambahkan.');
     }
+    
 
-    public function destroyImage($menuId, $submenuId, $imageName)
-    {
-        $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
+    public function destroyImage($menuId, $submenuId, $imageId)
+{
+    $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
 
-        // Path file di storage
-        $filePath = "submenu-images/{$submenu->id_submenu}/{$imageName}";
+    $image = SubmenuImage::where('submenu_id', $submenu->id_submenu)->findOrFail($imageId);
 
-        // Hapus file dari storage
-        if (Storage::disk('public')->exists($filePath)) {
-            Storage::disk('public')->delete($filePath);
-        }
-
-        // Hapus file dari public/storage (link simbolik)
-        $publicPath = public_path("storage/{$filePath}");
-        if (file_exists($publicPath)) {
-            unlink($publicPath);
-        }
-
-        return redirect()->back()->with('success', 'Gambar berhasil dihapus.');
+    // Hapus file dari storage
+    if (Storage::disk('public')->exists($image->image_path)) {
+        Storage::disk('public')->delete($image->image_path);
     }
 
-    public function updateImage(Request $request, $menuId, $submenuId, $imageName)
-    {
-        $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
+    // Hapus dari database
+    $image->delete();
 
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:51200', // Validasi file gambar
-        ]);
+    return redirect()->back()->with('success', 'Gambar berhasil dihapus.');
+}
 
-        // Hapus gambar lama
-        Storage::disk('public')->delete("submenu-images/{$submenu->id_submenu}/{$imageName}");
 
-        // Simpan gambar baru
-        $path = $request->file('image')->store("submenu-images/{$submenu->id_submenu}", 'public');
+public function updateImage(Request $request, $menuId, $submenuId, $imageId)
+{
+    $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
 
-        return redirect()->back()->with('success', 'Gambar berhasil diperbarui.');
+    $image = SubmenuImage::where('submenu_id', $submenu->id_submenu)->findOrFail($imageId);
+
+    $request->validate([
+        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:51200',
+        'description' => 'nullable|string',
+    ]);
+
+    // Jika user upload gambar baru
+    if ($request->hasFile('image')) {
+        if (Storage::disk('public')->exists($image->image_path)) {
+            Storage::disk('public')->delete($image->image_path);
+        }
+
+        $newPath = $request->file('image')->store("submenu-images/{$submenu->id_submenu}", 'public');
+        $image->image_path = $newPath;
     }
+
+    // Update deskripsi
+    $image->description = $request->input('description');
+    $image->save();
+
+    return redirect()->back()->with('success', 'Gambar berhasil diperbarui.');
+}
+
 
     public function sub($menuId)
     {
