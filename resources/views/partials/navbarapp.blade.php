@@ -82,49 +82,6 @@ $mainMenus = \App\Models\MainMenu::with('menuSections.brands.files')->get();
                 @endforeach
             </ul>
         </li>
-        
-
-        @php
-$categories = \App\Models\Category::with('subcategories')->get();
-        @endphp
-        
-        @if ($categories->count() > 0)
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#menu-category" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-folder"></i> <span>Data GMM</span> <i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="menu-category" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                    <li class="nav-item">
-                        <a href="{{ route('user.partunschedule.index') }}"
-                            class="nav-link {{ request()->routeIs('user.partunschedule.index') ? 'active' : '' }}">
-                            <i class="bi bi-wrench-adjustable-circle"></i>
-                            <span>Part Unschedule</span>
-                        </a>
-                    </li>
-
-                    @foreach ($categories as $category)
-                        <li>
-                            <a data-bs-toggle="collapse" href="#subcategory-{{ $category->id }}" class="nav-link collapsed">
-                                <i class="bi bi-chevron-right"></i><span>{{ $category->name }}</span>
-                            </a>
-                            @if ($category->subcategories->count() > 0)
-                                <ul id="subcategory-{{ $category->id }}" class="nav-content collapse ms-4">
-                                    @foreach ($category->subcategories as $subcategory)
-                                        <li>
-                                            <a href="{{ route('user.parts.index', $subcategory->id) }}"
-                                                class="{{ request()->routeIs('user.parts.index') && request()->route('id') == $subcategory->id ? 'active' : '' }}">
-                                                <i class="bi bi-circle"></i>{{ $subcategory->name }}
-                                            </a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </li>
-        @endif
-
 
         @php
 $menus = \App\Models\Menu::with('submenus')->get();
