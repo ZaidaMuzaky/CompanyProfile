@@ -24,12 +24,6 @@
                 </a>
             </li>
         @endif
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('user.newsview.*') ? '' : 'collapsed' }}"
-                href="{{ route('user.newsview.index') }}">
-                <i class="bi bi-newspaper"></i> <span>Berita</span>
-            </a>
-        </li>
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.files.*') ? '' : 'collapsed' }}"
@@ -39,11 +33,57 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('user.newsview.*') ? '' : 'collapsed' }}"
+                href="{{ route('user.newsview.index') }}">
+                <i class="bi bi-newspaper"></i> <span>Berita</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.gform.index') ? '' : 'collapsed' }}"
                 href="{{ route('user.gform.index') }}">
                 <i class="bi bi-google"></i> <span>Google Form</span>
             </a>
         </li>
+        @php
+$mainMenus = \App\Models\MainMenu::with('menuSections.brands.files')->get();
+        @endphp
+        
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#pareto-problem-unit" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span> <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="pareto-problem-unit" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                @foreach ($mainMenus as $mainMenu)
+                    <li>
+                        <a data-bs-toggle="collapse" href="#menu-{{ $mainMenu->id }}" class="nav-link collapsed">
+                            <i class="bi bi-folder"></i><span>{{ $mainMenu->nama }}</span>
+                        </a>
+                        <ul id="menu-{{ $mainMenu->id }}" class="nav-content collapse ms-4">
+                            @foreach ($mainMenu->menuSections as $section)
+                                <li>
+                                    <a data-bs-toggle="collapse" href="#section-{{ $section->id }}" class="nav-link collapsed">
+                                        <i class="bi bi-chevron-right"></i><span>{{ $section->nama }}</span>
+                                    </a>
+                                    <ul id="section-{{ $section->id }}" class="nav-content collapse ms-4">
+                                        @foreach ($section->brands as $brand)
+                                            <li>
+                                                <a href="{{ route('user.pareto.index', $brand->id) }}"
+                                                    class="{{ request()->routeIs('user.pareto.index') && request()->route('menuBrand') == $brand->id ? 'active' : '' }}">
+                                                    <i class="bi bi-circle"></i>{{ $brand->nama }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </li>
+                @endforeach
+            </ul>
+        </li>
+        
+
         @php
 $categories = \App\Models\Category::with('subcategories')->get();
         @endphp
@@ -165,6 +205,14 @@ $menus = \App\Models\Menu::with('submenus')->get();
                         <i class="bi bi-people"></i> <span>Managemen Our People</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.pareto.*') ? '' : 'collapsed' }}"
+                        href="{{ route('admin.pareto.index') }}">
+                        <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span>
+                    </a>
+                </li>
+
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.parts.*') ? '' : 'collapsed' }}"
                         href="{{ route('admin.parts.index') }}">

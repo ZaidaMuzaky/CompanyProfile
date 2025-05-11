@@ -10,14 +10,20 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\FoldersController;
+use App\Http\Controllers\MenuFileController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\NewsViewController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormImageController;
+use App\Http\Controllers\MenuBrandController;
+use App\Http\Controllers\MenuFileControlller;
 use App\Http\Controllers\NewsVisitController;
 use App\Http\Controllers\PartsViewController;
+use App\Http\Controllers\ParetoViewController;
 use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\ParetoProblemController;
+use App\Http\Controllers\ParetoSectionController;
 use App\Http\Controllers\PartUnscheduleController;
 use App\Http\Controllers\PartUnscheduleViewController;
 
@@ -152,6 +158,47 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::put('/update/{id}', [PeopleController::class, 'update'])->name('update');
         Route::delete('/destroy/{id}', [PeopleController::class, 'destroy'])->name('destroy');
     });
+// Pareto Problem management routes
+Route::prefix('admin/pareto')->name('admin.pareto.')->group(function () {
+    Route::get('/', [ParetoProblemController::class, 'index'])->name('index');
+    Route::post('/store', [ParetoProblemController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [ParetoProblemController::class, 'edit'])->name('edit');
+    Route::put('/{id}/update', [ParetoProblemController::class, 'update'])->name('update');
+    Route::delete('/{id}/destroy', [ParetoProblemController::class, 'destroy'])->name('destroy');
+
+    Route::get('{id}/show', [ParetoProblemController::class, 'show'])->name('show');
+});
+// parto problem section management routes
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    // Define the route for menu sections
+    Route::get('menuSections/{mainMenu}', [ParetoSectionController::class, 'index'])->name('menuSections.index');
+    Route::post('menuSections', [ParetoSectionController::class, 'store'])->name('menuSections.store');
+    Route::put('menuSections/{id}', [ParetoSectionController::class, 'update'])->name('menuSections.update');
+    Route::delete('menuSections/{id}', [ParetoSectionController::class, 'destroy'])->name('menuSections.destroy');
+    Route::get('menuSections/{id}/show', [ParetoSectionController::class, 'show'])->name('menuSections.show');
+});
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/menuSections/{menu_section_id}/brands', [MenuBrandController::class, 'index'])->name('menuBrands.index');
+    Route::post('/menuBrands', [MenuBrandController::class, 'store'])->name('menuBrands.store');
+    Route::put('/menuBrands/{id}', [MenuBrandController::class, 'update'])->name('menuBrands.update');
+    Route::delete('/menuBrands/{id}', [MenuBrandController::class, 'destroy'])->name('menuBrands.destroy');
+
+    Route::get('/admin/pareto/main/{id}', [MenuBrandController::class, 'main'])->name('pareto.main');
+});
+
+// menu file management routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Route untuk manajemen file dalam konteks menuBrand
+    Route::resource('menuFiles', MenuFileController::class)->except(['show', 'create', 'edit']);
+
+    // Route untuk menyimpan file
+    Route::post('menuFiles/{menuBrand}', [MenuFileController::class, 'store'])->name('menuFiles.store');
+});
+
+
+
+
 });
 
 // file management for authenticated users
@@ -204,6 +251,12 @@ Route::middleware(['auth'])->group(function () {
 
     // Delete route for deleting a part unschedule
     Route::delete('partunschedule/{id}', [PartUnscheduleController::class, 'destroy'])->name('partunschedule.destroy');
+
+   
+
+
+
+    
 });
 
 
@@ -230,6 +283,10 @@ Route::post('/upload-image', [FormImageController::class, 'upload']);
 
 // view Parts
 Route::get('/user/parts/{id}', [PartsViewController::class, 'index'])->name('user.parts.index');
+
+Route::get('/user/pareto/{menuBrand}', [ParetoViewController::class, 'index'])->name('user.pareto.index');
+Route::get('pareto/{menuBrand}', [ParetoViewController::class, 'index'])->name('user.pareto.index');
+
 
 
 

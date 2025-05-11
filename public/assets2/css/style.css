@@ -57,14 +57,50 @@ h6 {
 # Page Title
 --------------------------------------------------------------*/
 .pagetitle {
+  position: relative;
+  background-image: url('/assets/img/cp-img.jpg');
+  background-size: cover;
+  background-position: center 75%;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 30px;
+  border-radius: 10px;
   margin-bottom: 10px;
+  overflow: hidden;
 }
+
+.pagetitle::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.2); /* Overlay hitam transparan */
+  z-index: 1;
+}
+
+.pagetitle * {
+  position: relative;
+  z-index: 2; /* Pastikan teks tampil di atas overlay */
+}
+
 
 .pagetitle h1 {
   font-size: 24px;
   margin-bottom: 0;
   font-weight: 600;
-  color: #012970;
+  color: #ffffff;
+}
+.pagetitle .breadcrumb {
+  color: white; /* Teks dalam breadcrumb berwarna putih */
+}
+
+.pagetitle .breadcrumb a {
+  color: white; /* Teks link dalam breadcrumb menjadi putih */
+  text-decoration: none; /* Menghilangkan garis bawah pada link */
+}
+
+.pagetitle .breadcrumb a:hover {
+  color: #f8f9fa; /* Warna putih terang saat hover pada link breadcrumb */
 }
 
 /*--------------------------------------------------------------
@@ -323,25 +359,25 @@ h6 {
 .breadcrumb {
   font-size: 14px;
   font-family: "Nunito", sans-serif;
-  color: #899bbd;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .breadcrumb a {
-  color: #899bbd;
+  color: #ffffff;
   transition: 0.3s;
 }
 
 .breadcrumb a:hover {
-  color: #51678f;
+  color: #ffffff;
 }
 
 .breadcrumb .breadcrumb-item::before {
-  color: #899bbd;
+  color: #ffffff;
 }
 
 .breadcrumb .active {
-  color: #51678f;
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -1290,4 +1326,27 @@ h6 {
 
 .zoom-controls button {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.folder-card {
+  position: relative;
+  overflow: hidden;
+  color: white;
+  background-image: url('/assets/img/bg1.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.folder-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.27); /* Overlay hitam dengan transparansi */
+  z-index: 0;
+}
+
+.folder-card .card-body {
+  position: relative;
+  z-index: 1; /* Supaya di atas overlay */
+  color: white;
 }
