@@ -33,6 +33,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $mainMenu->nama }}</td>
                     <td>
+                        <div class="d-flex gap-2" onclick="event.stopPropagation();">
                         <!-- Edit Button -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editMainMenuModal"
                             onclick="event.stopPropagation(); editMainMenu('{{ $mainMenu->id }}', '{{ $mainMenu->nama }}')">
@@ -48,6 +49,7 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        </div>
                     </td>
                 </tr>
             @endforeach
