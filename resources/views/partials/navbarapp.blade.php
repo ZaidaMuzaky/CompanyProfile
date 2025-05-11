@@ -213,19 +213,6 @@ $menus = \App\Models\Menu::with('submenus')->get();
                 </li>
 
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.parts.*') ? '' : 'collapsed' }}"
-                        href="{{ route('admin.parts.index') }}">
-                        <i class="bi bi-tools"></i> <span>Manage Parts</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.partunschedule.*') ? '' : 'collapsed' }}"
-                        href="{{ route('admin.partunschedule.index') }}">
-                        <i class="bi bi-calendar-x"></i> <span>Manage Part Unschedule</span>
-                    </a>
-                </li>
-
         @endif
 
         <li class="nav-item">

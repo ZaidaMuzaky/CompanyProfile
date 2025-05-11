@@ -78,73 +78,77 @@ class MenuController extends Controller
         return redirect()->route('admin.menus.index')->with('success', 'Menu berhasil dihapus.');
     }
 
-    public function storeImage(Request $request, $menuId, $submenuId)
-    {
-        $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
-    
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:51200',
-            'description' => 'nullable|string',
-        ]);
-    
-        $path = $request->file('image')->store("submenu-images/{$submenu->id_submenu}", 'public');
-    
-        // Simpan ke database
-        SubmenuImage::create([
-            'submenu_id' => $submenu->id_submenu,
-            'image_path' => $path,
-            'description' => $request->input('description'),
-        ]);
-    
-        return redirect()->back()->with('success', 'Gambar berhasil ditambahkan.');
-    }
-    
-
-    public function destroyImage($menuId, $submenuId, $imageId)
+  // Store File (PDF or other file types)
+public function storeImage(Request $request, $menuId, $submenuId)
 {
     $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
 
-    $image = SubmenuImage::where('submenu_id', $submenu->id_submenu)->findOrFail($imageId);
-
-    // Hapus file dari storage
-    if (Storage::disk('public')->exists($image->image_path)) {
-        Storage::disk('public')->delete($image->image_path);
-    }
-
-    // Hapus dari database
-    $image->delete();
-
-    return redirect()->back()->with('success', 'Gambar berhasil dihapus.');
-}
-
-
-public function updateImage(Request $request, $menuId, $submenuId, $imageId)
-{
-    $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
-
-    $image = SubmenuImage::where('submenu_id', $submenu->id_submenu)->findOrFail($imageId);
-
+    // Validasi file, mendukung file PDF, DOCX, PPTX, TXT, ZIP
     $request->validate([
-        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:51200',
+        'file' => 'required|mimes:pdf,docx,pptx,txt,zip|max:51200',
         'description' => 'nullable|string',
     ]);
 
-    // Jika user upload gambar baru
-    if ($request->hasFile('image')) {
-        if (Storage::disk('public')->exists($image->image_path)) {
-            Storage::disk('public')->delete($image->image_path);
-        }
+    // Menyimpan file ke folder submenu-images dengan nama folder submenu_id
+    $path = $request->file('file')->store("submenu-files/{$submenu->id_submenu}", 'public');
 
-        $newPath = $request->file('image')->store("submenu-images/{$submenu->id_submenu}", 'public');
-        $image->image_path = $newPath;
+    // Simpan ke database
+    SubmenuImage::create([
+        'submenu_id' => $submenu->id_submenu,
+        'image_path' => $path, // Menyimpan path file
+        'description' => $request->input('description'),
+    ]);
+
+    return redirect()->back()->with('success', 'File berhasil ditambahkan.');
+}
+
+// Destroy File
+public function destroyImage($menuId, $submenuId, $fileId)
+{
+    $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
+    $file = SubmenuImage::where('submenu_id', $submenu->id_submenu)->findOrFail($fileId);
+
+    // Hapus file dari storage
+    if (Storage::disk('public')->exists($file->image_path)) {
+        Storage::disk('public')->delete($file->image_path);
     }
 
-    // Update deskripsi
-    $image->description = $request->input('description');
-    $image->save();
+    // Hapus dari database
+    $file->delete();
 
-    return redirect()->back()->with('success', 'Gambar berhasil diperbarui.');
+    return redirect()->back()->with('success', 'File berhasil dihapus.');
 }
+
+// Update File
+public function updateImage(Request $request, $menuId, $submenuId, $fileId)
+{
+    $submenu = Submenu::where('menu_id', $menuId)->findOrFail($submenuId);
+    $file = SubmenuImage::where('submenu_id', $submenu->id_submenu)->findOrFail($fileId);
+
+    $request->validate([
+        'file' => 'nullable|mimes:pdf,docx,pptx,txt,zip|max:51200',
+        'description' => 'nullable|string',
+    ]);
+
+    // Jika user upload file baru
+    if ($request->hasFile('file')) {
+        // Hapus file lama jika ada
+        if (Storage::disk('public')->exists($file->image_path)) {
+            Storage::disk('public')->delete($file->image_path);
+        }
+
+        // Simpan file baru
+        $newPath = $request->file('file')->store("submenu-files/{$submenu->id_submenu}", 'public');
+        $file->image_path = $newPath;
+    }
+
+    // Update deskripsi (meskipun tidak ada file yang diupload)
+    $file->description = $request->input('description');
+    $file->save();
+
+    return redirect()->back()->with('success', 'File berhasil diperbarui.');
+}
+
 
 
     public function sub($menuId)

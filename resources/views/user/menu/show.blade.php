@@ -1,6 +1,6 @@
 @extends('layouts.logapp')
 
-@section('title', 'Images for ' . $submenu->nama)
+@section('title', 'Files for ' . $submenu->nama)
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -9,55 +9,45 @@
 @endsection
 
 @section('content')
-<div class="container">
-    <div class="row mt-4">
-        @if (count($images) > 0)
-            @foreach ($images as $image)
-    <div class="col-md-3 mb-4">
-        <div class="card h-100">
-            <img src="{{ asset(str_replace('public', 'storage', $image->path)) }}" class="card-img-top" alt="Image"
-                 style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal"
-                 onclick="showImageModal('{{ asset(str_replace('public', 'storage', $image->path)) }}')">
-            <div class="card-body">
-                <p class="card-text" style="text-align: center; margin-top: 3%;">{{ $image->description }}</p>
-            </div>
+    <div class="container mt-4">
+        <h4 class="mb-3">File untuk Submenu: <strong>{{ $submenu->nama }}</strong></h4>
+
+        <div class="d-flex justify-content-center mb-3">
         </div>
-    </div>
-@endforeach
 
-        @else
-            <p>No images available for this submenu.</p>
-        @endif
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>File</th>
+                    <th>Deskripsi</th>
+                    <th>Preview / Download</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($filesData as $index => $file)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>
+                            <!-- Menampilkan ikon PDF -->
+                            <i class="bi bi-file-earmark-pdf" style="font-size: 1.5rem;"></i>
+                        </td>
+                        <td>{{ $file->description }}</td>
+                        <td>
+                            <a href="{{ asset($file->path) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-file-earmark-arrow-down"></i> Lihat File
+                            </a>
+                            <a href="{{ asset($file->path) }}" download class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-download"></i> Unduh
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center">Tidak ada file tersedia untuk submenu ini.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalImage" src="" alt="Image" class="img-fluid">
-            </div>
-            <div class="modal-footer">
-                <a id="downloadButton" href="#" class="btn btn-primary" download>
-                    <i class="bi bi-download"></i> Download
-                </a>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function showImageModal(imageUrl) {
-        const modalImage = document.getElementById('modalImage');
-        const downloadButton = document.getElementById('downloadButton');
-        modalImage.src = imageUrl;
-        downloadButton.href = imageUrl;
-    }
-</script>
 @endsection

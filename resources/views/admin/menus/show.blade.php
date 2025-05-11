@@ -1,6 +1,6 @@
 @extends('layouts.logapp')
 
-@section('title', 'Manage Images for ' . $submenu->nama)
+@section('title', 'Manage Files for ' . $submenu->nama)
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.menus.index') }}">Menus</a></li>
@@ -11,19 +11,19 @@
 @section('content')
     <div class="container">
 
-        <!-- Add Image Button -->
+        <!-- Add File Button -->
         <div class="mb-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addImageModal">
-                <i class="bi bi-plus-circle"></i> Add Image
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFileModal">
+                <i class="bi bi-plus-circle"></i> Add File
             </button>
         </div>
 
-        <!-- Images Table -->
+        <!-- Files Table -->
         <table class="table mt-3">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Image</th>
+                    <th>File</th>
                     <th>Description</th>
                     <th>Actions</th>
                 </tr>
@@ -33,12 +33,22 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>
-                            <img src="{{ asset('storage/' . $image->image_path) }}" alt="Menu Image" style="width: 100px;">
+                            @if (in_array(pathinfo($image->image_path, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png', 'gif']))
+                                <img src="{{ asset('storage/' . $image->image_path) }}" alt="File Image" style="width: 100px;">
+                            @elseif (in_array(pathinfo($image->image_path, PATHINFO_EXTENSION), ['pdf']))
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            @else
+                                <i class="bi bi-file-earmark"></i> File
+                            @endif
                         </td>
                         <td>{{ $image->description }}</td>
                         <td>
+                            <!-- View Button -->
+                            <a href="{{ asset('storage/' . $image->image_path) }}" target="_blank" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i> 
+                            </a>
                             <!-- Edit Button -->
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editImageModal"
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFileModal"
                                 onclick="setEditModal({{ $image->id }}, '{{ asset('storage/' . $image->image_path) }}', '{{ $image->description }}')">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
@@ -50,7 +60,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Yakin ingin menghapus gambar ini?')">
+                                    onclick="return confirm('Yakin ingin menghapus file ini?')">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
@@ -61,53 +71,53 @@
         </table>
     </div>
 
-    <!-- Add Image Modal -->
-    <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+    <!-- Add File Modal -->
+    <div class="modal fade" id="addFileModal" tabindex="-1" aria-labelledby="addFileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" action="{{ route('admin.menus.sub.images.store', [$menu->id_menu, $submenu->id_submenu]) }}"
                 enctype="multipart/form-data" class="modal-content">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addImageModalLabel">Add Image</h5>
+                    <h5 class="modal-title" id="addFileModalLabel">Add File</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="menuImage" class="form-label">Select Image</label>
-                        <input type="file" class="form-control" id="menuImage" name="image" required>
+                        <label for="menuFile" class="form-label">Select File</label>
+                        <input type="file" class="form-control" id="menuFile" name="file" required>
                     </div>
                     <div class="mb-3">
-                        <label for="imageDescription" class="form-label">Description</label>
-                        <textarea name="description" id="imageDescription" class="form-control" rows="2"></textarea>
+                        <label for="fileDescription" class="form-label">Description</label>
+                        <textarea name="description" id="fileDescription" class="form-control" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Add Image
+                        <i class="bi bi-plus-circle"></i> Add File
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Edit Image Modal -->
-    <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
+    <!-- Edit File Modal -->
+    <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="editImageForm" method="POST" enctype="multipart/form-data" class="modal-content">
+            <form id="editFileForm" method="POST" enctype="multipart/form-data" class="modal-content">
                 @csrf
                 @method('PUT')
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editImageModalLabel">Edit Image</h5>
+                    <h5 class="modal-title" id="editFileModalLabel">Edit File</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Current Image</label>
-                        <img id="currentImage" src="" alt="Current Image" style="width: 100%; margin-bottom: 10px;">
+                        <label class="form-label">Current File</label>
+                        <div id="currentFile" style="margin-bottom: 10px;"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="newImage" class="form-label">Select New Image (optional)</label>
-                        <input type="file" class="form-control" id="newImage" name="image">
+                        <label for="newFile" class="form-label">Select New File (optional)</label>
+                        <input type="file" class="form-control" id="newFile" name="file">
                     </div>
                     <div class="mb-3">
                         <label for="editDescription" class="form-label">Description</label>
@@ -124,10 +134,20 @@
     </div>
 
     <script>
-        function setEditModal(imageId, imageUrl, description) {
-            const form = document.getElementById('editImageForm');
-            form.action = `{{ url('admin/menus/' . $menu->id_menu . '/sub/' . $submenu->id_submenu . '/images') }}/${imageId}`;
-            document.getElementById('currentImage').src = imageUrl;
+        function setEditModal(fileId, fileUrl, description) {
+            const form = document.getElementById('editFileForm');
+            form.action = `{{ url('admin/menus/' . $menu->id_menu . '/sub/' . $submenu->id_submenu . '/images') }}/${fileId}`;
+            const fileExtension = fileUrl.split('.').pop().toLowerCase();
+
+            const currentFileDiv = document.getElementById('currentFile');
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                currentFileDiv.innerHTML = `<img src="${fileUrl}" alt="Current Image" style="width: 100%;">`;
+            } else if (fileExtension === 'pdf') {
+                currentFileDiv.innerHTML = `<i class="bi bi-file-earmark-pdf"></i> PDF`;
+            } else {
+                currentFileDiv.innerHTML = `<i class="bi bi-file-earmark"></i> File`;
+            }
+
             document.getElementById('editDescription').value = description;
         }
 
@@ -141,6 +161,6 @@
                     timer: 2000
                 });
             @endif
-        });
+            });
     </script>
 @endsection
