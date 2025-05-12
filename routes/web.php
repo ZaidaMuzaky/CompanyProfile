@@ -22,6 +22,8 @@ use App\Http\Controllers\NewsVisitController;
 use App\Http\Controllers\PartsViewController;
 use App\Http\Controllers\ParetoViewController;
 use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\UserBacklogController;
+use App\Http\Controllers\BacklogHeaderController;
 use App\Http\Controllers\ParetoProblemController;
 use App\Http\Controllers\ParetoSectionController;
 use App\Http\Controllers\PartUnscheduleController;
@@ -196,6 +198,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('menuFiles/{menuBrand}', [MenuFileController::class, 'store'])->name('menuFiles.store');
 });
 
+// backlog header management routes
+Route::get('/admin/backlog/backlog-header', [BacklogHeaderController::class, 'edit'])->name('admin.backlog.backlog-header');
+Route::post('/admin/backlog/backlog-header', [BacklogHeaderController::class, 'updateImage'])->name('admin.backlog.backlog-header.update');
+
 
 
 
@@ -217,19 +223,18 @@ Route::middleware(['auth'])->group(function () {
     // dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-   
-
-
-
-    
 });
 
 
-// Route untuk menampilkan submenu (dapat diakses oleh user dan admin)
-Route::get('menus/{menu}/view', [MenuViewController::class, 'view'])->name('menus.view');
+// Route untuk melihat submenu dari menu tertentu
+Route::get('menus/{menuId}/view', [MenuViewController::class, 'view'])->name('menus.view');
 
-// Route untuk menampilkan submenu (khusus user)
-Route::get('menus/{menu}/view', [MenuViewController::class, 'view'])->name('menus.view');
+// Route untuk melihat file dan deskripsi dari submenu tertentu
+Route::get('menus/{menuId}/submenus/{submenuId}/show', [MenuViewController::class, 'show'])->name('menus.sub.show');
+
+
+
+
 
 // Route untuk menampilkan gambar submenu (khusus user)
 Route::get('menus/{menu}/sub/{submenu}/show', [MenuViewController::class, 'show'])->name('menus.sub.show');
@@ -249,5 +254,13 @@ Route::post('/upload-image', [FormImageController::class, 'upload']);
 Route::get('/user/pareto/{menuBrand}', [ParetoViewController::class, 'index'])->name('user.pareto.index');
 Route::get('pareto/{menuBrand}', [ParetoViewController::class, 'index'])->name('user.pareto.index');
 
+Route::get('/user/backlog/form', [UserBacklogController::class, 'form'])->name('user.backlog.form');
+Route::post('/user/backlog/form', [UserBacklogController::class, 'store']);
+Route::get('/user/backlog/show', [UserBacklogController::class, 'show'])->name('user.backlog.show');
+Route::get('/user/backlog/show', [UserBacklogController::class, 'status'])->name('user.backlog.show');
 
 
+
+Route::get('storage/{file}', function ($file) {
+    return response()->file(storage_path('app/public/evidence/' . $file));
+});
