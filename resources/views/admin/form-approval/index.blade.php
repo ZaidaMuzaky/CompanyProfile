@@ -1,0 +1,347 @@
+```blade
+@extends('layouts.logapp')
+
+@section('title', 'Form Approval')
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Admin Backlog</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Form Approval</li>
+        </ol>
+    </nav>
+@endsection
+
+@section('content')
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold text-dark">Approval Backlog Form</h2>
+                <p class="text-muted mb-0">Kelola persetujuan formulir backlog dari berbagai supervisor.</p>
+                <hr class="mt-3 mb-0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-body p-4">
+                        <!-- Notifikasi -->
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        <!-- Supervisor Tabs -->
+                        <ul class="nav nav-tabs mb-4 border-0">
+                            @foreach($supervisorForms as $supervisor => $forms)
+                                <li class="nav-item">
+                                    <button class="nav-link {{ $loop->first ? 'active' : '' }} rounded-3 px-4 py-2"
+                                        data-bs-toggle="tab" data-bs-target="#{{ Str::slug($supervisor) }}">
+                                        {{ $supervisor }}
+                                        <span class="badge bg-secondary ms-2 rounded-pill">{{ count($forms) }}</span>
+                                    </button>
+                                </li>
+                            @endforeach
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            @foreach($supervisorForms as $supervisor => $forms)
+                                <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}"
+                                    id="{{ Str::slug($supervisor) }}">
+                                    @if(count($forms) > 0)
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle mb-0">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="ps-4 py-3 text-uppercase small fw-semibold">Nama Mekanik</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Section</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Supervisor</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Model Unit</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Status</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($forms as $form)
+                                                        <tr class="border-top">
+                                                            <td class="ps-4 py-3">{{ $form['Nama Mekanik'] ?? '-' }}</td>
+                                                            <td class="py-3">{{ $form['Section'] ?? '-' }}</td>
+                                                            <td class="py-3">{{ $form['Supervisor'] ?? '-' }}</td>
+                                                            <td class="py-3 fw-semibold">{{ $form['Model Unit'] ?? '-' }}</td>
+                                                            <td class="py-3">
+                                                                <span
+                                                                    class="badge bg-{{ $form['Status'] == 'Approved' ? 'success' : ($form['Status'] == 'Rejected' ? 'danger' : 'warning text-dark') }} rounded-pill px-3 py-2">
+                                                                    {{ $form['Status'] ?? 'Pending' }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-center pe-4 py-3 text-nowrap">
+                                                                <button class="btn btn-sm btn-outline-primary rounded-pill me-1"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#detailModal{{ $form['ID'] }}"
+                                                                    data-bs-toggle="tooltip" title="Lihat detail formulir">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+                                                                @if($form['Status'] != 'Approved')
+                                                                    <button class="btn btn-sm btn-outline-success rounded-pill me-1"
+                                                                        onclick="approveForm('{{ $form['ID'] }}')" data-bs-toggle="tooltip"
+                                                                        title="Setujui formulir">
+                                                                        <i class="fas fa-check"></i>
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-outline-danger rounded-pill"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#rejectModal{{ $form['ID'] }}"
+                                                                        data-bs-toggle="tooltip" title="Tolak formulir">
+                                                                        <i class="fas fa-times"></i>
+                                                                    </button>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @else
+                                        <div class="card border-0 shadow-sm rounded-3 text-center py-5">
+                                            <div class="card-body">
+                                                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                                <h4 class="fw-bold mb-3">Belum Ada Formulir</h4>
+                                                <p class="text-muted mb-0">Tidak ada formulir untuk supervisor {{ $supervisor }}.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    @foreach($supervisorForms as $supervisor => $forms)
+        @foreach($forms as $form)
+            <!-- Detail Modal -->
+            <div class="modal fade" id="detailModal{{ $form['ID'] }}" tabindex="-1"
+                aria-labelledby="detailModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0 shadow-lg rounded-3">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title fw-semibold" id="detailModalLabel{{ $form['ID'] }}">
+                                Detail Formulir #{{ $form['ID'] }}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                @foreach($form as $key => $value)
+                                    <div class="col-md-6 mb-4">
+                                        <p class="mb-1 text-muted small fw-semibold">{{ $key }}</p>
+                                        <p class="mb-0">
+                                            @php
+                                                // Pisahkan berdasarkan spasi, koma, atau newline
+                                                $links = is_string($value) ? preg_split('/[\s,]+/', $value, -1, PREG_SPLIT_NO_EMPTY) : [];
+                                                $isAllLinks = collect($links)->every(function ($link) {
+                                                    return filter_var($link, FILTER_VALIDATE_URL);
+                                                });
+                                            @endphp
+
+                                            @if($isAllLinks && count($links) > 0)
+                                                @foreach($links as $i => $link)
+                                                    <div class="mb-1">
+                                                        <a href="{{ $link }}" target="_blank" class="text-primary text-decoration-none fw-semibold">
+                                                            <i class="fas fa-link me-1"></i> Lihat Dokumen {{ count($links) > 1 ? $i + 1 : '' }}
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                            {{ $value ?: '-' }}
+                                        @endif
+                                        </p>
+
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reject Modal -->
+            <div class="modal fade" id="rejectModal{{ $form['ID'] }}" tabindex="-1"
+                aria-labelledby="rejectModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-3">
+                        <form method="POST" action="{{ route('admin.approvals.approve', $form['ID']) }}">
+                            @csrf
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title fw-semibold" id="rejectModalLabel{{ $form['ID'] }}">
+                                    Tolak Formulir #{{ $form['ID'] }}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="mb-3">
+                                    <label for="note" class="form-label fw-semibold">Alasan Penolakan</label>
+                                    <textarea name="note" id="note" class="form-control rounded-3" rows="4" required></textarea>
+                                </div>
+                                <input type="hidden" name="status" value="Rejected">
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                                    Batal
+                                </button>
+                                <button type="submit" class="btn btn-danger rounded-pill px-4">
+                                    <i class="fas fa-times me-1"></i> Konfirmasi Tolak
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endforeach
+
+    <form id="approveForm" method="POST" style="display:none;">
+        @csrf
+        <input type="hidden" name="status" value="Approved">
+    </form>
+@endsection
+
+@push('styles')
+    <style>
+        /* General Styling */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #dee2e6;
+            color: #495057;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #ffffff;
+            border-color: #dee2e6 #dee2e6 #ffffff;
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+
+            .btn-sm {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .nav-tabs .nav-link {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Approve form function
+        function approveForm(formId) {
+            if (confirm('Apakah Anda yakin ingin menyetujui formulir ini?')) {
+                const form = document.getElementById('approveForm');
+                form.action = `/admin/approvals/${formId}/approve
+                    form.submit();
+                }
+            }
+    </script>
+@endpush
+```

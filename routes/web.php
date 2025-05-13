@@ -23,10 +23,12 @@ use App\Http\Controllers\PartsViewController;
 use App\Http\Controllers\ParetoViewController;
 use App\Http\Controllers\AchivementsController;
 use App\Http\Controllers\UserBacklogController;
+use App\Http\Controllers\AdminApprovalController;
 use App\Http\Controllers\BacklogHeaderController;
 use App\Http\Controllers\ParetoProblemController;
 use App\Http\Controllers\ParetoSectionController;
 use App\Http\Controllers\PartUnscheduleController;
+use App\Http\Controllers\AdminFormStatusController;
 use App\Http\Controllers\PartUnscheduleViewController;
 
 /*
@@ -199,8 +201,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // backlog header management routes
-Route::get('/admin/backlog/backlog-header', [BacklogHeaderController::class, 'edit'])->name('admin.backlog.backlog-header');
-Route::post('/admin/backlog/backlog-header', [BacklogHeaderController::class, 'updateImage'])->name('admin.backlog.backlog-header.update');
+    Route::get('/admin/backlog/backlog-header', [BacklogHeaderController::class, 'edit'])->name('admin.backlog.backlog-header');
+    Route::post('/admin/backlog/backlog-header', [BacklogHeaderController::class, 'updateImage'])->name('admin.backlog.backlog-header.update');
+
+// backlog form all users
+    Route::get('/admin/backlog/form-status', [AdminFormStatusController::class, 'index'])->name('admin.backlog.form-status');
+
+// approval form
+    Route::get('/approvals', [AdminApprovalController::class, 'index'])->name('admin.approvals');
+    Route::post('/approvals/{id}/approve', [AdminApprovalController::class, 'approveForm'])->name('admin.approvals.approve');
 
 
 
@@ -222,10 +231,6 @@ Route::middleware(['auth'])->group(function () {
 
     // dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-});
-
-
 // Route untuk melihat submenu dari menu tertentu
 Route::get('menus/{menuId}/view', [MenuViewController::class, 'view'])->name('menus.view');
 
@@ -250,14 +255,28 @@ Route::post('/upload-image', [FormImageController::class, 'upload']);
 
 
 
-
+//  pareto view route
 Route::get('/user/pareto/{menuBrand}', [ParetoViewController::class, 'index'])->name('user.pareto.index');
 Route::get('pareto/{menuBrand}', [ParetoViewController::class, 'index'])->name('user.pareto.index');
 
+// backlog form route 
 Route::get('/user/backlog/form', [UserBacklogController::class, 'form'])->name('user.backlog.form');
 Route::post('/user/backlog/form', [UserBacklogController::class, 'store']);
 Route::get('/user/backlog/show', [UserBacklogController::class, 'show'])->name('user.backlog.show');
 Route::get('/user/backlog/show', [UserBacklogController::class, 'status'])->name('user.backlog.show');
+Route::get('/backlog/{id}/edit', [UserBacklogController::class, 'edit'])->name('user.backlog.edit');
+Route::put('/backlog/{id}/resubmit', [UserBacklogController::class, 'resubmit'])->name('user.backlog.resubmit');
+Route::delete('user/backlog/{id}', [UserBacklogController::class, 'destroy'])->name('user.backlog.destroy');
+
+
+
+
+});
+
+
+
+
+
 
 
 

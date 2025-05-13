@@ -24,7 +24,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ $submenu->nama }}</h5>
                             <a href="{{ route('menus.sub.show', [$menu->id_menu, $submenu->id_submenu]) }}" class="btn btn-primary">
-                                View Images
+                                View File
                             </a>
                         </div>
                     </div>
