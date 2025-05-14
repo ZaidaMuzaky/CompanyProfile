@@ -3,12 +3,8 @@
 @section('title', 'Formulir Backlog')
 
 @section('breadcrumb')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Backlog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Formulir Backlog</li>
-        </ol>
-    </nav>
+    <li class="breadcrumb-item"><a href="#">Backlog</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Formulir Backlog</li>
 @endsection
 
 @section('content')

@@ -3,12 +3,8 @@
 @section('title', 'Semua Status Formulir')
 
 @section('breadcrumb')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Admin Backlog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Semua Status Formulir</li>
-        </ol>
-    </nav>
+    <li class="breadcrumb-item"><a href="#">Admin Backlog</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Semua Status Formulir</li>
 @endsection
 
 @section('content')
@@ -19,6 +15,10 @@
                 <p class="text-muted mb-0">Lihat status semua pengajuan formulir backlog di bawah ini.</p>
                 <hr class="mt-3 mb-0">
             </div>
+        </div>
+        <div class="mb-3">
+            <input type="text" id="searchCnUnit" class="form-control rounded-pill px-4 py-2"
+                placeholder="Cari CN Unit...">
         </div>
 
         @if (count($allForms) > 0)
@@ -160,6 +160,37 @@
             </div>
         @endif
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var searchInput = document.getElementById('searchCnUnit');
+            var tableRows = document.querySelectorAll('table tbody tr');
+
+            searchInput.addEventListener('keyup', function() {
+                var filter = searchInput.value.toUpperCase();
+                tableRows.forEach(function(row) {
+                    var cnUnitCell = row.cells[4]; // kolom ke-5 (0-indexed)
+                    if (cnUnitCell) {
+                        var cnText = cnUnitCell.textContent || cnUnitCell.innerText;
+                        row.style.display = cnText.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            @endif
+        });
+    </script>
 @endsection
 
 @push('styles')

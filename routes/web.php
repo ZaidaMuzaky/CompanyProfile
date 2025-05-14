@@ -28,6 +28,7 @@ use App\Http\Controllers\BacklogHeaderController;
 use App\Http\Controllers\ParetoProblemController;
 use App\Http\Controllers\ParetoSectionController;
 use App\Http\Controllers\PartUnscheduleController;
+use App\Http\Controllers\UserStatusVIewController;
 use App\Http\Controllers\AdminFormStatusController;
 use App\Http\Controllers\PartUnscheduleViewController;
 
@@ -267,6 +268,9 @@ Route::get('/user/backlog/show', [UserBacklogController::class, 'status'])->name
 Route::get('/backlog/{id}/edit', [UserBacklogController::class, 'edit'])->name('user.backlog.edit');
 Route::put('/backlog/{id}/resubmit', [UserBacklogController::class, 'resubmit'])->name('user.backlog.resubmit');
 Route::delete('user/backlog/{id}', [UserBacklogController::class, 'destroy'])->name('user.backlog.destroy');
+
+// backlog all form status route
+Route::get('/user/backlog', [UserStatusVIewController::class, 'index'])->name('user.backlog.index');
 
 
 

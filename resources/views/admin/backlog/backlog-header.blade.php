@@ -3,12 +3,8 @@
 @section('title', 'Edit Header Image')
 
 @section('breadcrumb')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Admin Backlog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit Header Image</li>
-        </ol>
-    </nav>
+    <li class="breadcrumb-item"><a href="#">Admin Backlog</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Header Image</li>
 @endsection
 
 @section('content')
@@ -29,7 +25,8 @@
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
                         @endif
 
@@ -130,15 +127,15 @@
 @push('scripts')
     <script>
         // Initialize tooltips
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
 
         // Preview image before upload
-        document.getElementById('header_image').addEventListener('change', function (e) {
+        document.getElementById('header_image').addEventListener('change', function(e) {
             const [file] = e.target.files;
             if (file) {
                 const preview = document.createElement('img');

@@ -64,11 +64,14 @@ class UserBacklogController extends Controller
     
         // ✅ Cari ID terbesar, bukan jumlah baris
         $maxId = 0;
-        foreach ($values as $row) {
-            if (isset($row[0]) && is_numeric($row[0])) {
-                $maxId = max($maxId, intval($row[0]));
+        if (is_array($values)) {
+            foreach ($values as $row) {
+                if (isset($row[0]) && is_numeric($row[0])) {
+                    $maxId = max($maxId, intval($row[0]));
+                }
             }
         }
+        
         $id = (string)($maxId + 1);
     
         // Header kolom

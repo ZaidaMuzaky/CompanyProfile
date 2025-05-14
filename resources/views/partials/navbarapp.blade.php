@@ -53,8 +53,13 @@
             </a>
             <ul id="backlog-submenu" class="nav-content collapse" data-bs-parent="#sidebar-nav">
                 <li>
+                    <a href="{{ route('user.backlog.index') }}">
+                        <i class="bi bi-bar-chart-line"></i><span>Semua Status Form</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('user.backlog.show') }}">
-                        <i class="bi bi-bar-chart-line"></i><span>Status Form</span>
+                        <i class="bi bi-bar-chart-line"></i><span>Status Form Saya</span>
                     </a>
                 </li>
                 <li>

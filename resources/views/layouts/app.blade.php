@@ -157,7 +157,12 @@
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <span class="input-group-text" id="togglePassword">
+                                    <i class="bi bi-eye" id="eyeIcon"></i> <!-- Bootstrap Icon for Eye -->
+                                </span>
+                            </div>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Login</button>
@@ -167,6 +172,24 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text"; // Show password
+                eyeIcon.classList.remove('bi-eye'); // Change eye icon to open
+                eyeIcon.classList.add('bi-eye-slash'); // Change to eye-slash icon
+            } else {
+                passwordField.type = "password"; // Hide password
+                eyeIcon.classList.remove('bi-eye-slash'); // Change back to eye icon
+                eyeIcon.classList.add('bi-eye');
+            }
+        });
+    </script>
+
 
 </body>
 

@@ -4,12 +4,8 @@
 @section('title', 'Status Formulir Backlog')
 
 @section('breadcrumb')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Backlog</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Status Formulir</li>
-        </ol>
-    </nav>
+    <li class="breadcrumb-item"><a href="#">Backlog</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Status Formulir Saya</li>
 @endsection
 
 @section('content')
@@ -20,6 +16,10 @@
                 <p class="text-muted mb-0">Lihat status pengajuan formulir backlog Anda di bawah ini.</p>
                 <hr class="mt-3 mb-0">
             </div>
+        </div>
+        <div class="mb-3">
+            <input type="text" id="searchCnUnit" class="form-control rounded-pill px-4 py-2"
+                placeholder="Cari CN Unit...">
         </div>
 
         @if (count($userForms) > 0)
@@ -65,26 +65,33 @@
                                                     </span>
                                                 </td>
                                                 <td class="pe-4 py-2 action-buttons text-center">
-                                                    @if ($form['Status'] === 'Rejected')
-                                                        <a href="{{ route('user.backlog.edit', $form['ID']) }}"
-                                                            class="btn btn-warning btn-sm rounded-pill mb-1"
-                                                            data-bs-toggle="tooltip" title="Edit formulir">
-                                                            <i class="fas fa-edit me-1"></i></a>
-                                                    @else
-                                                        <span
-                                                            class="text-muted d-inline-block mb-1 action-placeholder"></span>
-                                                    @endif
                                                     <button class="btn btn-sm btn-outline-primary rounded-pill mb-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#detailModal{{ $index }}"
                                                         data-bs-toggle="tooltip" title="Lihat detail formulir">
                                                         <i class="fas fa-eye me-1"></i>
                                                     </button>
-                                                    @if ($form['Status'] === 'Pending')
+
+                                                    @if (($form['Status'] ?? '') === 'Rejected')
                                                         <a href="{{ route('user.backlog.edit', $form['ID']) }}"
                                                             class="btn btn-warning btn-sm rounded-pill mb-1"
                                                             data-bs-toggle="tooltip" title="Edit formulir">
-                                                            <i class="fas fa-edit me-1"></i></a>
+                                                            <i class="fas fa-edit me-1"></i>
+                                                        </a>
+                                                        <form action="{{ route('user.backlog.destroy', $form['ID']) }}"
+                                                            method="POST" class="d-inline"
+                                                            onsubmit="return confirm('Yakin ingin menghapus formulir ini?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="btn btn-danger btn-sm rounded-pill mb-1"
+                                                                data-bs-toggle="tooltip" title="Hapus formulir">
+                                                                <i class="fas fa-trash-alt me-1"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+
+                                                    @if ($form['Status'] === 'Pending')
                                                         <form action="{{ route('user.backlog.destroy', $form['ID']) }}"
                                                             method="POST" class="d-inline"
                                                             onsubmit="return confirm('Yakin ingin menghapus formulir ini?');">
@@ -211,6 +218,25 @@
             @endif
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var searchInput = document.getElementById('searchCnUnit');
+            var tableRows = document.querySelectorAll('table tbody tr');
+
+            searchInput.addEventListener('keyup', function() {
+                var filter = searchInput.value.toUpperCase();
+                tableRows.forEach(function(row) {
+                    var cnUnitCell = row.cells[3]; // CN Unit berada di kolom ke-4 (0-indexed = 3)
+                    if (cnUnitCell) {
+                        var cnText = cnUnitCell.textContent || cnUnitCell.innerText;
+                        row.style.display = cnText.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+                    }
+                });
+            });
+        });
+    </script>
+
+
 @endsection
 
 @push('styles')
