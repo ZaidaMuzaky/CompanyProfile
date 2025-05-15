@@ -41,4 +41,53 @@ class AdminFormStatusController extends Controller
         return view('admin.backlog.form-status', ['allForms' => $userForms]);
 
     }
+    public function destroy($id)
+{
+    try {
+        $client = new Client();
+        $client->setAuthConfig(storage_path('app/google/credentials.json'));
+        $client->addScope(Sheets::SPREADSHEETS);
+
+        $service = new Sheets($client);
+        $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
+        $range = 'Sheet1!A2:AO'; // Sesuaikan range sesuai data kamu
+
+        $response = $service->spreadsheets_values->get($spreadsheetId, $range);
+        $values = $response->getValues();
+
+        $targetRow = null;
+
+        foreach ($values as $index => $row) {
+            // Pastikan ID berada di kolom pertama
+            if (isset($row[0]) && $row[0] == $id) {
+                $targetRow = $index + 2; // Karena range mulai dari A2, jadi baris sesungguhnya
+                break;
+            }
+        }
+
+        if ($targetRow) {
+            $batchUpdateRequest = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
+                'requests' => [
+                    ['deleteDimension' => [
+                        'range' => [
+                            'sheetId' => 0, // Ganti jika sheet bukan yang pertama
+                            'dimension' => 'ROWS',
+                            'startIndex' => $targetRow - 1,
+                            'endIndex' => $targetRow,
+                        ],
+                    ]],
+                ]
+            ]);
+
+            $service->spreadsheets->batchUpdate($spreadsheetId, $batchUpdateRequest);
+
+            return redirect()->route('admin.backlog.form-status')->with('success', 'Formulir berhasil dihapus.');
+        } else {
+            return redirect()->route('admin.backlog.form-status')->with('error', 'Formulir tidak ditemukan.');
+        }
+    } catch (\Exception $e) {
+        return redirect()->route('admin.backlog.form-status')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+    }
+}
+
 }

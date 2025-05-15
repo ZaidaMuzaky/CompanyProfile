@@ -207,10 +207,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // backlog form all users
     Route::get('/admin/backlog/form-status', [AdminFormStatusController::class, 'index'])->name('admin.backlog.form-status');
+    Route::delete('/admin/backlog/form-status/{id}', [AdminFormStatusController::class, 'destroy'])->name('admin.backlog.form-status.destroy');
 
 // approval form
     Route::get('/approvals', [AdminApprovalController::class, 'index'])->name('admin.approvals');
     Route::post('/approvals/{id}/approve', [AdminApprovalController::class, 'approveForm'])->name('admin.approvals.approve');
+// case status
+Route::put('/admin/approvals/update-case/{id}', [AdminApprovalController::class, 'updateCase'])->name('admin.approvals.updateCase');
+
 
 
 

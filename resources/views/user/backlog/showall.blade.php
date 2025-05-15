@@ -31,12 +31,12 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th class="ps-4 py-2 text-uppercase small fw-semibold text-center">Username</th>
-                                            <th class="py-2 text-uppercase small fw-semibold text-center">Timestamp</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Tanggal Service
                                             </th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Model Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">CN Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Status</th>
+                                            <th class="py-2 text-uppercase small fw-semibold text-center">Status Case</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -46,7 +46,6 @@
         }) as $index => $form)
                                             <tr class="border-top">
                                                 <td class="ps-4 py-2 text-center">{{ $form['Username'] ?? '-' }}</td>
-                                                <td class="py-2 text-center">{{ $form['Timestamp'] ?? '-' }}</td>
                                                 <td class="py-2 text-center">{{ $form['Tanggal Service'] ?? '-' }}</td>
                                                 <td class="py-2 fw-semibold text-center">{{ $form['Model Unit'] ?? '-' }}
                                                 </td>
@@ -57,6 +56,13 @@
                                                         {{ $form['Status'] }}
                                                     </span>
                                                 </td>
+                                                <td class="py-2 text-center">
+                                                    <span
+                                                        class="badge bg-{{ $form['Status Case'] == 'Open' ? 'primary' : ($form['Status Case'] == 'Close' ? 'secondary-subtle text-dark' : 'secondary-subtle text-dark') }} rounded-pill px-3 py-2">
+                                                        {{ $form['Status Case'] }}
+                                                    </span>
+                                                </td>
+
                                                 <td class="text-center pe-4 py-2">
                                                     <button class="btn btn-sm btn-outline-primary rounded-pill"
                                                         data-bs-toggle="modal"
@@ -94,11 +100,18 @@
                                         <p class="mb-1 text-muted small">Tanggal Service</p>
                                         <p class="mb-0 fw-bold">{{ $form['Tanggal Service'] ?? '-' }}</p>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-3 mb-3">
                                         <p class="mb-1 text-muted small">Status</p>
                                         <span
                                             class="badge bg-{{ $form['Status'] == 'Rejected' ? 'danger' : ($form['Status'] == 'Pending' ? 'warning text-dark' : 'success') }} rounded-pill px-3 py-2">
                                             {{ $form['Status'] }}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <p class="mb-1 text-muted small">Status Case</p>
+                                        <span
+                                            class="badge bg-{{ $form['Status Case'] == 'Open' ? 'primary' : ($form['Status Case'] == 'Close' ? 'secondary-subtle text-dark' : 'secondary-subtle text-dark') }} rounded-pill px-3 py-2">
+                                            {{ $form['Status Case'] }}
                                         </span>
                                     </div>
                                 </div>

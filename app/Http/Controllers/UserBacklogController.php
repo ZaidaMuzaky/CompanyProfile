@@ -96,6 +96,8 @@ class UserBacklogController extends Controller
         $headers[] = 'Status';
         $headers[] = 'Approved By';
         $headers[] = 'Note';
+        $headers[] = 'Status Case'; 
+        $headers[] = 'Note Case';   
     
         // Temuan
         $temuanData = [];
@@ -132,7 +134,9 @@ class UserBacklogController extends Controller
             implode(', ', $evidenceUrls),
             'Pending',
             '', // Approved By
-            ''  // Note
+            '',  // Note
+            'Open', // Status Case
+            '', // Note Case
         ]);
     
         // Tulis header jika sheet kosong
@@ -199,7 +203,7 @@ public function destroy($id)
 
         $service = new Sheets($client);
         $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
-        $range = 'Sheet1!A2:AM'; // Sesuaikan jika perlu
+        $range = 'Sheet1!A2:AO'; // Sesuaikan jika perlu
 
         $response = $service->spreadsheets_values->get($spreadsheetId, $range);
         $values = $response->getValues();

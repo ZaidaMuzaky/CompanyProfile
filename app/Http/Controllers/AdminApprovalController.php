@@ -115,4 +115,69 @@ class AdminApprovalController extends Controller
 
         return back()->with('error', 'Form not found.');
     }
+
+    // case status
+    public function updateCase(Request $request, $id)
+{
+    $client = new \Google\Client();
+    $client->setApplicationName('Backlog Service Form');
+    $client->setScopes([\Google\Service\Sheets::SPREADSHEETS]);
+    $client->setAuthConfig(storage_path('app/google/credentials.json'));
+    $client->setAccessType('offline');
+
+    $service = new \Google\Service\Sheets($client);
+    $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
+    $sheetName = 'Sheet1';
+
+    $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
+    $values = $response->getValues();
+
+    if (empty($values)) {
+        return back()->with('error', 'Spreadsheet is empty.');
+    }
+
+    $headers = array_map('trim', $values[0]);
+    $headerIndex = array_flip($headers);
+
+    foreach ($values as $index => $row) {
+        if ($index === 0) continue; // Skip header
+
+        // Pastikan jumlah kolom sesuai
+        $row = array_pad($row, count($headers), '');
+
+        if (isset($row[$headerIndex['ID']]) && $row[$headerIndex['ID']] == $id) {
+            // Update kolom Case Status dan Case Note jika disediakan
+            if (isset($headerIndex['Status Case'])) {
+                $row[$headerIndex['Status Case']] = $request->input('status_case');
+            }            
+        
+            if (isset($headerIndex['Note Case']) && $request->filled('note_case')) {
+                $row[$headerIndex['Note Case']] = $request->input('note_case');
+            }
+
+            // Buat ulang array numerik sesuai urutan headers
+            $newRow = [];
+            foreach ($headers as $header) {
+                $colIndex = $headerIndex[$header];
+                $newRow[] = isset($row[$colIndex]) ? $row[$colIndex] : '';
+            }
+
+            // Update ke spreadsheet
+            $range = $sheetName . '!A' . ($index + 1);
+            $service->spreadsheets_values->update(
+                $spreadsheetId,
+                $range,
+                new \Google\Service\Sheets\ValueRange([
+                    'values' => [$newRow]
+                ]),
+                ['valueInputOption' => 'USER_ENTERED']
+            );
+
+            return back()->with('success', 'Case status has been updated.');
+        }
+    }
+
+    return back()->with('error', 'Form not found.');
+}
+
 }
