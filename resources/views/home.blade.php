@@ -284,6 +284,15 @@
                             </video>
                         </div>
                     </div>
+                    <!-- Slide 6 -->
+                    <div class="carousel-item">
+                        <div class="ratio ratio-16x9">
+                            <video controls>
+                                <source src="{{ asset('videos/video6.mp4') }}" type="video/mp4">
+                                Browser Anda tidak mendukung tag video.
+                            </video>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Carousel Controls -->
