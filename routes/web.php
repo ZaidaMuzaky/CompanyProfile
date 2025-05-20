@@ -7,12 +7,14 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\FoldersController;
 use App\Http\Controllers\MenuFileController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\NewsViewController;
+use App\Http\Controllers\AuditViewController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormImageController;
@@ -22,6 +24,7 @@ use App\Http\Controllers\NewsVisitController;
 use App\Http\Controllers\PartsViewController;
 use App\Http\Controllers\ParetoViewController;
 use App\Http\Controllers\AchivementsController;
+use App\Http\Controllers\AuditUploadController;
 use App\Http\Controllers\UserBacklogController;
 use App\Http\Controllers\AdminApprovalController;
 use App\Http\Controllers\BacklogHeaderController;
@@ -219,6 +222,22 @@ Route::post('action-inspection/{id}', [AdminApprovalController::class, 'updateAc
 Route::get('/inspection/{id}/edit', [AdminApprovalController::class, 'edit'])->name('inspection.edit');
 
 
+// audit management
+Route::prefix('admin/audit')->name('admin.audit.')->group(function () {
+    Route::get('/', [AuditController::class, 'index'])->name('index');
+    Route::post('/', [AuditController::class, 'store'])->name('store');
+    Route::get('/{id}', [AuditController::class, 'show'])->name('show');
+    Route::put('/{id}/update', [AuditController::class, 'update'])->name('update');
+    Route::delete('/{id}', [AuditController::class, 'destroy'])->name('destroy');
+// audit upload
+Route::get('/{audit_id}/uploads', [AuditUploadController::class, 'index'])->name('upload.index');
+    Route::post('/audit/upload', [AuditUploadController::class, 'store'])->name('upload.store');
+    Route::put('/audit/upload/{id}/update', [AuditUploadController::class, 'update'])->name('upload.update');
+    Route::delete('/audit/upload/{id}', [AuditUploadController::class, 'destroy'])->name('upload.destroy');
+});
+
+
+
 
 
 
@@ -281,7 +300,8 @@ Route::delete('user/backlog/{id}', [UserBacklogController::class, 'destroy'])->n
 
 // backlog all form status route
 Route::get('/user/backlog', [UserStatusVIewController::class, 'index'])->name('user.backlog.index');
-
+// view audit
+Route::get('/audit/{id}', [AuditViewController::class, 'view'])->name('audit.view');
 
 
 

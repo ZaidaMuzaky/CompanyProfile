@@ -138,6 +138,29 @@
                 </ul>
             </li>
         @endif
+        @php
+            $audits = \App\Models\Audit::with('uploads')->get();
+        @endphp
+        @if ($audits->count() > 0)
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#menu-audit" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-folder-check"></i> <span>Audit Service</span> <i
+                        class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="menu-audit" class="nav-content collapse {{ request()->routeIs('audit.view') ? 'show' : '' }}"
+                    data-bs-parent="#sidebar-nav">
+                    @foreach ($audits as $audit)
+                        <li>
+                            <a href="{{ route('audit.view', $audit->id) }}"
+                                class="{{ request()->routeIs('audit.view') && request()->route('id') == $audit->id ? 'active' : '' }}">
+                                <i class="bi bi-circle"></i><span>{{ $audit->nama }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+        @endif
+
 
         @if (Auth::check() && Auth::user()->type === 'admin')
             {{-- admin side --}}
@@ -226,6 +249,12 @@
                         </a>
                     </li>
                 </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.audit.*') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.audit.index') }}">
+                    <i class="bi bi-check2-square"></i> <span>Audit Service Management</span>
+                </a>
             </li>
         @endif
 
