@@ -215,11 +215,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // approval form
     Route::get('/approvals', [AdminApprovalController::class, 'index'])->name('admin.approvals');
     Route::post('/approvals/{id}/approve', [AdminApprovalController::class, 'approveForm'])->name('admin.approvals.approve');
-// case status
-Route::put('/admin/approvals/update-case/{id}', [AdminApprovalController::class, 'updateCase'])->name('admin.approvals.updateCase');
-// action inspection
-Route::post('action-inspection/{id}', [AdminApprovalController::class, 'updateActionInspection'])->name('update.action.inspection');
-Route::get('/inspection/{id}/edit', [AdminApprovalController::class, 'edit'])->name('inspection.edit');
 
 
 // audit management
@@ -303,6 +298,11 @@ Route::get('/user/backlog', [UserStatusVIewController::class, 'index'])->name('u
 // view audit
 Route::get('/audit/{id}', [AuditViewController::class, 'view'])->name('audit.view');
 
+// case status
+Route::put('/admin/approvals/update-case/{id}', [AdminApprovalController::class, 'updateCase'])->name('admin.approvals.updateCase');
+// action inspection
+Route::post('action-inspection/{id}', [AdminApprovalController::class, 'updateActionInspection'])->name('update.action.inspection');
+Route::get('/inspection/{id}/edit', [AdminApprovalController::class, 'edit'])->name('inspection.edit');
 
 
 });

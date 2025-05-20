@@ -37,7 +37,12 @@
                                             <th class="py-2 text-uppercase small fw-semibold">Status</th>
                                             <th class="py-2 text-uppercase small fw-semibold">Status Case</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Aksi</th>
-                                        </tr>
+                                            <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
+                                                Case
+                                            </th>
+                                            <th class="py-3 text-uppercase small fw-semibold text-center">Action
+                                                Inspection
+                                            </th>
                                     </thead>
                                     <tbody>
                                         @php
@@ -112,6 +117,123 @@
                                                     @endif
 
                                                 </td>
+                                                <td class="text-center pe-4 py-3 text-nowrap">
+                                                    <button class="btn btn-sm btn-outline-warning rounded-pill"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#caseModal{{ $form['ID'] }}"
+                                                        data-bs-toggle="tooltip" title="Update Status Case">
+                                                        <i class="fas fa-tools"></i>
+                                                    </button>
+                                                </td>
+                                                {{-- TOMBOL DALAM TABEL --}}
+                                                <td class="py-3 text-nowrap text-center">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary fw-semibold"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#inspectionModal{{ $form['ID'] }}">
+                                                        <i class="bi bi-gear-fill me-1"></i>
+                                                    </button>
+                                                </td>
+                                                {{-- aksi Inspection --}}
+                                                <div class="modal fade" id="inspectionModal{{ $form['ID'] }}"
+                                                    tabindex="-1"
+                                                    aria-labelledby="inspectionModalLabel{{ $form['ID'] }}"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+
+                                                        <form
+                                                            action="{{ route('update.action.inspection', ['id' => $form['ID']]) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            <div class="modal-content shadow-sm border-0 rounded-4">
+                                                                <div
+                                                                    class="modal-header bg-primary text-white rounded-top-4">
+                                                                    <h5 class="modal-title fw-bold"
+                                                                        id="inspectionModalLabel{{ $form['ID'] }}">
+                                                                        Edit Action Inspection
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close btn-close-white"
+                                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+
+                                                                    @php
+                                                                        $inspectionData = collect($form)->filter(
+                                                                            function ($val, $key) {
+                                                                                return strpos(
+                                                                                    $key,
+                                                                                    'Inspection Description',
+                                                                                ) !== false && !empty($val);
+                                                                            },
+                                                                        );
+                                                                    @endphp
+
+                                                                    @foreach ($inspectionData as $key => $value)
+                                                                        <div
+                                                                            class="mb-3 d-flex align-items-center justify-content-between">
+                                                                            <div class="flex-grow-1 pe-3 fw-semibold text-truncate"
+                                                                                title="{{ $value }}">
+                                                                                {{ $value }}
+                                                                            </div>
+                                                                            <div style="min-width: 140px;">
+                                                                                @php
+                                                                                    preg_match(
+                                                                                        '/\[(.*?)\]/',
+                                                                                        $value,
+                                                                                        $match,
+                                                                                    );
+                                                                                    $selectedAction = strtoupper(
+                                                                                        trim(
+                                                                                            old(
+                                                                                                "actions.$key",
+                                                                                                $match[1] ?? '',
+                                                                                            ),
+                                                                                        ),
+                                                                                    );
+                                                                                    $options = [
+                                                                                        'CHECK',
+                                                                                        'INSTALL',
+                                                                                        'REPLACE',
+                                                                                        'MONITORING',
+                                                                                        'REPAIR',
+                                                                                    ];
+                                                                                @endphp
+
+
+
+                                                                                <select
+                                                                                    name="actions[{{ $key }}]"
+                                                                                    class="form-select form-select-sm"
+                                                                                    required>
+                                                                                    @foreach ($options as $option)
+                                                                                        <option
+                                                                                            value="{{ $option }}"
+                                                                                            {{ $selectedAction === $option ? 'selected' : '' }}>
+                                                                                            {{ $option }}
+                                                                                        </option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endforeach
+
+
+
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary fw-semibold px-4">
+                                                                        <i class="bi bi-save2 me-1"></i> Simpan
+                                                                        Semua
+                                                                    </button>
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary fw-semibold px-4"
+                                                                        data-bs-dismiss="modal">Batal</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -200,6 +322,52 @@
                         </div>
                     </div>
                 </div>
+                <!-- Modal Update Status Case & Note -->
+                <div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
+                    aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg rounded-3">
+                            <form method="POST" action="{{ route('admin.approvals.updateCase', $form['ID']) }}">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title fw-semibold" id="caseModalLabel{{ $form['ID'] }}">
+                                        Update Status Case #{{ $form['ID'] }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="mb-3">
+                                        <label for="status_case" class="form-label fw-semibold">Status Case</label>
+                                        <select name="status_case" id="status_case" class="form-select rounded-3"
+                                            required>
+                                            <option value="Open" {{ $form['Status Case'] == 'Open' ? 'selected' : '' }}>
+                                                Open
+                                            </option>
+                                            <option value="Close"
+                                                {{ $form['Status Case'] == 'Close' ? 'selected' : '' }}>
+                                                Close</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="note_case" class="form-label fw-semibold">Note Case</label>
+                                        <textarea name="note_case" id="note_case" class="form-control rounded-3" rows="4">{{ $form['Note Case'] ?? '' }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                        data-bs-dismiss="modal">
+                                        Batal
+                                    </button>
+                                    <button type="submit" class="btn btn-warning rounded-pill px-4">
+                                        <i class="fas fa-save me-1"></i> Simpan Perubahan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             @endforeach
         @else
             <div class="row">
@@ -217,8 +385,6 @@
             </div>
         @endif
     </div>
-
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             @if (session('success'))
