@@ -270,45 +270,26 @@
                             </div>
 
                             <div class="mb-4">
-                                <label class="form-label fw-semibold">Temuan / Backlog</label>
+                                <label class="form-label fw-semibold">Temuan / Backlog / Inspection Description</label>
                                 <p class="text-muted small mb-3">MASUKAN EVIDENCE JIKA TERDAPAT TEMUAN MAYOR, LAPOR KEPADA
                                     PENGAWAS JIKA MENGALAMI KEBINGUNGAN</p>
-                                @php
-                                    $temuanFields = [
-                                        'ENGINE',
-                                        'ELECTRICAL SYSTEM',
-                                        'GENERAL (ACCESSORIES, CABIN, ETC)',
-                                        'AC SYSTEM',
-                                        'BRAKE SYSTEM',
-                                        'DIFFERENTIAL & FINAL DRIVE',
-                                        'HYDRAULIC SYSTEM',
-                                        'MAIN FRAME / CHASSIS / VESSEL',
-                                        'PERIODICAL SERVICE',
-                                        'PREVENTIVE MAINTENANCE',
-                                        'PREDICTIVE MAINTENANCE',
-                                        'IT SYSTEM',
-                                        'PNEUMATIC SYSTEM',
-                                        'TRANSMISSION SYSTEM',
-                                        'STEERING SYSTEM',
-                                        'PROBLEM SDT',
-                                        'PROBLEM TYRE SDT',
-                                        'UNDERCARRIAGE',
-                                        'WORK EQUIPMENT',
-                                        'TYRE',
-                                        'LAINNYA',
-                                    ];
-                                @endphp
-                                @foreach ($temuanFields as $field)
-                                    <div class="mb-3">
-                                        <label class="form-label small fw-semibold">{{ $field }}</label>
-                                        <input type="text"
-                                            class="form-control form-control-sm rounded-3 text-uppercase @error('temuan.' . $field) is-invalid @enderror"
-                                            name="temuan[{{ $field }}]" placeholder="ISI JIKA ADA TEMUAN">
-                                        @error('temuan.' . $field)
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                <div class="mb-4">
+                                    <div id="inspection-container">
+                                        <div class="input-group mb-2">
+                                            <input type="text" name="temuanFields[]" class="form-control"
+                                                placeholder="Masukkan deskripsi inspeksi">
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                onclick="removeInspection(this)" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                @endforeach
+                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                        onclick="addInspection()">
+                                        <i class="bi bi-plus"></i> Tambah Deskripsi
+                                    </button>
+                                </div>
+
                             </div>
 
                             <div class="mb-4">
@@ -353,6 +334,24 @@
             @endif
         });
     </script>
+    <script>
+        function addInspection() {
+            const container = document.getElementById('inspection-container');
+            const div = document.createElement('div');
+            div.classList.add('input-group', 'mb-2');
+            div.innerHTML = `
+        <input type="text" name="temuanFields[]" class="form-control" placeholder="Masukkan deskripsi inspeksi">
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeInspection(this)" title="Hapus">
+            <i class="bi bi-trash"></i>
+        </button>`;
+            container.appendChild(div);
+        }
+
+        function removeInspection(button) {
+            button.parentElement.remove();
+        }
+    </script>
+
 @endsection
 
 @push('styles')

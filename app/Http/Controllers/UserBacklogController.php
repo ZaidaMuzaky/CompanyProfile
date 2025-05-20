@@ -22,141 +22,140 @@ class UserBacklogController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'tanggal_service' => 'required|date',
-            'nama_mekanik' => 'required|string',
-            'waktu_serah_terima' => 'required',
-            'nik' => 'required|string',
-            'section' => 'required|string',
-            'supervisor' => 'required|string',
-            'model_unit' => 'required|string',
-            'cn_unit' => 'required|string',
-            'periodical_service' => 'required|string',
-            'hour_meter' => 'required|numeric',
-            'temuan' => 'array',
-            'evidence.*' => 'file|max:102400'
-        ]);
-    
-        $temuanFields = [
-            'ENGINE', 'ELECTRICAL SYSTEM', 'GENERAL (ACCESSORIES, CABIN, ETC)', 'AC SYSTEM',
-            'BRAKE SYSTEM', 'DIFFERENTIAL & FINAL DRIVE', 'HYDRAULIC SYSTEM',
-            'MAIN FRAME / CHASSIS / VESSEL', 'PERIODICAL SERVICE', 'PREVENTIVE MAINTENANCE',
-            'PREDICTIVE MAINTENANCE', 'IT SYSTEM', 'PNEUMATIC SYSTEM',
-            'TRANSMISSION SYSTEM', 'STEERING SYSTEM', 'PROBLEM SDT', 'PROBLEM TYRE SDT',
-            'UNDERCARRIAGE', 'WORK EQUIPMENT', 'TYRE', 'LAINNYA'
-        ];
-    
-        $client = new Client();
-        $client->setApplicationName('Backlog Service Form');
-        $client->setScopes([Sheets::SPREADSHEETS]);
-        $client->setAuthConfig(storage_path('app/google/credentials.json'));
-        $client->setAccessType('offline');
-    
-        $service = new Sheets($client);
-        $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
-        $sheetName = 'Sheet1';
-    
-        $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
-        $values = $response->getValues();
-        $isSheetEmpty = empty($values);
-    
-        // ✅ Cari ID terbesar, bukan jumlah baris
-        $maxId = 0;
-        if (is_array($values)) {
-            foreach ($values as $row) {
-                if (isset($row[0]) && is_numeric($row[0])) {
-                    $maxId = max($maxId, intval($row[0]));
-                }
+{
+    $request->validate([
+        'email' => 'required|email',
+        'tanggal_service' => 'required|date',
+        'nama_mekanik' => 'required|string',
+        'waktu_serah_terima' => 'required',
+        'nik' => 'required|string',
+        'section' => 'required|string',
+        'supervisor' => 'required|string',
+        'model_unit' => 'required|string',
+        'cn_unit' => 'required|string',
+        'periodical_service' => 'required|string',
+        'hour_meter' => 'required|numeric',
+        'temuanFields' => 'array',
+        'action_inspection' => 'array',
+        'evidence.*' => 'file|max:102400'
+    ]);
+
+    $client = new Client();
+    $client->setApplicationName('Backlog Service Form');
+    $client->setScopes([Sheets::SPREADSHEETS]);
+    $client->setAuthConfig(storage_path('app/google/credentials.json'));
+    $client->setAccessType('offline');
+
+    $service = new Sheets($client);
+    $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
+    $sheetName = 'Sheet1';
+
+    $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
+    $values = $response->getValues();
+    $isSheetEmpty = empty($values);
+
+    // Cari ID terbesar
+    $maxId = 0;
+    if (is_array($values)) {
+        foreach ($values as $row) {
+            if (isset($row[0]) && is_numeric($row[0])) {
+                $maxId = max($maxId, intval($row[0]));
             }
         }
-        
-        $id = (string)($maxId + 1);
-    
-        // Header kolom
-        $headers = [
-            'ID',
-            'Timestamp',
-            'Username',
-            'Email',
-            'Tanggal Service',
-            'Nama Mekanik',
-            'Waktu Serah Terima',
-            'NIK',
-            'Section',
-            'Supervisor',
-            'Model Unit',
-            'CN Unit',
-            'Periodical Service',
-            'Hour Meter'
-        ];
-        $headers = array_merge($headers, $temuanFields);
-        $headers[] = 'Evidence';
-        $headers[] = 'Status';
-        $headers[] = 'Approved By';
-        $headers[] = 'Note';
-        $headers[] = 'Status Case'; 
-        $headers[] = 'Note Case';   
-    
-        // Temuan
-        $temuanData = [];
-        foreach ($temuanFields as $field) {
-            $temuanData[] = strtoupper($request->temuan[$field] ?? '');
+    }
+    $id = (string)($maxId + 1);
+
+    // Header default
+    $headers = [
+        'ID',
+        'Timestamp',
+        'Username',
+        'Email',
+        'Tanggal Service',
+        'Nama Mekanik',
+        'Waktu Serah Terima',
+        'NIK',
+        'Section',
+        'Supervisor',
+        'Model Unit',
+        'CN Unit',
+        'Periodical Service',
+        'Hour Meter',
+        'Evidence',
+        'Status',
+        'Approved By',
+        'Note',
+        'Status Case',
+        'Note Case',
+    ];
+
+    // Tambahkan header kolom temuan
+    $temuanCount = count($request->temuanFields ?? []);
+    for ($i = 1; $i <= $temuanCount; $i++) {
+        $headers[] = 'Inspection Description ' . $i;
+    }
+
+    // Upload evidence
+    $evidenceUrls = [];
+    if ($request->hasFile('evidence')) {
+        foreach ($request->file('evidence') as $file) {
+            $path = $file->store('evidence', 'public');
+            $evidenceUrls[] = asset('storage/' . $path);
         }
-    
-        // Upload evidence
-        $evidenceUrls = [];
-        if ($request->hasFile('evidence')) {
-            foreach ($request->file('evidence') as $file) {
-                $path = $file->store('evidence', 'public');
-                $evidenceUrls[] = asset('storage/' . $path);
-            }
-        }
-    
-        // Data baris
-        $row = array_merge([
-            $id,
-            now()->toDateTimeString(),
-            Auth::user()->username ?? '-',
-            $request->email,
-            $request->tanggal_service,
-            $request->nama_mekanik,
-            $request->waktu_serah_terima,
-            $request->nik,
-            $request->section,
-            $request->supervisor,
-            $request->model_unit === 'Other' ? $request->other_model_unit : $request->model_unit,
-            $request->cn_unit,
-            $request->periodical_service,
-            $request->hour_meter,
-        ], $temuanData, [
-            implode(', ', $evidenceUrls),
-            'Pending',
-            '', // Approved By
-            '',  // Note
-            'Open', // Status Case
-            '', // Note Case
-        ]);
-    
-        // Tulis header jika sheet kosong
-        if ($isSheetEmpty) {
-            $service->spreadsheets_values->append($spreadsheetId, $sheetName, new Sheets\ValueRange([
-                'values' => [$headers]
-            ]), [
-                'valueInputOption' => 'USER_ENTERED'
-            ]);
-        }
-    
-        // Tambahkan data ke sheet
+    }
+
+    // Data baris utama
+    $row = [
+        $id,
+        now()->toDateTimeString(),
+        Auth::user()->username ?? '-',
+        $request->email,
+        $request->tanggal_service,
+        $request->nama_mekanik,
+        $request->waktu_serah_terima,
+        $request->nik,
+        $request->section,
+        $request->supervisor,
+        $request->model_unit === 'Other' ? $request->other_model_unit : $request->model_unit,
+        $request->cn_unit,
+        $request->periodical_service,
+        $request->hour_meter,
+        implode(', ', $evidenceUrls),
+        'Pending', // Status
+        '',        // Approved By
+        '',        // Note
+        'Open',    // Status Case
+        '',        // Note Case
+    ];
+
+    // Tambahkan temuan beserta action inspection di akhir
+    foreach ($request->temuanFields ?? [] as $index => $temuan) {
+        $action = $request->action_inspection[$index] ?? 'CHECK'; // default
+        $row[] = '[' . strtoupper($action) . '] ' . strtoupper($temuan);
+    }
+
+    // Tulis header jika sheet kosong
+    if ($isSheetEmpty) {
         $service->spreadsheets_values->append($spreadsheetId, $sheetName, new Sheets\ValueRange([
-            'values' => [$row]
+            'values' => [$headers]
         ]), [
             'valueInputOption' => 'USER_ENTERED'
         ]);
-    
-        return back()->with('success', 'Form berhasil dikirim.');
     }
+
+    // Tambahkan data ke sheet
+    $service->spreadsheets_values->append($spreadsheetId, $sheetName, new Sheets\ValueRange([
+        'values' => [$row]
+    ]), [
+        'valueInputOption' => 'USER_ENTERED'
+    ]);
+
+    return back()->with('success', 'Form berhasil dikirim.');
+}
+
+    
+    
+    
     
 
     // status form

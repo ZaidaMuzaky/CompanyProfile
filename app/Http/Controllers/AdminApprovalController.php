@@ -119,13 +119,13 @@ class AdminApprovalController extends Controller
     // case status
     public function updateCase(Request $request, $id)
 {
-    $client = new \Google\Client();
+    $client = new Client();
     $client->setApplicationName('Backlog Service Form');
-    $client->setScopes([\Google\Service\Sheets::SPREADSHEETS]);
+    $client->setScopes([Sheets::SPREADSHEETS]);
     $client->setAuthConfig(storage_path('app/google/credentials.json'));
     $client->setAccessType('offline');
 
-    $service = new \Google\Service\Sheets($client);
+    $service = new Sheets($client);
     $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
     $sheetName = 'Sheet1';
 
@@ -179,5 +179,95 @@ class AdminApprovalController extends Controller
 
     return back()->with('error', 'Form not found.');
 }
+
+public function updateActionInspection(Request $request, $id)
+{
+    $actions = $request->input('actions', []);
+
+    // Validasi action
+    foreach ($actions as $key => $action) {
+        if (!in_array($action, ['CHECK', 'INSTALL', 'REPLACE', 'MONITORING', 'REPAIR'])) {
+            return back()->withErrors(['Invalid action: ' . $action])->withInput();
+        }
+    }
+
+    $client = new Client();
+    $client->setApplicationName('Backlog Service Form');
+    $client->setScopes([Sheets::SPREADSHEETS]);
+    $client->setAuthConfig(storage_path('app/google/credentials.json'));
+    $client->setAccessType('offline');
+    $service = new Sheets($client);
+
+    $spreadsheetId = '1GGgBGiWCIoWjbwM6LLllcUUqdk4bAsHn94gdZz8uHAA';
+    $sheetName = 'Sheet1';
+
+    // Ambil semua data sheet
+    $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
+    $values = $response->getValues();
+
+    // Mendapatkan array key kolom action dari input form
+    $inspectionColumns = array_keys($actions);
+
+    foreach ($values as $rowIndex => $row) {
+        if (isset($row[0]) && $row[0] == $id) {
+
+            foreach ($actions as $key => $action) {
+                $position = array_search($key, $inspectionColumns);
+                if ($position === false) continue;
+
+                // Misal kolom mulai dari indeks 20 (kolom U)
+                $descIndex = 20 + $position;
+
+                $oldValue = $row[$descIndex] ?? '';
+
+                // Ekstrak deskripsi lama (teks setelah tanda ']')
+                $descText = '';
+                if (preg_match('/\](.*)/', $oldValue, $matches)) {
+                    $descText = $matches[1];
+                }
+
+                // Buat nilai baru
+                $newValue = '[' . strtoupper($action) . ']' . trim($descText);
+
+                // Tentukan alamat sel, kolom huruf + nomor baris (1-based)
+                $columnLetter = chr(65 + $descIndex); // 65 = A
+                $range = $sheetName . '!' . $columnLetter . ($rowIndex + 1);
+
+                $service->spreadsheets_values->update($spreadsheetId, $range, new Sheets\ValueRange([
+                    'values' => [[$newValue]]
+                ]), ['valueInputOption' => 'USER_ENTERED']);
+            }
+
+            break;
+        }
+    }
+
+    return back()->with('success', 'Action Inspection berhasil diperbarui.');
+}
+
+
+public function edit($id)
+{
+    // Ambil data $form dari Google Sheets atau database sesuai $id
+    $form = $this->getFormById($id); // contoh ambil data
+
+    // Parsing status lama dari kolom Inspection Description
+    foreach ($form as $key => $value) {
+        if (strpos($key, 'Inspection Description') !== false) {
+            preg_match('/\[(.*?)\]/', $value, $matches);
+            $status = $matches[1] ?? null;
+    
+            // Ekstrak nomor dari "Inspection Description 1"
+            if (preg_match('/Inspection Description (\d+)/', $key, $numberMatch)) {
+                $number = $numberMatch[1];
+                $form["Action Inspection $number"] = $status;
+            }
+        }
+    }
+    
+
+    return view('admin.form-approval.index', compact('form'));
+}
+
 
 }

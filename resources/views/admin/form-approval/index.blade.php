@@ -82,6 +82,9 @@
                                                         <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
                                                             Case
                                                         </th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Action Inspection
+                                                        </th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -140,6 +143,19 @@
                                                                     <i class="fas fa-tools"></i>
                                                                 </button>
                                                             </td>
+                                                            <td class="py-3 text-nowrap text-center">
+                                                                <button type="button" class="btn btn-sm btn-outline-primary fw-semibold"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#inspectionModal{{ $form['ID'] }}">
+                                                                    <i class="bi bi-gear-fill me-1"></i>
+                                                                </button>
+                                                            
+                                                               
+                                                            </td>
+                                                            
+                                                            
+
+
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
@@ -334,6 +350,64 @@
             </div>
         @endforeach
     @endforeach
+    {{-- aksi Inspection --}}
+    <div class="modal fade" id="inspectionModal{{ $form['ID'] }}" tabindex="-1"
+    aria-labelledby="inspectionModalLabel{{ $form['ID'] }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        
+        <form action="{{ route('update.action.inspection', ['id' => $form['ID']]) }}" method="POST">
+            @csrf
+            <div class="modal-content shadow-sm border-0 rounded-4">
+                <div class="modal-header bg-primary text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold" id="inspectionModalLabel{{ $form['ID'] }}">
+                        Edit Action Inspection
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    @php
+                    $inspectionData = collect($form)->filter(function ($val, $key) {
+                        return strpos($key, 'Inspection Description') !== false;
+                    });
+                @endphp
+                
+                @foreach ($inspectionData as $key => $value)
+                    <div class="mb-3 d-flex align-items-center justify-content-between">
+                        <div class="flex-grow-1 pe-3 fw-semibold text-truncate" title="{{ $value }}">
+                            {{ $value }}
+                        </div>
+                        <div style="min-width: 140px;">
+                            @php
+                            preg_match('/\[(.*?)\]/', $value, $match);
+                            $selectedAction = strtoupper(trim(old("actions.$key") ?? ($match[1] ?? '')));
+                        @endphp
+                        
+                    
+                        <select name="actions[{{ $key }}]" class="form-select form-select-sm" required>
+                            @foreach(['CHECK', 'INSTALL', 'REPLACE', 'MONITORING', 'REPAIR'] as $option)
+                                <option value="{{ $option }}" {{ $selectedAction === $option ? 'selected' : '' }}>
+                                    {{ $option }}
+                                </option>
+                            @endforeach
+                        </select>
+                        </div>
+                    </div>
+                @endforeach
+                
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary fw-semibold px-4">
+                        <i class="bi bi-save2 me-1"></i> Simpan Semua
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                        data-bs-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var searchInput = document.getElementById('searchCnUnit');
