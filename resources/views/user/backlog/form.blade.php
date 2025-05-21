@@ -275,19 +275,35 @@
                                     PENGAWAS JIKA MENGALAMI KEBINGUNGAN</p>
                                 <div class="mb-4">
                                     <div id="inspection-container">
-                                        <div class="input-group mb-2">
+                                        <div class="input-group mb-3 inspection-entry">
                                             <input type="text" name="temuanFields[]" class="form-control"
-                                                placeholder="Masukkan deskripsi inspeksi">
-                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                placeholder="Masukkan deskripsi inspeksi" required>
+                                            <select name="statusCase[]" class="form-select ms-2" required>
+                                                <option value="">-- Status Case --</option>
+                                                <option value="OPEN">OPEN</option>
+                                                <option value="CLOSE">CLOSE</option>
+                                            </select>
+                                            <select name="action_inspection[]" class="form-select ms-2" required>
+
+                                                <option value="">-- Action Inspection --</option>
+                                                <option value="CHECK">CHECK</option>
+                                                <option value="INSTALL">INSTALL</option>
+                                                <option value="REPLACE">REPLACE</option>
+                                                <option value="MONITORING">MONITORING</option>
+                                                <option value="REPAIR">REPAIR</option>
+                                            </select>
+                                            <button type="button" class="btn btn-outline-danger btn-sm ms-2"
                                                 onclick="removeInspection(this)" title="Hapus">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
                                     </div>
+
                                     <button type="button" class="btn btn-outline-primary btn-sm"
                                         onclick="addInspection()">
                                         <i class="bi bi-plus"></i> Tambah Deskripsi
                                     </button>
+
                                 </div>
 
                             </div>
@@ -337,20 +353,38 @@
     <script>
         function addInspection() {
             const container = document.getElementById('inspection-container');
-            const div = document.createElement('div');
-            div.classList.add('input-group', 'mb-2');
-            div.innerHTML = `
-        <input type="text" name="temuanFields[]" class="form-control" placeholder="Masukkan deskripsi inspeksi">
-        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeInspection(this)" title="Hapus">
-            <i class="bi bi-trash"></i>
-        </button>`;
-            container.appendChild(div);
+            const newEntry = document.createElement('div');
+            newEntry.classList.add('input-group', 'mb-3', 'inspection-entry');
+            newEntry.innerHTML = `
+                <input type="text" name="temuanFields[]" class="form-control" placeholder="Masukkan deskripsi inspeksi" required>
+                <select name="statusCase[]" class="form-select ms-2" required>
+                    <option value="">-- Status Case --</option>
+                    <option value="OPEN">OPEN</option>
+                    <option value="CLOSE">CLOSE</option>
+                </select>
+               <select name="action_inspection[]" class="form-select ms-2" required>
+                    <option value="">-- Action Inspection --</option>
+                    <option value="CHECK">CHECK</option>
+                    <option value="INSTALL">INSTALL</option>
+                    <option value="REPLACE">REPLACE</option>
+                    <option value="MONITORING">MONITORING</option>
+                    <option value="REPAIR">REPAIR</option>
+                </select>
+                <button type="button" class="btn btn-outline-danger btn-sm ms-2" onclick="removeInspection(this)" title="Hapus">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            container.appendChild(newEntry);
         }
 
         function removeInspection(button) {
-            button.parentElement.remove();
+            const entry = button.closest('.inspection-entry');
+            if (entry) {
+                entry.remove();
+            }
         }
     </script>
+
 
 @endsection
 

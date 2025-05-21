@@ -140,29 +140,34 @@ class AdminApprovalController extends Controller
     $headerIndex = array_flip($headers);
 
     foreach ($values as $index => $row) {
-        if ($index === 0) continue; // Skip header
+        if ($index === 0) continue;
 
-        // Pastikan jumlah kolom sesuai
         $row = array_pad($row, count($headers), '');
 
         if (isset($row[$headerIndex['ID']]) && $row[$headerIndex['ID']] == $id) {
-            // Update kolom Case Status dan Case Note jika disediakan
-            if (isset($headerIndex['Status Case'])) {
-                $row[$headerIndex['Status Case']] = $request->input('status_case');
-            }            
-        
-            if (isset($headerIndex['Note Case']) && $request->filled('note_case')) {
-                $row[$headerIndex['Note Case']] = $request->input('note_case');
+
+            // Loop kolom yang dikirim dari form
+            $keys = $request->input('case_keys', []);
+            foreach ($keys as $key) {
+                if (isset($headerIndex[$key])) {
+                    $action = $request->input("actions.$key", '');
+                    $status = $request->input("statuses.$key", '');
+                    $desc = $request->input("descriptions.$key", '');
+
+                    // Format ulang jadi: [ACTION][STATUS] DESCRIPTION
+                    $formatted = "[$action][$status] $desc";
+                    $row[$headerIndex[$key]] = $formatted;
+                }
             }
 
-            // Buat ulang array numerik sesuai urutan headers
+            // Buat ulang array berdasarkan urutan header
             $newRow = [];
             foreach ($headers as $header) {
                 $colIndex = $headerIndex[$header];
-                $newRow[] = isset($row[$colIndex]) ? $row[$colIndex] : '';
+                $newRow[] = $row[$colIndex] ?? '';
             }
 
-            // Update ke spreadsheet
+            // Update spreadsheet
             $range = $sheetName . '!A' . ($index + 1);
             $service->spreadsheets_values->update(
                 $spreadsheetId,
@@ -173,12 +178,13 @@ class AdminApprovalController extends Controller
                 ['valueInputOption' => 'USER_ENTERED']
             );
 
-            return back()->with('success', 'Case status has been updated.');
+            return back()->with('success', 'Status case berhasil diperbarui.');
         }
     }
 
-    return back()->with('error', 'Form not found.');
+    return back()->with('error', 'Form tidak ditemukan.');
 }
+
 
 public function updateActionInspection(Request $request, $id)
 {

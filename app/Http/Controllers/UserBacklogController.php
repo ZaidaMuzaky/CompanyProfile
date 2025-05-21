@@ -36,7 +36,10 @@ class UserBacklogController extends Controller
         'periodical_service' => 'required|string',
         'hour_meter' => 'required|numeric',
         'temuanFields' => 'array',
+        'statusCase' => 'array',
+        'statusCase.*' => 'in:OPEN,CLOSE',
         'action_inspection' => 'array',
+        'action_inspection.*' => 'in:CHECK,INSTALL,REPLACE,MONITORING,REPAIR',
         'evidence.*' => 'file|max:102400'
     ]);
 
@@ -85,11 +88,9 @@ class UserBacklogController extends Controller
         'Status',
         'Approved By',
         'Note',
-        'Status Case',
-        'Note Case',
     ];
 
-    // Tambahkan header kolom temuan
+    // Tambahkan kolom temuan sesuai jumlahnya
     $temuanCount = count($request->temuanFields ?? []);
     for ($i = 1; $i <= $temuanCount; $i++) {
         $headers[] = 'Inspection Description ' . $i;
@@ -124,20 +125,42 @@ class UserBacklogController extends Controller
         'Pending', // Status
         '',        // Approved By
         '',        // Note
-        'Open',    // Status Case
-        '',        // Note Case
     ];
 
-    // Tambahkan temuan beserta action inspection di akhir
+    // Tambahkan deskripsi temuan dengan action + status case
     foreach ($request->temuanFields ?? [] as $index => $temuan) {
-        $action = $request->action_inspection[$index] ?? 'CHECK'; // default
-        $row[] = '[' . strtoupper($action) . '] ' . strtoupper($temuan);
+        $action = strtoupper($request->action_inspection[$index] ?? 'CHECK');
+        $status = strtoupper($request->statusCase[$index] ?? 'OPEN');
+        $description = strtoupper($temuan);
+        $row[] = "[$action][$status] $description";
     }
 
     // Tulis header jika sheet kosong
     if ($isSheetEmpty) {
         $service->spreadsheets_values->append($spreadsheetId, $sheetName, new Sheets\ValueRange([
             'values' => [$headers]
+        ]), [
+            'valueInputOption' => 'USER_ENTERED'
+        ]);
+    }
+    // Tulis atau perbarui header jika perlu
+    $currentHeaderCount = count($values[0] ?? []);
+    $newHeaderCount = count($row);
+
+    if ($newHeaderCount > $currentHeaderCount) {
+        $missingColumns = $newHeaderCount - $currentHeaderCount;
+
+        // Ambil header lama kalau ada
+        $currentHeaders = $values[0] ?? $headers;
+
+        // Tambahkan kolom baru ke header
+        for ($i = 1; $i <= $missingColumns; $i++) {
+            $currentHeaders[] = 'Inspection Description ' . ($temuanCount - $missingColumns + $i);
+        }
+
+        // Update header (overwrite row pertama di sheet)
+        $service->spreadsheets_values->update($spreadsheetId, $sheetName . '!A1', new Sheets\ValueRange([
+            'values' => [$currentHeaders]
         ]), [
             'valueInputOption' => 'USER_ENTERED'
         ]);
@@ -152,6 +175,8 @@ class UserBacklogController extends Controller
 
     return back()->with('success', 'Form berhasil dikirim.');
 }
+
+    
 
     
     

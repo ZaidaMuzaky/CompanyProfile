@@ -75,14 +75,13 @@
                                                         <th class="py-3 text-uppercase small fw-semibold">CN Unit</th>
                                                         <!-- Kolom CN Unit -->
                                                         <th class="py-3 text-uppercase small fw-semibold">Status</th>
-                                                        <th class="py-3 text-uppercase small fw-semibold">Status Case</th>
                                                         <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
                                                             Formulir
                                                         </th>
-                                                        {{-- <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
                                                             Case
                                                         </th>
-                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Action
+                                                        {{-- <th class="py-3 text-uppercase small fw-semibold text-center">Action
                                                             Inspection
                                                         </th> --}}
 
@@ -102,12 +101,6 @@
                                                                 <span
                                                                     class="badge bg-{{ $form['Status'] == 'Approved' ? 'success' : ($form['Status'] == 'Rejected' ? 'danger' : 'warning text-dark') }} rounded-pill px-3 py-2">
                                                                     {{ $form['Status'] ?? 'Pending' }}
-                                                                </span>
-                                                            </td>
-                                                            <td class="py-3">
-                                                                <span
-                                                                    class="badge bg-{{ $form['Status Case'] == 'Open' ? 'primary' : ($form['Status Case'] == 'Close' ? 'secondary-subtle text-dark' : 'secondary-subtle text-dark') }} rounded-pill px-3 py-2">
-                                                                    {{ $form['Status Case'] }}
                                                                 </span>
                                                             </td>
                                                             <td class="text-center pe-4 py-3 text-nowrap">
@@ -135,6 +128,14 @@
                                                                         <i class="fas fa-times"></i>
                                                                     </button>
                                                                 @endif
+                                                            </td>
+                                                            <td class="text-center pe-4 py-3 text-nowrap">
+                                                                <button class="btn btn-sm btn-outline-warning rounded-pill"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#caseModal{{ $form['ID'] }}"
+                                                                    data-bs-toggle="tooltip" title="Update Status Case">
+                                                                    <i class="fas fa-tools"></i>
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -285,49 +286,66 @@
                     </div>
                 </div>
             </div>
-            {{-- <!-- Modal Update Status Case & Note -->
+            <!-- Modal Update Status Case -->
             <div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
                 aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content border-0 shadow-lg rounded-3">
-                        <form method="POST" action="{{ route('admin.approvals.updateCase', $form['ID']) }}">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-header bg-warning text-dark">
-                                <h5 class="modal-title fw-semibold" id="caseModalLabel{{ $form['ID'] }}">
-                                    Update Status Case #{{ $form['ID'] }}
+
+                    <form action="{{ route('admin.approvals.updateCase', ['id' => $form['ID']]) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-content shadow-sm border-0 rounded-4">
+                            <div class="modal-header bg-warning text-dark rounded-top-4">
+                                <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
+                                    Edit Status Case
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <div class="modal-body p-4">
-                                <div class="mb-3">
-                                    <label for="status_case" class="form-label fw-semibold">Status Case</label>
-                                    <select name="status_case" id="status_case" class="form-select rounded-3" required>
-                                        <option value="Open" {{ $form['Status Case'] == 'Open' ? 'selected' : '' }}>Open
-                                        </option>
-                                        <option value="Close" {{ $form['Status Case'] == 'Close' ? 'selected' : '' }}>
-                                            Close</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="note_case" class="form-label fw-semibold">Note Case</label>
-                                    <textarea name="note_case" id="note_case" class="form-control rounded-3" rows="4">{{ $form['Note Case'] ?? '' }}</textarea>
-                                </div>
+                            <div class="modal-body">
+
+                                @php
+                                    $caseData = collect($form)->filter(function ($val, $key) {
+                                        return strpos($key, 'Inspection Description') !== false && !empty($val);
+                                    });
+                                @endphp
+
+                                @foreach ($caseData as $key => $value)
+                                    @php
+                                        preg_match('/\[(.*?)\]\[(.*?)\](.*)/', $value, $matches);
+                                        $action = $matches[1] ?? '';
+                                        $status = $matches[2] ?? '';
+                                        $desc = trim($matches[3] ?? '');
+                                    @endphp
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">{{ $desc }}</label>
+                                        <input type="hidden" name="case_keys[]" value="{{ $key }}">
+                                        <input type="hidden" name="actions[{{ $key }}]"
+                                            value="{{ $action }}">
+                                        <input type="hidden" name="descriptions[{{ $key }}]"
+                                            value="{{ $desc }}">
+                                        <select name="statuses[{{ $key }}]" class="form-select" required>
+                                            <option value="OPEN" {{ $status === 'OPEN' ? 'selected' : '' }}>OPEN
+                                            </option>
+                                            <option value="CLOSE" {{ $status === 'CLOSE' ? 'selected' : '' }}>CLOSE
+                                            </option>
+                                        </select>
+                                    </div>
+                                @endforeach
+
                             </div>
-                            <div class="modal-footer border-0">
-                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                                    data-bs-dismiss="modal">
-                                    Batal
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-warning fw-semibold px-4">
+                                    <i class="bi bi-save2 me-1"></i> Simpan
                                 </button>
-                                <button type="submit" class="btn btn-warning rounded-pill px-4">
-                                    <i class="fas fa-save me-1"></i> Simpan Perubahan
-                                </button>
+                                <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                                    data-bs-dismiss="modal">Batal</button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
-            </div> --}}
+            </div>
         @endforeach
     @endforeach
 
