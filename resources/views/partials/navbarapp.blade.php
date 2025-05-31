@@ -173,14 +173,14 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.users') ? '' : 'collapsed' }}"
                     href="{{ route('admin.users') }}">
-                    <i class="bi bi-people"></i> <span>Managemen Users</span>
+                    <i class="bi bi-people"></i> <span>Manajemen Users</span>
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.folders.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.folders.index') }}">
-                    <i class="bi bi-folder"></i> <span>Managemen Section</span>
+                    <i class="bi bi-folder"></i> <span>Manajemen Section</span>
                 </a>
             </li>
 
@@ -194,31 +194,31 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.menus.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.menus.index') }}">
-                    <i class="bi bi-folder"></i> <span>Managemen Meca</span>
+                    <i class="bi bi-folder"></i> <span>Manajemen Meca</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.news.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.news.index') }}">
-                    <i class="bi bi-newspaper"></i> <span>Managemen Berita</span>
+                    <i class="bi bi-newspaper"></i> <span>Manajemen Berita</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.achievement.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.achievement.index') }}">
-                    <i class="bi bi-award"></i> <span>Managemen Penghargaan</span>
+                    <i class="bi bi-award"></i> <span>Manajemen Penghargaan</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.community.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.community.index') }}">
-                    <i class="bi bi-people"></i> <span>Managemen Poster</span>
+                    <i class="bi bi-people"></i> <span>Manajemen Poster</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.people.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.people.index') }}">
-                    <i class="bi bi-people"></i> <span>Managemen Our People</span>
+                    <i class="bi bi-people"></i> <span>Manajemen Our People</span>
                 </a>
             </li>
             <li class="nav-item">
