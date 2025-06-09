@@ -689,13 +689,13 @@ $id = empty($existingIds) ? 1 : max($existingIds) + 1;
     }
 
     // Setup Google Sheets
-    $client = new \Google\Client();
+    $client = new Client();
     $client->setApplicationName('Backlog Service Form');
-    $client->setScopes([\Google\Service\Sheets::SPREADSHEETS]);
+    $client->setScopes([Sheets::SPREADSHEETS]);
     $client->setAuthConfig(storage_path('app/google/credentials.json'));
     $client->setAccessType('offline');
 
-    $service = new \Google\Service\Sheets($client);
+    $service = new Sheets($client);
     $spreadsheetId = '1BeBtZZNZBEQBfZHV28Jq_KWRhqBrSuRIBJIrLfNeFfY';
     $sheetName = 'Sheet1';
 
