@@ -168,7 +168,7 @@
             searchInput.addEventListener('keyup', function() {
                 var filter = searchInput.value.toUpperCase();
                 tableRows.forEach(function(row) {
-                    var cnUnitCell = row.cells[4]; // kolom ke-5 (0-indexed)
+                    var cnUnitCell = row.cells[3]; // kolom ke-5 (0-indexed)
                     if (cnUnitCell) {
                         var cnText = cnUnitCell.textContent || cnUnitCell.innerText;
                         row.style.display = cnText.toUpperCase().indexOf(filter) > -1 ? '' : 'none';

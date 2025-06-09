@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.logapp')
 
 @section('title', 'Form Approval')

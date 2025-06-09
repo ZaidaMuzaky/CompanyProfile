@@ -413,7 +413,7 @@
             searchInput.addEventListener('keyup', function() {
                 var filter = searchInput.value.toUpperCase();
                 tableRows.forEach(function(row) {
-                    var cnUnitCell = row.cells[3]; // CN Unit berada di kolom ke-4 (0-indexed = 3)
+                    var cnUnitCell = row.cells[2]; // CN Unit berada di kolom ke-4 (0-indexed = 3)
                     if (cnUnitCell) {
                         var cnText = cnUnitCell.textContent || cnUnitCell.innerText;
                         row.style.display = cnText.toUpperCase().indexOf(filter) > -1 ? '' : 'none';

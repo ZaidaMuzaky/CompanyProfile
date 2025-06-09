@@ -1,0 +1,847 @@
+@extends('layouts.logapp')
+
+@section('title', 'Form Inspection Approval')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="#">Inspection After Service</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Form Inspection Approval</li>
+@endsection
+
+@section('content')
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold text-dark">Approval Inspection Form</h2>
+                <p class="text-muted mb-0">Kelola persetujuan formulir backlog dari berbagai supervisor.</p>
+                <hr class="mt-3 mb-0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-body p-4">
+                        <!-- Notifikasi -->
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show rounded-3" role="alert">
+                                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        <!-- Supervisor Tabs -->
+                        <ul class="nav nav-tabs mb-4 border-0">
+                            @foreach ($supervisorForms as $supervisor => $forms)
+                                <li class="nav-item">
+                                    <button class="nav-link {{ $loop->first ? 'active' : '' }} rounded-3 px-4 py-2"
+                                        data-bs-toggle="tab" data-bs-target="#{{ Str::slug($supervisor) }}">
+                                        {{ $supervisor }}
+                                        <span class="badge bg-secondary ms-2 rounded-pill">{{ count($forms) }}</span>
+                                    </button>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <div class="mb-3">
+                            <input type="text" id="searchCnUnit" class="form-control rounded-pill px-4 py-2"
+                                placeholder="Cari CN Unit...">
+                        </div>
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            @foreach ($supervisorForms as $supervisor => $forms)
+                                <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}"
+                                    id="{{ Str::slug($supervisor) }}">
+                                    @if (count($forms) > 0)
+                                        <div class="table-responsive">
+                                            <table class="table table-hover align-middle mb-0">
+                                                <div class="row mb-4">
+                                                </div>
+
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="ps-4 py-3 text-uppercase small fw-semibold">Nama Mekanik
+                                                        </th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Section</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Supervisor</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">Model Unit</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold">CN Unit</th>
+                                                        <!-- Kolom CN Unit -->
+                                                        <th class="py-3 text-uppercase small fw-semibold">Status</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
+                                                            Formulir
+                                                        </th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
+                                                            Case
+                                                        </th>
+                                                        {{-- <th class="py-3 text-uppercase small fw-semibold text-center">Action
+                                                            Inspection
+                                                        </th> --}}
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($forms as $form)
+                                                        <tr class="border-top">
+                                                            <td class="ps-4 py-3">{{ $form['Nama Mekanik'] ?? '-' }}</td>
+                                                            <td class="py-3">{{ $form['Section'] ?? '-' }}</td>
+                                                            <td class="py-3">{{ $form['Supervisor'] ?? '-' }}</td>
+                                                            <td class="py-3">{{ $form['Model Unit'] ?? '-' }}
+                                                            </td>
+                                                            <td class="py-3 cn-unit">{{ $form['CN Unit'] ?? '-' }}</td>
+                                                            <!-- Menampilkan CN Unit -->
+                                                            <td class="py-3">
+                                                                <span
+                                                                    class="badge bg-{{ $form['Status'] == 'Approved' ? 'success' : ($form['Status'] == 'Rejected' ? 'danger' : 'warning text-dark') }} rounded-pill px-3 py-2">
+                                                                    {{ $form['Status'] ?? 'Pending' }}
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-center pe-4 py-3 text-nowrap">
+                                                                <button
+                                                                    class="btn btn-sm btn-outline-primary rounded-pill me-1"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#detailModal{{ $form['ID'] }}"
+                                                                    data-bs-toggle="tooltip" title="Lihat detail formulir">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </button>
+
+                                                                @if ($form['Status'] != 'Approved' && $form['Status'] != 'Rejected')
+                                                                    <button
+                                                                        class="btn btn-sm btn-outline-success rounded-pill me-1"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#approveModal{{ $form['ID'] }}"
+                                                                        data-bs-toggle="tooltip" title="Setujui formulir">
+                                                                        <i class="fas fa-check"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        class="btn btn-sm btn-outline-danger rounded-pill"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#rejectModal{{ $form['ID'] }}"
+                                                                        data-bs-toggle="tooltip" title="Tolak formulir">
+                                                                        <i class="fas fa-times"></i>
+                                                                    </button>
+                                                                @endif
+                                                            </td>
+                                                            <td class="text-center pe-4 py-3 text-nowrap">
+                                                                <button class="btn btn-sm btn-outline-warning rounded-pill"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#caseModal{{ $form['ID'] }}"
+                                                                    data-bs-toggle="tooltip" title="Update Status Case">
+                                                                    <i class="fas fa-tools"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    @else
+                                        <div class="card-body">
+                                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                            <h4 class="fw-bold mb-3">Belum Ada Formulir</h4>
+                                            <p class="text-muted mb-0">Tidak ada formulir untuk supervisor
+                                                {{ $supervisor }}.
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    @foreach ($supervisorForms as $supervisor => $forms)
+        @foreach ($forms as $form)
+            <!-- Detail Modal -->
+            @php
+            $lubricantKeys = [
+                'Engine Oil level',
+                'Radiator Coolant Level',
+                'Final Drive Oil Level',
+                'Differential Oil Level',
+                'Transmission & Steering Oil Level',
+                'Hydraulic Oil Level',
+                'Fuel Level',
+                'PTO Oil',
+                'Brake Oil',
+                'Compressor Oil Level',
+            ];
+
+            $afterRepairKeys = [
+                'Check Leaking',
+                'Check tighting Bolt',
+                'Check Abnormal Noise',
+                'Check Abnormal Temperature',
+                'Check Abnormal Smoke/Smell',
+                'Check Abnormal Vibration',
+                'Check Abnormal Bending/Crack',
+                'Check Abnormal Tention',
+                'Check Abnormal Pressure',
+                'Check Error Vault Code',
+            ];
+
+            $componentKeys = [
+                'AC SYSTEM',
+                'BRAKE SYSTEM',
+                'DIFFERENTIAL & FINAL DRAVE',
+                'ELECTRICAL SYSTEM',
+                'ENGINE',
+                'GENERAL ( ACCESSORIES, CABIN, ETC )',
+                'HYDRAULIC SYSTEM',
+                'IT SYSTEM',
+                'MAIN FRAME / CHASSIS / VASSEL',
+                'PERIODICAL SERVICE',
+                'PNEUMATIC SYSTEM',
+                'PREEICTIVE MAINTENANCE',
+                'PREVENTIF MAINTENANCE',
+                'PROBLEM SDT',
+                'PROBLEM TYRE SDT',
+                'STEERING SYSTEM',
+                'TRANSMISSION SYSTEM',
+                'TYRE',
+                'UNDERGRADUATE',
+                'WORK EQUIPMENT',
+            ];
+
+            // Gabungkan semua inspection keys supaya mudah pengecekan nanti
+            $allInspectionKeys = array_merge($lubricantKeys, $afterRepairKeys, $componentKeys);
+        @endphp
+
+            <div class="modal fade" id="detailModal{{ $form['ID'] }}" tabindex="-1"
+                aria-labelledby="detailModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0 shadow-lg rounded-3">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title fw-semibold" id="detailModalLabel{{ $form['ID'] }}">
+                                Detail Formulir Inspeksi
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                    <div class="modal-body p-4">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <p class="mb-1 text-muted small">Tanggal Service</p>
+                                <p class="mb-0 fw-bold">{{ $form['Tanggal Service'] ?? '-' }}</p>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <p class="mb-1 text-muted small">Status</p>
+                                <span
+                                    class="badge bg-{{ $form['Status'] == 'Rejected' ? 'danger' : ($form['Status'] == 'Pending' ? 'warning text-dark' : 'success') }} rounded-pill px-3 py-2">
+                                    {{ $form['Status'] }}
+                                </span>
+                            </div>
+                        </div>
+                        {{-- Tampilkan data selain inspection keys, tanggal service, dan status --}}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped align-middle">
+                                <tbody>
+                                    @foreach ($form as $key => $value)
+                                        @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status')
+                                            <tr>
+                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                                                <td class="p-3">
+                                                    @php
+                                                        $links = preg_split('/[\s,]+/', $value);
+                                                        $isAllLinks = collect($links)->every(function ($link) {
+                                                            return filter_var($link, FILTER_VALIDATE_URL);
+                                                        });
+                                                    @endphp
+                                                    @if ($isAllLinks && count($links) > 0)
+                                                        @foreach ($links as $i => $link)
+                                                            <div class="mb-1">
+                                                                <a href="{{ $link }}" target="_blank"
+                                                                    class="text-primary text-decoration-none fw-semibold">
+                                                                    <i class="fas fa-link me-1"></i> Buka Eviden
+                                                                    {{ count($links) > 1 ? $i + 1 : '' }}
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        {{ $value }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        {{-- Bagian A. Check Level Lubricant Coolant --}}
+                        <h6 class="mb-3">A. Check Level Lubricant Coolant</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-striped align-middle">
+                                <tbody>
+                                    @foreach ($lubricantKeys as $key)
+                                        @if (isset($form[$key]))
+                                            <tr>
+                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                                                <td class="p-3">
+                                                    @php
+                                                        // Decode JSON string jika ada
+                                                        $jsonData = json_decode($form[$key], true);
+
+                                                        // Cek apakah jsonData adalah array hasil decode JSON valid
+                                                        $isJson = is_array($jsonData);
+                                                    @endphp
+
+                                                    @if ($isJson)
+                                                        <table class="table table-bordered mb-0"
+                                                            style="font-size: 0.9rem;">
+                                                            <tbody>
+                                                                @foreach ($jsonData as $jsonKey => $jsonValue)
+                                                                    <tr>
+                                                                        <th class="bg-light" style="width: 35%;">
+                                                                            {{ ucfirst($jsonKey) }}</th>
+                                                                        <td>
+                                                                            @if (strtolower($jsonKey) === 'statuscase')
+                                                                                <span
+                                                                                    class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
+                                                                                    {{ ucfirst($jsonValue) }}
+                                                                                </span>
+                                                                                @elseif (strtolower($jsonKey) === 'action')
+                                                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
+                                                                            @else
+                                                                                {{ $jsonValue }}
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    @else
+                                                        @php
+                                                            // Jika bukan JSON, cek apakah berupa link dan tampilkan link
+                                                            $links = preg_split('/[\s,]+/', $form[$key]);
+                                                            $isAllLinks = collect($links)->every(function (
+                                                                $link
+                                                            ) {
+                                                                return filter_var($link, FILTER_VALIDATE_URL);
+                                                            });
+                                                        @endphp
+                                                        @if ($isAllLinks && count($links) > 0)
+                                                            @foreach ($links as $i => $link)
+                                                                <div class="mb-1">
+                                                                    <a href="{{ $link }}" target="_blank"
+                                                                        class="text-primary text-decoration-none fw-semibold">
+                                                                        <i class="fas fa-link me-1"></i> Buka Eviden
+                                                                        {{ count($links) > 1 ? $i + 1 : '' }}
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            {{ $form[$key] }}
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        {{-- Bagian B. Check Job Condition After Repair --}}
+                        <h6 class="mb-3">B. Check Job Condition After Repair</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-striped align-middle">
+                                <tbody>
+                                    @foreach ($afterRepairKeys as $key)
+                                        @if (isset($form[$key]))
+                                            <tr>
+                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                                                <td class="p-3">
+                                                    @php
+                                                        $jsonData = json_decode($form[$key], true);
+                                                        $isJson = is_array($jsonData);
+                                                    @endphp
+
+                                                    @if ($isJson)
+                                                        <table class="table table-bordered mb-0"
+                                                            style="font-size: 0.9rem;">
+                                                            <tbody>
+                                                                @foreach ($jsonData as $jsonKey => $jsonValue)
+                                                                    <tr>
+                                                                        <th class="bg-light" style="width: 35%;">
+                                                                            {{ ucfirst($jsonKey) }}</th>
+                                                                        <td>
+                                                                            @if (strtolower($jsonKey) === 'statuscase')
+                                                                                <span
+                                                                                    class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
+                                                                                    {{ ucfirst($jsonValue) }}
+                                                                                </span>
+                                                                                @elseif (strtolower($jsonKey) === 'action')
+                                                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
+                                                                            @else
+                                                                                {{ $jsonValue }}
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    @else
+                                                            @php
+                                                            $links = preg_split('/[\s,]+/', $form[$key]);
+                                                            $isAllLinks = collect($links)->every(function ($link) {
+                                                                return filter_var($link, FILTER_VALIDATE_URL);
+                                                            });
+                                                        @endphp
+                                                        {{-- Jika bukan JSON, cek apakah berupa link --}}
+                                                
+                                                        @if ($isAllLinks && count($links) > 0)
+                                                            @foreach ($links as $i => $link)
+                                                                <div class="mb-1">
+                                                                    <a href="{{ $link }}" target="_blank"
+                                                                        class="text-primary text-decoration-none fw-semibold">
+                                                                        <i class="fas fa-link me-1"></i> Buka
+                                                                        Eviden
+                                                                        {{ count($links) > 1 ? $i + 1 : '' }}
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            {{ $form[$key] }}
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {{-- Bagian C. Sub Component --}}
+                        <h6 class="mb-3">C. Sub Component</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-striped align-middle">
+                                <tbody>
+                                    @foreach ($componentKeys as $key)
+                                        @if (isset($form[$key]))
+                                            <tr>
+                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                                                <td class="p-3">
+                                                    @php
+                                                        $jsonData = json_decode($form[$key], true);
+                                                        $isJson = is_array($jsonData);
+                                                    @endphp
+
+                                                    @if ($isJson)
+                                                        <table class="table table-bordered mb-0"
+                                                            style="font-size: 0.9rem;">
+                                                            <tbody>
+                                                                @foreach ($jsonData as $jsonKey => $jsonValue)
+                                                                    <tr>
+                                                                        <th class="bg-light" style="width: 35%;">
+                                                                            {{ ucfirst($jsonKey) }}</th>
+                                                                        <td>
+                                                                            @if (strtolower($jsonKey) === 'statuscase')
+                                                                                <span
+                                                                                    class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
+                                                                                    {{ ucfirst($jsonValue) }}
+                                                                                </span>
+                                                                                @elseif (strtolower($jsonKey) === 'action')
+                                                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
+                                                                            @else
+                                                                                {{ $jsonValue }}
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    @else
+                                                        @php
+                                                            $links = preg_split('/[\s,]+/', $form[$key]);
+                                                            $isAllLinks = collect($links)->every(function (
+                                                                $link
+                                                            ) {
+                                                                return filter_var($link, FILTER_VALIDATE_URL);
+                                                            });
+                                                        @endphp
+                                                        @if ($isAllLinks && count($links) > 0)
+                                                            @foreach ($links as $i => $link)
+                                                                <div class="mb-1">
+                                                                    <a href="{{ $link }}" target="_blank"
+                                                                        class="text-primary text-decoration-none fw-semibold">
+                                                                        <i class="fas fa-link me-1"></i> Buka
+                                                                        Eviden
+                                                                        {{ count($links) > 1 ? $i + 1 : '' }}
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
+                                                        @else
+                                                            {{ $form[$key] }}
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                            data-bs-dismiss="modal">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Reject Modal -->
+            <div class="modal fade" id="rejectModal{{ $form['ID'] }}" tabindex="-1"
+                aria-labelledby="rejectModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-3">
+                        <form method="POST" action="{{ route('admin.inspection.approve', $form['ID']) }}">
+                            @csrf
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title fw-semibold" id="rejectModalLabel{{ $form['ID'] }}">
+                                    Tolak Formulir #{{ $form['ID'] }}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="mb-3">
+                                    <label for="note" class="form-label fw-semibold">Alasan Penolakan</label>
+                                    <textarea name="note" id="note" class="form-control rounded-3" rows="4" required></textarea>
+                                </div>
+                                <input type="hidden" name="status" value="Rejected">
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                    data-bs-dismiss="modal">
+                                    Batal
+                                </button>
+                                <button type="submit" class="btn btn-danger rounded-pill px-4">
+                                    <i class="fas fa-times me-1"></i> Konfirmasi Tolak
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{-- acc modal --}}
+            <div class="modal fade" id="approveModal{{ $form['ID'] }}" tabindex="-1"
+                aria-labelledby="approveModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-3">
+                        <form method="POST" action="{{ route('admin.inspection.approve', $form['ID']) }}">
+                            @csrf
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title fw-semibold" id="approveModalLabel{{ $form['ID'] }}">
+                                    Setujui Formulir #{{ $form['ID'] }}
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <p class="mb-0">Apakah Anda yakin ingin menyetujui formulir ini?</p>
+                                <input type="hidden" name="status" value="Approved">
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                    data-bs-dismiss="modal">
+                                    Batal
+                                </button>
+                                <button type="submit" class="btn btn-success rounded-pill px-4">
+                                    <i class="fas fa-check me-1"></i> Konfirmasi Setujui
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Update Status Case -->
+            <div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
+                    aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+
+                        <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-content shadow-sm border-0 rounded-4">
+                                <div class="modal-header bg-warning text-dark rounded-top-4">
+                                    <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
+                                        Edit Status Case - ID: {{ $form['ID'] }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    @php
+                                        $caseData = collect($form)->filter(function ($val, $key) {
+                                            return is_string($val) && strpos($val, '"statusCase"') !== false;
+                                        });
+
+                                        $groupedKeys = [
+                                            'A. Check Level Lubricant Coolant' => [
+                                                'Engine Oil level',
+                                                'Radiator Coolant Level',
+                                                'Final Drive Oil Level',
+                                                'Differential Oil Level',
+                                                'Transmission & Steering Oil Level',
+                                                'Hydraulic Oil Level',
+                                                'Fuel Level',
+                                                'PTO Oil',
+                                                'Brake Oil',
+                                                'Compressor Oil Level',
+                                            ],
+                                            'B. Check Job Condition After Repair' => [
+                                                'Check Leaking',
+                                                'Check tighting Bolt',
+                                                'Check Abnormal Noise',
+                                                'Check Abnormal Temperature',
+                                                'Check Abnormal Smoke/Smell',
+                                                'Check Abnormal Vibration',
+                                                'Check Abnormal Bending/Crack',
+                                                'Check Abnormal Tention',
+                                                'Check Abnormal Pressure',
+                                                'Check Error Vault Code',
+                                            ],
+                                            'C. Sub Component' => [
+                                                'AC SYSTEM',
+                                                'BRAKE SYSTEM',
+                                                'DIFFERENTIAL & FINAL DRAVE',
+                                                'ELECTRICAL SYSTEM',
+                                                'ENGINE',
+                                                'GENERAL ( ACCESSORIES, CABIN, ETC )',
+                                                'HYDRAULIC SYSTEM',
+                                                'IT SYSTEM',
+                                                'MAIN FRAME / CHASSIS / VASSEL',
+                                                'PERIODICAL SERVICE',
+                                                'PNEUMATIC SYSTEM',
+                                                'PREEICTIVE MAINTENANCE',
+                                                'PREVENTIF MAINTENANCE',
+                                                'PROBLEM SDT',
+                                                'PROBLEM TYRE SDT',
+                                                'STEERING SYSTEM',
+                                                'TRANSMISSION SYSTEM',
+                                                'TYRE',
+                                                'UNDERGRADUATE',
+                                                'WORK EQUIPMENT',
+                                            ],
+                                        ];
+                                    @endphp
+
+
+                                    @foreach ($groupedKeys as $groupTitle => $keys)
+                                        <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
+                                        <div class="row">
+                                            @foreach ($keys as $key)
+                                                @if (isset($caseData[$key]))
+                                                    @php
+                                                        $data = json_decode($caseData[$key], true);
+                                                        $status = $data['statusCase'] ?? 'open';
+                                                        $bgClass = $status === 'close' ? 'bg-danger text-white' : 'bg-primary text-white';
+                                                    @endphp
+                                                    <div class="col-md-3 mb-3">
+                                                        <label class="form-label fw-semibold text-truncate d-block" title="{{ $key }}">{{ $key }}</label>
+                                                        <input type="hidden" name="keys[]" value="{{ $key }}">
+                                                        <select name="statuses[{{ $key }}]" class="form-select status-select {{ $bgClass }}" required>
+                                                            <option value="open" {{ $status === 'open' ? 'selected' : '' }}>OPEN</option>
+                                                            <option value="close" {{ $status === 'close' ? 'selected' : '' }}>CLOSE</option>
+                                                        </select>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+
+                                        </div>
+                                    @endforeach
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            const selects = document.querySelectorAll('.status-select');
+                                    
+                                            selects.forEach(select => {
+                                                select.addEventListener('change', function () {
+                                                    // Hapus semua class warna dulu
+                                                    this.classList.remove('bg-danger', 'bg-primary', 'text-white');
+                                    
+                                                    // Tambahkan class sesuai value terpilih
+                                                    if (this.value === 'close') {
+                                                        this.classList.add('bg-danger', 'text-white');
+                                                    } else if (this.value === 'open') {
+                                                        this.classList.add('bg-primary', 'text-white');
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    </script>
+                                    
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-warning fw-semibold px-4">
+                                        <i class="bi bi-save2 me-1"></i> Simpan
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                                        data-bs-dismiss="modal">
+                                        Batal
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        @endforeach
+    @endforeach
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var searchInput = document.getElementById('searchCnUnit');
+            var tableRows = document.querySelectorAll('table tbody tr');
+
+            searchInput.addEventListener('keyup', function() {
+                var filter = searchInput.value.toUpperCase();
+                tableRows.forEach(function(row) {
+                    var cnUnitCell = row.cells[4]; // kolom ke-5 (0-indexed)
+                    if (cnUnitCell) {
+                        var cnText = cnUnitCell.textContent || cnUnitCell.innerText;
+                        row.style.display = cnText.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+                    }
+                });
+            });
+        });
+    </script>
+@endsection
+
+@push('styles')
+    <style>
+        /* General Styling */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #dee2e6;
+            color: #495057;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #ffffff;
+            border-color: #dee2e6 #dee2e6 #ffffff;
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 8px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+
+            .btn-sm {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .nav-tabs .nav-link {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+@endpush
+
+
+
+
+@push('scripts')
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Approve form function
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function(tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    @endpush

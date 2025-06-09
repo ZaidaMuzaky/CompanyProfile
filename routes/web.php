@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminInspectionController;
 use App\Models\Achivements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\PartUnscheduleController;
 use App\Http\Controllers\UserStatusVIewController;
 use App\Http\Controllers\AdminFormStatusController;
 use App\Http\Controllers\PartUnscheduleViewController;
+use App\Http\Controllers\UserInspectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -217,6 +219,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/approvals/{id}/approve', [AdminApprovalController::class, 'approveForm'])->name('admin.approvals.approve');
 
 
+    // display Inspection data admin
+    Route::get('admin/inspection', [AdminInspectionController::class, 'show'])->name('admin.inspection.form-show');
+    Route::delete('admin/inspection/{id}', [AdminInspectionController::class, 'destroy'])->name('admin.inspection.destroy');
+    // inspection form approval
+    Route::get('/inspection', [AdminInspectionController::class, 'index'])->name('admin.inspection.index');
+    Route::post('/inspection/{id}/approve', [AdminInspectionController::class, 'approveForm'])->name('admin.inspection.approve');
+
 // audit management
 Route::prefix('admin/audit')->name('admin.audit.')->group(function () {
     Route::get('/', [AuditController::class, 'index'])->name('index');
@@ -229,6 +238,10 @@ Route::get('/{audit_id}/uploads', [AuditUploadController::class, 'index'])->name
     Route::post('/audit/upload', [AuditUploadController::class, 'store'])->name('upload.store');
     Route::put('/audit/upload/{id}/update', [AuditUploadController::class, 'update'])->name('upload.update');
     Route::delete('/audit/upload/{id}', [AuditUploadController::class, 'destroy'])->name('upload.destroy');
+
+
+
+
 });
 
 
@@ -300,11 +313,24 @@ Route::get('/audit/{id}', [AuditViewController::class, 'view'])->name('audit.vie
 
 // case status
 Route::put('/admin/approvals/update-case/{id}', [AdminApprovalController::class, 'updateCase'])->name('admin.approvals.updateCase');
-// action inspection
+// action inspection backlog
 Route::post('action-inspection/{id}', [AdminApprovalController::class, 'updateActionInspection'])->name('update.action.inspection');
 Route::get('/inspection/{id}/edit', [AdminApprovalController::class, 'edit'])->name('inspection.edit');
 
-
+// inspection form
+Route::get('/user/inspection/form', [UserInspectionController::class, 'form'])->name('user.inspection.form');
+Route::post('/user/inspection/form', [UserInspectionController::class, 'store']);
+// inspection show
+Route::get('/user/inspection/show', [UserInspectionController::class, 'status'])->name('user.inspection.show');
+Route::delete('user/inspection/{id}', [UserInspectionController::class, 'destroy'])->name('user.inspection.destroy');
+// update case status
+Route::put('/admin/inspection/update-case/{id}', [UserInspectionController::class, 'updateCase'])->name('user.inspection.updateCase');
+Route::post('actionReview-inspection/{id}', [UserInspectionController::class, 'updateActionInspection'])->name('user.action.inspection');
+// inspection all form status route
+Route::get('/user/inspection', [UserInspectionController::class, 'index'])->name('user.inspection.index');
+// edit inspection form
+Route::get('/inspection/{id}/edit', [UserInspectionController::class, 'edit'])->name('user.inspection.edit');
+Route::put('/inspection/{id}/resubmit', [UserInspectionController::class, 'resubmit'])->name('user.inspection.resubmit');
 });
 
 

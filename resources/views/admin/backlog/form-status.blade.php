@@ -64,7 +64,7 @@
                                                     </button>
 
                                                     <!-- Tombol Hapus -->
-                                                    <form <form
+                                                    <form
                                                         action="{{ route('admin.backlog.form-status.destroy', $form['ID']) }}"
                                                         method="POST" class="d-inline"
                                                         onsubmit="return confirm('Yakin ingin menghapus data ini?');">
