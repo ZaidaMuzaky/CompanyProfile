@@ -503,16 +503,13 @@ $id = empty($existingIds) ? 1 : max($existingIds) + 1;
             for ($i = 1; $i < count($values); $i++) {
                 $row = $values[$i];
                 $data = array_combine($headers, array_pad($row, count($headers), ''));
-    
-                if (($data['Username'] ?? '') === (auth()->user()->username ?? '')) {
-                    $userForms[] = $data;
-                }
+                $userForms[] = $data;
             }
         }
     
         return view('user.inspection.showall', compact('userForms', 'headers'));
-
-}
+    }
+    
  
 
 

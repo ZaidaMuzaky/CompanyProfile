@@ -13,39 +13,36 @@ class AdminInspectionController extends Controller
 {
     // display inspection data
     public function show()
-    {
-        $client = new Client();
-        $client->setApplicationName('Inspection after Service Form');
-        $client->setScopes([Sheets::SPREADSHEETS_READONLY]);
-        $client->setAuthConfig(storage_path('app/google/credentials.json'));
-        $client->setAccessType('offline');
-    
-        $service = new Sheets($client);
-        $spreadsheetId = '1BeBtZZNZBEQBfZHV28Jq_KWRhqBrSuRIBJIrLfNeFfY';
-        $sheetName = 'Sheet1';
-    
-        $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
-        $values = $response->getValues();
-    
-        $userForms = [];
-        $headers = [];
-    
-        if (!empty($values)) {
-            $headers = array_map('trim', $values[0]);
-    
-            for ($i = 1; $i < count($values); $i++) {
-                $row = $values[$i];
-                $data = array_combine($headers, array_pad($row, count($headers), ''));
-    
-                if (($data['Username'] ?? '') === (auth()->user()->username ?? '')) {
-                    $userForms[] = $data;
-                }
-            }
-        }
-    
-        return view('admin.inspection.form-show', compact('userForms', 'headers'));
+{
+    $client = new Client();
+    $client->setApplicationName('Inspection after Service Form');
+    $client->setScopes([Sheets::SPREADSHEETS_READONLY]);
+    $client->setAuthConfig(storage_path('app/google/credentials.json'));
+    $client->setAccessType('offline');
 
+    $service = new Sheets($client);
+    $spreadsheetId = '1BeBtZZNZBEQBfZHV28Jq_KWRhqBrSuRIBJIrLfNeFfY';
+    $sheetName = 'Sheet1';
+
+    $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
+    $values = $response->getValues();
+
+    $userForms = [];
+    $headers = [];
+
+    if (!empty($values)) {
+        $headers = array_map('trim', $values[0]);
+
+        for ($i = 1; $i < count($values); $i++) {
+            $row = $values[$i];
+            $data = array_combine($headers, array_pad($row, count($headers), ''));
+            $userForms[] = $data; // tidak ada filter username
+        }
+    }
+
+    return view('admin.inspection.form-show', compact('userForms', 'headers'));
 }
+
     // delete inspection data
     public function destroy($id)
     {
