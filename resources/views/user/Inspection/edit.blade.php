@@ -323,6 +323,40 @@
                                         </div>
                                     </div>
                                 </template>
+                                <!-- Template khusus Section C (Sub Component) -->
+                                <template id="sub-component-template">
+                                    <div class="mb-4 p-3 border rounded shadow-sm sub-component-section">
+                                        <h6 class="fw-bold mb-3 sub-component-title">Sub Component</h6>
+                                        <div class="sub-component-items"></div>
+
+                                        <button type="button" class="btn btn-sm btn-success add-temuan mt-2">+ Tambah
+                                            Temuan</button>
+                                    </div>
+                                </template>
+                                <!-- Template item temuan untuk Section C -->
+                                <template id="temuan-item-template">
+                                    <div class="row align-items-center mb-2">
+                                        <div class="col-md-4">
+                                            <input type="text" name="temuan_sub_component[__INDEX__][temuan]"
+                                                class="form-control form-control-sm" placeholder="Temuan" >
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select name="temuan_sub_component[__INDEX__][condition]"
+                                                class="form-select form-select-sm" >
+                                                <option value="" disabled selected>-- Condition --</option>
+                                                <option value="OK">OK</option>
+                                                <option value="BAD">BAD</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" name="temuan_sub_component[__INDEX__][recommendation]"
+                                                class="form-control form-control-sm" placeholder="Recommendation">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-sm btn-danger remove-temuan">×</button>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                             <script>
                                 const previousInspectionValues = @json($inspectionValues ?? []);
@@ -400,11 +434,73 @@
                                     });
                                 }
 
+                                function renderSectionC(sectionId, items) {
+                                    const container = document.getElementById(sectionId);
+                                    const sectionTemplate = document.getElementById('sub-component-template');
+                                    const itemTemplate = document.getElementById('temuan-item-template');
+                                    let temuanIndex = 0;
 
+                                    items.forEach(subComponent => {
+                                        const sectionClone = sectionTemplate.content.cloneNode(true);
+                                        const sectionDiv = sectionClone.querySelector('.sub-component-section');
+                                        const title = sectionDiv.querySelector('.sub-component-title');
+                                        const itemsDiv = sectionDiv.querySelector('.sub-component-items');
+                                        title.textContent = subComponent;
+
+                                        // Render previous temuan if available
+                                        if (previousInspectionValues.section_c && previousInspectionValues.section_c[subComponent]) {
+                                            previousInspectionValues.section_c[subComponent].forEach(temuan => {
+                                                const temuanClone = itemTemplate.content.cloneNode(true);
+                                                temuanClone.querySelectorAll('input, select').forEach(input => {
+                                                    if (input.name && input.name.includes('__INDEX__')) {
+                                                        input.name = input.name.replace(/__INDEX__/g, temuanIndex);
+                                                    }
+                                                    if (input.name && input.name.endsWith('[temuan]')) {
+                                                        input.value = temuan.temuan || '';
+                                                    }
+                                                    if (input.name && input.name.endsWith('[condition]')) {
+                                                        input.value = temuan.condition || '';
+                                                    }
+                                                    if (input.name && input.name.endsWith('[recommendation]')) {
+                                                        input.value = temuan.recommendation || '';
+                                                    }
+                                                });
+                                                // Add hidden input for sub_component
+                                                const hidden = document.createElement('input');
+                                                hidden.type = 'hidden';
+                                                hidden.name = `temuan_sub_component[${temuanIndex}][sub_component]`;
+                                                hidden.value = subComponent;
+                                                temuanClone.querySelector('.row').appendChild(hidden);
+                                                itemsDiv.appendChild(temuanClone);
+                                                temuanIndex++;
+                                            });
+                                        }
+
+                                        // Add temuan button
+                                        const addBtn = sectionDiv.querySelector('.add-temuan');
+                                        addBtn.addEventListener('click', function() {
+                                            const temuanClone = itemTemplate.content.cloneNode(true);
+                                            temuanClone.querySelectorAll('input, select').forEach(input => {
+                                                if (input.name && input.name.includes('__INDEX__')) {
+                                                    input.name = input.name.replace(/__INDEX__/g, temuanIndex);
+                                                }
+                                            });
+                                            // Add hidden input for sub_component
+                                            const hidden = document.createElement('input');
+                                            hidden.type = 'hidden';
+                                            hidden.name = `temuan_sub_component[${temuanIndex}][sub_component]`;
+                                            hidden.value = subComponent;
+                                            temuanClone.querySelector('.row').appendChild(hidden);
+                                            itemsDiv.appendChild(temuanClone);
+                                            temuanIndex++;
+                                        });
+                                        container.appendChild(sectionClone);
+                                    });
+                                }
                                 document.addEventListener('DOMContentLoaded', () => {
                                     renderSection('section-a-items', sectionAItems);
                                     renderSection('section-b-items', sectionBItems);
-                                    renderSection('section-c-items', sectionCItems);
+                                    renderSectionC('section-c-items', sectionCItems);
                                 });
                             </script>
 

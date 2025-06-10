@@ -128,26 +128,35 @@
                                                     </button>
                                                 </td>
                                                 {{-- aksi Inspection --}}
+                                                
+                                                
+                                                <style>
+                                                    .form-label.text-truncate {
+                                                        max-width: 100%;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        white-space: nowrap;
+                                                    }
+                                                </style>
+                                                
                                                 <div class="modal fade" id="inspectionModal{{ $form['ID'] }}"
-                                                    tabindex="-1"
-                                                    aria-labelledby="inspectionModalLabel{{ $form['ID'] }}"
-                                                    aria-hidden="true">
+                                                     tabindex="-1"
+                                                     aria-labelledby="inspectionModalLabel{{ $form['ID'] }}"
+                                                     aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered modal-xl">
-                                                        <form
-                                                            action="{{ route('user.action.inspection', ['id' => $form['ID']]) }}"
-                                                            method="POST">
+                                                        <form action="{{ route('user.action.inspection', ['id' => $form['ID']]) }}"
+                                                              method="POST">
                                                             @csrf
                                                             <div class="modal-content shadow-sm border-0 rounded-4">
-                                                                <div
-                                                                    class="modal-header bg-primary text-white rounded-top-4">
+                                                                <div class="modal-header bg-primary text-white rounded-top-4">
                                                                     <h5 class="modal-title fw-bold"
                                                                         id="inspectionModalLabel{{ $form['ID'] }}">
                                                                         Edit Action Inspection
                                                                     </h5>
                                                                     <button type="button" class="btn-close btn-close-white"
-                                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
-
+                                                
                                                                 <div class="modal-body">
                                                                     @php
                                                                         $inspectionData = collect($form)->filter(
@@ -157,7 +166,7 @@
                                                                                     strpos($val, 'action') !== false;
                                                                             },
                                                                         );
-
+                                                
                                                                         $options = [
                                                                             'CHECK',
                                                                             'INSTALL',
@@ -165,7 +174,7 @@
                                                                             'MONITORING',
                                                                             'REPAIR',
                                                                         ];
-
+                                                
                                                                         $colorMap = [
                                                                             'CHECK' => 'bg-secondary text-white',
                                                                             'INSTALL' => 'bg-warning text-dark',
@@ -173,7 +182,7 @@
                                                                             'MONITORING' => 'bg-info text-dark',
                                                                             'REPAIR' => 'bg-success text-white',
                                                                         ];
-
+                                                
                                                                         $groupA = [
                                                                             'Engine Oil level',
                                                                             'Radiator Coolant Level',
@@ -186,7 +195,7 @@
                                                                             'Brake Oil',
                                                                             'Compressor Oil Level',
                                                                         ];
-
+                                                
                                                                         $groupB = [
                                                                             'Check Leaking',
                                                                             'Check tighting Bolt',
@@ -199,7 +208,7 @@
                                                                             'Check Abnormal Pressure',
                                                                             'Check Error Vault Code',
                                                                         ];
-
+                                                
                                                                         $groupC = [
                                                                             'AC SYSTEM',
                                                                             'BRAKE SYSTEM',
@@ -223,171 +232,150 @@
                                                                             'WORK EQUIPMENT',
                                                                         ];
                                                                     @endphp
-
+                                                
                                                                     @foreach (['A. Check Level Lubricant & Coolant' => $groupA, 'B. Check Job Condition After Repair' => $groupB, 'C. Sub Component' => $groupC] as $groupLabel => $groupItems)
-                                                                        <h6 class="mt-3 fw-bold">{{ $groupLabel }}
-                                                                        </h6>
+                                                                        <h6 class="mt-3 fw-bold">{{ $groupLabel }}</h6>
                                                                         <div class="row">
-                                                                            @foreach ($inspectionData as $key => $jsonValue)
-                                                                                @if (in_array($key, $groupItems))
-                                                                                    @php
-                                                                                        $decoded = json_decode(
-                                                                                            $jsonValue,
-                                                                                            true,
-                                                                                        );
-                                                                                        $selectedAction = strtoupper(
-                                                                                            old(
-                                                                                                "actions.$key",
-                                                                                                $decoded['action'] ??
-                                                                                                    '',
-                                                                                            ),
-                                                                                        );
-                                                                                        $colorClass =
-                                                                                            $colorMap[
-                                                                                                $selectedAction
-                                                                                            ] ?? '';
-                                                                                    @endphp
-
-                                                                                    <div class="col-md-6 mb-3">
-                                                                                        <div
-                                                                                            class="d-flex align-items-center justify-content-between">
-                                                                                            <div class="flex-grow-1 pe-3 fw- text-truncate"
-                                                                                                title="{{ $key }}">
+                                                                            @if ($groupLabel === 'C. Sub Component')
+                                                                                @foreach ($groupItems as $key)
+                                                                                    @if (!empty($form[$key]) && is_string($form[$key]) && substr(trim($form[$key]), 0, 1) === '[')
+                                                                                        @php
+                                                                                            $jsonData = json_decode($form[$key], true);
+                                                                                        @endphp
+                                                                                        @if (is_array($jsonData))
+                                                                                            @foreach ($jsonData as $idx => $item)
+                                                                                                <div class="col-md-3 mb-3">
+                                                                                                    <label class="form-label fw-semibold text-truncate" title="{{ $key }} - {{ $item['temuan'] ?? '' }}">
+                                                                                                        {{ $key }} - {{ $item['temuan'] ?? '' }}
+                                                                                                    </label>
+                                                                                                    <select name="actions[{{ $key }}_{{ $idx }}]"
+                                                                                                            class="form-select form-select-sm {{ isset($item['action']) ? $colorMap[$item['action']] : '' }}">
+                                                                                                        @foreach ($options as $action)
+                                                                                                            <option value="{{ $action }}"
+                                                                                                                    {{ (isset($item['action']) && $item['action'] == $action) ? 'selected' : '' }}>
+                                                                                                                {{ $action }}
+                                                                                                            </option>
+                                                                                                        @endforeach
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            @endforeach
+                                                                                        @endif
+                                                                                    @endif
+                                                                                @endforeach
+                                                                            @else
+                                                                                @foreach ($groupItems as $key)
+                                                                                    @if (isset($form[$key]) && is_string($form[$key]) && strpos($form[$key], '"action"') !== false)
+                                                                                        @php
+                                                                                            $jsonData = json_decode($form[$key], true);
+                                                                                        @endphp
+                                                                                        <div class="col-md-3 mb-3">
+                                                                                            <label class="form-label fw-semibold text-truncate" title="{{ $key }}">
                                                                                                 {{ $key }}
-                                                                                            </div>
-                                                                                            <div style="min-width: 140px;">
-                                                                                                <select
-                                                                                                    name="actions[{{ $key }}]"
-                                                                                                    class="form-select form-select-sm {{ $colorClass }}"
-                                                                                                    required>
-                                                                                                    @foreach ($options as $option)
-                                                                                                        <option
-                                                                                                            value="{{ $option }}"
-                                                                                                            {{ $selectedAction === $option ? 'selected' : '' }}>
-                                                                                                            {{ $option }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </div>
+                                                                                            </label>
+                                                                                            <select name="actions[{{ $key }}]"
+                                                                                                    class="form-select form-select-sm {{ isset($jsonData['action']) ? $colorMap[$jsonData['action']] : '' }}">
+                                                                                                @foreach ($options as $action)
+                                                                                                    <option value="{{ $action }}"
+                                                                                                            {{ (isset($jsonData['action']) && $jsonData['action'] == $action) ? 'selected' : '' }}>
+                                                                                                        {{ $action }}
+                                                                                                    </option>
+                                                                                                @endforeach
+                                                                                            </select>
                                                                                         </div>
-                                                                                    </div>
-                                                                                @endif
-                                                                            @endforeach
+                                                                                    @endif
+                                                                                @endforeach
+                                                                            @endif
                                                                         </div>
                                                                     @endforeach
-
-                                                                    {{-- Group D (yang tidak masuk A/B/C) --}}
+                                                
                                                                     @php
-                                                                        $groupedKeys = array_merge(
-                                                                            $groupA,
-                                                                            $groupB,
-                                                                            $groupC,
-                                                                        );
-                                                                        $groupDData = $inspectionData->filter(function (
-                                                                            $val,
-                                                                            $key
-                                                                        ) use ($groupedKeys) {
+                                                                        $groupedKeys = array_merge($groupA, $groupB, $groupC);
+                                                                        $groupDData = $inspectionData->filter(function ($val, $key) use ($groupedKeys) {
                                                                             return !in_array($key, $groupedKeys);
                                                                         });
-
                                                                     @endphp
-
+                                                
                                                                     @if ($groupDData->count())
                                                                         <h6 class="mt-3 fw-bold">Bagian D (Lainnya)</h6>
                                                                         <div class="row">
                                                                             @foreach ($groupDData as $key => $jsonValue)
                                                                                 @php
-                                                                                    $decoded = json_decode(
-                                                                                        $jsonValue,
-                                                                                        true,
-                                                                                    );
-                                                                                    $selectedAction = strtoupper(
-                                                                                        old(
-                                                                                            "actions.$key",
-                                                                                            $decoded['action'] ?? '',
-                                                                                        ),
-                                                                                    );
-                                                                                    $colorClass =
-                                                                                        $colorMap[$selectedAction] ??
-                                                                                        '';
+                                                                                    $decoded = json_decode($jsonValue, true);
+                                                                                    $selectedAction = strtoupper(old("actions.$key", $decoded['action'] ?? ''));
+                                                                                    $colorClass = $colorMap[$selectedAction] ?? '';
                                                                                 @endphp
-
-                                                                                <div class="col-md-6 mb-3">
-                                                                                    <div
-                                                                                        class="d-flex align-items-center justify-content-between">
-                                                                                        <div class="flex-grow-1 pe-3 fw-semibold text-truncate"
-                                                                                            title="{{ $key }}">
-                                                                                            {{ $key }}
-                                                                                        </div>
-                                                                                        <div style="min-width: 140px;">
-                                                                                            <select
-                                                                                                name="actions[{{ $key }}]"
-                                                                                                class="form-select form-select-sm {{ $colorClass }}"
-                                                                                                required>
-                                                                                                @foreach ($options as $option)
-                                                                                                    <option
-                                                                                                        value="{{ $option }}"
-                                                                                                        {{ $selectedAction === $option ? 'selected' : '' }}>
-                                                                                                        {{ $option }}
-                                                                                                    </option>
-                                                                                                @endforeach
-                                                                                            </select>
-                                                                                        </div>
-                                                                                    </div>
+                                                                                <div class="col-md-3 mb-3">
+                                                                                    <label class="form-label fw-semibold text-truncate" title="{{ $key }}">
+                                                                                        {{ $key }}
+                                                                                    </label>
+                                                                                    <select name="actions[{{ $key }}]"
+                                                                                            class="form-select form-select-sm {{ $colorClass }}"
+                                                                                            required>
+                                                                                        @foreach ($options as $option)
+                                                                                            <option value="{{ $option }}"
+                                                                                                    {{ $selectedAction === $option ? 'selected' : '' }}>
+                                                                                                {{ $option }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                                                                    </select>
                                                                                 </div>
                                                                             @endforeach
                                                                         </div>
                                                                     @endif
                                                                 </div>
-
+                                                
                                                                 <div class="modal-footer">
-                                                                    <button type="submit"
-                                                                        class="btn btn-primary fw-semibold px-4">
+                                                                    <button type="submit" class="btn btn-primary fw-semibold px-4">
                                                                         <i class="bi bi-save2 me-1"></i> Simpan Semua
                                                                     </button>
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-secondary fw-semibold px-4"
-                                                                        data-bs-dismiss="modal">Batal</button>
+                                                                    <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                                                                            data-bs-dismiss="modal">Batal</button>
                                                                 </div>
                                                             </div>
                                                         </form>
                                                     </div>
                                                 </div>
-
-
+                                                
                                                 <script>
                                                     const modalId = 'inspectionModal{{ $form['ID'] }}';
                                                     const modalElement = document.getElementById(modalId);
-
-                                                    modalElement.addEventListener('shown.bs.modal', function() {
-                                                        modalElement.querySelectorAll('select[name^="actions"]').forEach(select => {
-                                                            select.addEventListener('change', function() {
-                                                                this.classList.remove(
-                                                                    'bg-secondary', 'bg-warning', 'bg-danger',
-                                                                    'bg-info', 'bg-success', 'text-white', 'text-dark'
-                                                                );
-                                                                switch (this.value) {
-                                                                    case 'CHECK':
-                                                                        this.classList.add('bg-secondary', 'text-white');
-                                                                        break;
-                                                                    case 'INSTALL':
-                                                                        this.classList.add('bg-warning', 'text-dark');
-                                                                        break;
-                                                                    case 'REPLACE':
-                                                                        this.classList.add('bg-danger', 'text-white');
-                                                                        break;
-                                                                    case 'MONITORING':
-                                                                        this.classList.add('bg-info', 'text-dark');
-                                                                        break;
-                                                                    case 'REPAIR':
-                                                                        this.classList.add('bg-success', 'text-white');
-                                                                        break;
-                                                                }
+                                                
+                                                    function applySelectColors(select) {
+                                                        select.classList.remove(
+                                                            'bg-secondary', 'bg-warning', 'bg-danger',
+                                                            'bg-info', 'bg-success', 'text-white', 'text-dark'
+                                                        );
+                                                        switch (select.value) {
+                                                            case 'CHECK':
+                                                                select.classList.add('bg-secondary', 'text-white');
+                                                                break;
+                                                            case 'INSTALL':
+                                                                select.classList.add('bg-warning', 'text-dark');
+                                                                break;
+                                                            case 'REPLACE':
+                                                                select.classList.add('bg-danger', 'text-white');
+                                                                break;
+                                                            case 'MONITORING':
+                                                                select.classList.add('bg-info', 'text-dark');
+                                                                break;
+                                                            case 'REPAIR':
+                                                                select.classList.add('bg-success', 'text-white');
+                                                                break;
+                                                        }
+                                                    }
+                                                
+                                                    modalElement.addEventListener('shown.bs.modal', function () {
+                                                        const selects = modalElement.querySelectorAll('select[name^="actions"]');
+                                                        selects.forEach(select => {
+                                                            applySelectColors(select); // Apply colors on modal open
+                                                            select.addEventListener('change', function () {
+                                                                applySelectColors(this); // Update colors on change
                                                             });
                                                         });
                                                     });
                                                 </script>
-
+                                                
+                                                
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -484,7 +472,7 @@
                                     <table class="table table-bordered table-striped align-middle">
                                         <tbody>
                                             @foreach ($form as $key => $value)
-                                                @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status')
+                                                @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status' && !in_array($key, $componentKeys))
                                                     <tr>
                                                         <th class="w-40 bg-light p-3">{{ $key }}</th>
                                                         <td class="p-3">
@@ -651,60 +639,47 @@
 
 {{-- Bagian C. Sub Component --}}
 <h6 class="mb-3">C. Sub Component</h6>
-<div class="table-responsive mb-4">
-    <table class="table table-bordered table-striped align-middle">
+<div class="table-responsive mb-4" style="font-size: 0.875rem;">
+    <table class="table table-bordered table-striped align-middle mb-0">
         <tbody>
             @foreach ($componentKeys as $key)
-                @if (isset($form[$key]))
+                @if (isset($form[$key]) && $form[$key] !== '')
+                    @php
+                        $jsonData = json_decode($form[$key], true);
+                        $isJson = is_array($jsonData);
+                    @endphp
                     <tr>
                         <th class="w-40 bg-light p-3">{{ $key }}</th>
                         <td class="p-3">
-                            @php
-                                $jsonData = json_decode($form[$key], true);
-                                $isJson = is_array($jsonData);
-                            @endphp
-
-                            @if ($isJson)
-                                <table class="table table-bordered mb-0" style="font-size: 0.9rem;">
-                                    <tbody>
-                                        @foreach ($jsonData as $jsonKey => $jsonValue)
-                                            <tr>
-                                                <th class="bg-light" style="width: 35%;">{{ ucfirst($jsonKey) }}</th>
-                                                <td>
-                                                    @if (strtolower($jsonKey) === 'statuscase')
-                                                        <span class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
-                                                            {{ ucfirst($jsonValue) }}
-                                                        </span>
-                                                    @elseif (strtolower($jsonKey) === 'action')
-                                                        <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
-                                                    @else
-                                                        {{ $jsonValue }}
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                            @if ($isJson && count($jsonData) > 0)
+                                @foreach ($jsonData as $temuan)
+                                    <table class="table table-bordered mb-3" style="font-size: 0.85rem;">
+                                        <tbody>
+                                            @foreach ($temuan as $label => $value)
+                                                <tr>
+                                                    <th class="bg-light" style="width: 30%;">
+                                                        {{ ucfirst($label) }}
+                                                    </th>
+                                                    <td>
+                                                        @if (strtolower($label) === 'statuscase')
+                                                            <span class="badge bg-{{ $value == 'open' ? 'danger' : 'success' }}">
+                                                                {{ ucfirst($value) }}
+                                                            </span>
+                                                        @elseif (strtolower($label) === 'action')
+                                                            <span class="badge bg-info text-dark">
+                                                                {{ $value }}
+                                                            </span>
+                                                        @else
+                                                            {{ $value }}
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @endforeach
                             @else
-                                @php
-                                    $links = preg_split('/[\s,]+/', $form[$key]);
-                                    $isAllLinks = collect($links)->every(function ($link) {
-                                        return filter_var($link, FILTER_VALIDATE_URL);
-                                    });
-                                @endphp
-                                @if ($isAllLinks && count($links) > 0)
-                                    @foreach ($links as $i => $link)
-                                        <div class="mb-1">
-                                            <a href="{{ $link }}" target="_blank"
-                                               class="text-primary text-decoration-none fw-semibold">
-                                                <i class="fas fa-link me-1"></i> Buka Eviden
-                                                {{ count($links) > 1 ? $i + 1 : '' }}
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    {{ $form[$key] }}
-                                @endif
+                                <span class="text-muted">-</span>
                             @endif
                         </td>
                     </tr>
@@ -713,6 +688,9 @@
         </tbody>
     </table>
 </div>
+
+
+
 
 
                             </div>
@@ -725,138 +703,153 @@
                         </div>
                     </div>
                 </div>
-                <!-- Modal Update Status Case -->
-                <div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
-                    aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-xl">
+               <!-- Modal Update Status Case -->
+<div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
+aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-xl">
+    <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="modal-content shadow-sm border-0 rounded-4">
+            <div class="modal-header bg-warning text-dark rounded-top-4">
+                <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
+                    Edit Status Case - ID: {{ $form['ID'] }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
 
-                        <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-content shadow-sm border-0 rounded-4">
-                                <div class="modal-header bg-warning text-dark rounded-top-4">
-                                    <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
-                                        Edit Status Case - ID: {{ $form['ID'] }}
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
+            <div class="modal-body">
+                @php
+                    $caseData = collect($form)->filter(function ($val, $key) {
+                        return is_string($val) && strpos($val, '"statusCase"') !== false;
+                    });
 
-                                <div class="modal-body">
+                    $groupedKeys = [
+                        'A. Check Level Lubricant Coolant' => [
+                            'Engine Oil level',
+                            'Radiator Coolant Level',
+                            'Final Drive Oil Level',
+                            'Differential Oil Level',
+                            'Transmission & Steering Oil Level',
+                            'Hydraulic Oil Level',
+                            'Fuel Level',
+                            'PTO Oil',
+                            'Brake Oil',
+                            'Compressor Oil Level',
+                        ],
+                        'B. Check Job Condition After Repair' => [
+                            'Check Leaking',
+                            'Check tighting Bolt',
+                            'Check Abnormal Noise',
+                            'Check Abnormal Temperature',
+                            'Check Abnormal Smoke/Smell',
+                            'Check Abnormal Vibration',
+                            'Check Abnormal Bending/Crack',
+                            'Check Abnormal Tention',
+                            'Check Abnormal Pressure',
+                            'Check Error Vault Code',
+                        ],
+                        'C. Sub Component' => [
+                            'AC SYSTEM',
+                            'BRAKE SYSTEM',
+                            'DIFFERENTIAL & FINAL DRAVE',
+                            'ELECTRICAL SYSTEM',
+                            'ENGINE',
+                            'GENERAL ( ACCESSORIES, CABIN, ETC )',
+                            'HYDRAULIC SYSTEM',
+                            'IT SYSTEM',
+                            'MAIN FRAME / CHASSIS / VASSEL',
+                            'PERIODICAL SERVICE',
+                            'PNEUMATIC SYSTEM',
+                            'PREEICTIVE MAINTENANCE',
+                            'PREVENTIF MAINTENANCE',
+                            'PROBLEM SDT',
+                            'PROBLEM TYRE SDT',
+                            'STEERING SYSTEM',
+                            'TRANSMISSION SYSTEM',
+                            'TYRE',
+                            'UNDERGRADUATE',
+                            'WORK EQUIPMENT',
+                        ],
+                    ];
+                @endphp
+
+                @foreach ($groupedKeys as $groupTitle => $keys)
+                    <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
+                    <div class="row">
+                        @foreach ($keys as $key)
+                            @if ($groupTitle === 'C. Sub Component')
+                                @if (!empty($form[$key]) && is_string($form[$key]) && substr(trim($form[$key]), 0, 1) === '[')
                                     @php
-                                        $caseData = collect($form)->filter(function ($val, $key) {
-                                            return is_string($val) && strpos($val, '"statusCase"') !== false;
-                                        });
-
-                                        $groupedKeys = [
-                                            'A. Check Level Lubricant Coolant' => [
-                                                'Engine Oil level',
-                                                'Radiator Coolant Level',
-                                                'Final Drive Oil Level',
-                                                'Differential Oil Level',
-                                                'Transmission & Steering Oil Level',
-                                                'Hydraulic Oil Level',
-                                                'Fuel Level',
-                                                'PTO Oil',
-                                                'Brake Oil',
-                                                'Compressor Oil Level',
-                                            ],
-                                            'B. Check Job Condition After Repair' => [
-                                                'Check Leaking',
-                                                'Check tighting Bolt',
-                                                'Check Abnormal Noise',
-                                                'Check Abnormal Temperature',
-                                                'Check Abnormal Smoke/Smell',
-                                                'Check Abnormal Vibration',
-                                                'Check Abnormal Bending/Crack',
-                                                'Check Abnormal Tention',
-                                                'Check Abnormal Pressure',
-                                                'Check Error Vault Code',
-                                            ],
-                                            'C. Sub Component' => [
-                                                'AC SYSTEM',
-                                                'BRAKE SYSTEM',
-                                                'DIFFERENTIAL & FINAL DRAVE',
-                                                'ELECTRICAL SYSTEM',
-                                                'ENGINE',
-                                                'GENERAL ( ACCESSORIES, CABIN, ETC )',
-                                                'HYDRAULIC SYSTEM',
-                                                'IT SYSTEM',
-                                                'MAIN FRAME / CHASSIS / VASSEL',
-                                                'PERIODICAL SERVICE',
-                                                'PNEUMATIC SYSTEM',
-                                                'PREEICTIVE MAINTENANCE',
-                                                'PREVENTIF MAINTENANCE',
-                                                'PROBLEM SDT',
-                                                'PROBLEM TYRE SDT',
-                                                'STEERING SYSTEM',
-                                                'TRANSMISSION SYSTEM',
-                                                'TYRE',
-                                                'UNDERGRADUATE',
-                                                'WORK EQUIPMENT',
-                                            ],
-                                        ];
+                                        $jsonData = json_decode($form[$key], true);
                                     @endphp
-
-
-                                    @foreach ($groupedKeys as $groupTitle => $keys)
-                                        <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
-                                        <div class="row">
-                                            @foreach ($keys as $key)
-    @if (isset($caseData[$key]))
-        @php
-            $data = json_decode($caseData[$key], true);
-            $status = $data['statusCase'] ?? 'open';
-            $bgClass = $status === 'close' ? 'bg-danger text-white' : 'bg-primary text-white';
-        @endphp
-        <div class="col-md-3 mb-3">
-            <label class="form-label fw-semibold text-truncate d-block" title="{{ $key }}">{{ $key }}</label>
-            <input type="hidden" name="keys[]" value="{{ $key }}">
-            <select name="statuses[{{ $key }}]" class="form-select status-select {{ $bgClass }}" required>
-                <option value="open" {{ $status === 'open' ? 'selected' : '' }}>OPEN</option>
-                <option value="close" {{ $status === 'close' ? 'selected' : '' }}>CLOSE</option>
-            </select>
-        </div>
-    @endif
-@endforeach
-
-                                        </div>
-                                    @endforeach
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const selects = document.querySelectorAll('.status-select');
-                                    
-                                            selects.forEach(select => {
-                                                select.addEventListener('change', function () {
-                                                    // Hapus semua class warna dulu
-                                                    this.classList.remove('bg-danger', 'bg-primary', 'text-white');
-                                    
-                                                    // Tambahkan class sesuai value terpilih
-                                                    if (this.value === 'close') {
-                                                        this.classList.add('bg-danger', 'text-white');
-                                                    } else if (this.value === 'open') {
-                                                        this.classList.add('bg-primary', 'text-white');
-                                                    }
-                                                });
-                                            });
-                                        });
-                                    </script>
-                                    
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-warning fw-semibold px-4">
-                                        <i class="bi bi-save2 me-1"></i> Simpan
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
-                                        data-bs-dismiss="modal">
-                                        Batal
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                                    @if (is_array($jsonData))
+                                        @foreach ($jsonData as $idx => $item)
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">{{ $key }} - {{ $item['temuan'] ?? '' }}</label>
+                                                <select name="actions[{{ $key }}_{{ $idx }}]" class="form-select">
+                                                    @foreach (['CHECK', 'INSTALL', 'REPLACE', 'MONITORING', 'REPAIR'] as $action)
+                                                        <option value="{{ $action }}" {{ (isset($item['action']) && $item['action'] == $action) ? 'selected' : '' }}>
+                                                            {{ $action }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                @endif
+                            @else
+                                @if (isset($form[$key]) && is_string($form[$key]) && strpos($form[$key], '"action"') !== false)
+                                    @php
+                                        $jsonData = json_decode($form[$key], true);
+                                    @endphp
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">{{ $key }}</label>
+                                        <select name="actions[{{ $key }}]" class="form-select">
+                                            @foreach (['CHECK', 'INSTALL', 'REPLACE', 'MONITORING', 'REPAIR'] as $action)
+                                                <option value="{{ $action }}" {{ (isset($jsonData['action']) && $jsonData['action'] == $action) ? 'selected' : '' }}>
+                                                    {{ $action }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+                            @endif
+                        @endforeach
                     </div>
-                </div>
+                @endforeach
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const selects = document.querySelectorAll('.status-select');
+                        selects.forEach(select => {
+                            select.addEventListener('change', function () {
+                                this.classList.remove('bg-danger', 'bg-primary', 'text-white');
+                                if (this.value === 'close') {
+                                    this.classList.add('bg-danger', 'text-white');
+                                } else if (this.value === 'open') {
+                                    this.classList.add('bg-primary', 'text-white');
+                                }
+                            });
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning fw-semibold px-4">
+                    <i class="bi bi-save2 me-1"></i> Simpan
+                </button>
+                <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                    data-bs-dismiss="modal">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
             @endforeach
         @else
             <div class="row">

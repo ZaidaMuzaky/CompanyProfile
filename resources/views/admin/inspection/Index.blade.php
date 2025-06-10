@@ -218,17 +218,17 @@
             $allInspectionKeys = array_merge($lubricantKeys, $afterRepairKeys, $componentKeys);
         @endphp
 
-            <div class="modal fade" id="detailModal{{ $form['ID'] }}" tabindex="-1"
-                aria-labelledby="detailModalLabel{{ $form['ID'] }}" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content border-0 shadow-lg rounded-3">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title fw-semibold" id="detailModalLabel{{ $form['ID'] }}">
-                                Detail Formulir Inspeksi
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
+        <div class="modal fade" id="detailModal{{ $form['ID'] }}" tabindex="-1"
+            aria-labelledby="detailModalLabel{{ $form['ID'] }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content border-0 shadow-lg rounded-3">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title fw-semibold" id="detailModalLabel{{ $form['ID'] }}">
+                            Detail Formulir Inspeksi
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
                     <div class="modal-body p-4">
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
@@ -248,7 +248,7 @@
                             <table class="table table-bordered table-striped align-middle">
                                 <tbody>
                                     @foreach ($form as $key => $value)
-                                        @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status')
+                                        @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status' && !in_array($key, $componentKeys))
                                             <tr>
                                                 <th class="w-40 bg-light p-3">{{ $key }}</th>
                                                 <td class="p-3">
@@ -280,220 +280,193 @@
                         </div>
                         {{-- Bagian A. Check Level Lubricant Coolant --}}
                         <h6 class="mb-3">A. Check Level Lubricant Coolant</h6>
-                        <div class="table-responsive mb-4">
-                            <table class="table table-bordered table-striped align-middle">
-                                <tbody>
-                                    @foreach ($lubricantKeys as $key)
-                                        @if (isset($form[$key]))
-                                            <tr>
-                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
-                                                <td class="p-3">
-                                                    @php
-                                                        // Decode JSON string jika ada
-                                                        $jsonData = json_decode($form[$key], true);
+<div class="table-responsive mb-4">
+<table class="table table-bordered table-striped align-middle">
+<tbody>
+    @foreach ($lubricantKeys as $key)
+        @if (isset($form[$key]))
+            <tr>
+                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                <td class="p-3">
+                    @php
+                        // Decode JSON string jika ada
+                        $jsonData = json_decode($form[$key], true);
 
-                                                        // Cek apakah jsonData adalah array hasil decode JSON valid
-                                                        $isJson = is_array($jsonData);
-                                                    @endphp
+                        // Cek apakah jsonData adalah array hasil decode JSON valid
+                        $isJson = is_array($jsonData);
+                    @endphp
 
-                                                    @if ($isJson)
-                                                        <table class="table table-bordered mb-0"
-                                                            style="font-size: 0.9rem;">
-                                                            <tbody>
-                                                                @foreach ($jsonData as $jsonKey => $jsonValue)
-                                                                    <tr>
-                                                                        <th class="bg-light" style="width: 35%;">
-                                                                            {{ ucfirst($jsonKey) }}</th>
-                                                                        <td>
-                                                                            @if (strtolower($jsonKey) === 'statuscase')
-                                                                                <span
-                                                                                    class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
-                                                                                    {{ ucfirst($jsonValue) }}
-                                                                                </span>
-                                                                                @elseif (strtolower($jsonKey) === 'action')
-                                                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
-                                                                            @else
-                                                                                {{ $jsonValue }}
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    @else
-                                                        @php
-                                                            // Jika bukan JSON, cek apakah berupa link dan tampilkan link
-                                                            $links = preg_split('/[\s,]+/', $form[$key]);
-                                                            $isAllLinks = collect($links)->every(function (
-                                                                $link
-                                                            ) {
-                                                                return filter_var($link, FILTER_VALIDATE_URL);
-                                                            });
-                                                        @endphp
-                                                        @if ($isAllLinks && count($links) > 0)
-                                                            @foreach ($links as $i => $link)
-                                                                <div class="mb-1">
-                                                                    <a href="{{ $link }}" target="_blank"
-                                                                        class="text-primary text-decoration-none fw-semibold">
-                                                                        <i class="fas fa-link me-1"></i> Buka Eviden
-                                                                        {{ count($links) > 1 ? $i + 1 : '' }}
-                                                                    </a>
-                                                                </div>
-                                                            @endforeach
-                                                        @else
-                                                            {{ $form[$key] }}
-                                                        @endif
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    @if ($isJson)
+                        <table class="table table-bordered mb-0" style="font-size: 0.9rem;">
+                            <tbody>
+                                @foreach ($jsonData as $jsonKey => $jsonValue)
+                                    <tr>
+                                        <th class="bg-light" style="width: 35%;">{{ ucfirst($jsonKey) }}</th>
+                                        <td>
+                                            @if (strtolower($jsonKey) === 'statuscase')
+                                                <span class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
+                                                    {{ ucfirst($jsonValue) }}
+                                                </span>
+                                            @elseif (strtolower($jsonKey) === 'action')
+                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
+                                            @else
+                                                {{ $jsonValue }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        @php
+                            // Jika bukan JSON, cek apakah berupa link dan tampilkan link
+                            $links = preg_split('/[\s,]+/', $form[$key]);
+                            $isAllLinks = collect($links)->every(function ($link) {
+                                return filter_var($link, FILTER_VALIDATE_URL);
+                            });
+                        @endphp
+                        @if ($isAllLinks && count($links) > 0)
+                            @foreach ($links as $i => $link)
+                                <div class="mb-1">
+                                    <a href="{{ $link }}" target="_blank"
+                                        class="text-primary text-decoration-none fw-semibold">
+                                        <i class="fas fa-link me-1"></i> Buka Eviden
+                                        {{ count($links) > 1 ? $i + 1 : '' }}
+                                    </a>
+                                </div>
+                            @endforeach
+                        @else
+                            {{ $form[$key] }}
+                        @endif
+                    @endif
+                </td>
+            </tr>
+        @endif
+    @endforeach
+</tbody>
+</table>
+</div>
 
 
                         {{-- Bagian B. Check Job Condition After Repair --}}
-                        <h6 class="mb-3">B. Check Job Condition After Repair</h6>
-                        <div class="table-responsive mb-4">
-                            <table class="table table-bordered table-striped align-middle">
-                                <tbody>
-                                    @foreach ($afterRepairKeys as $key)
-                                        @if (isset($form[$key]))
-                                            <tr>
-                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
-                                                <td class="p-3">
-                                                    @php
-                                                        $jsonData = json_decode($form[$key], true);
-                                                        $isJson = is_array($jsonData);
-                                                    @endphp
+<h6 class="mb-3">B. Check Job Condition After Repair</h6>
+<div class="table-responsive mb-4">
+<table class="table table-bordered table-striped align-middle">
+<tbody>
+    @foreach ($afterRepairKeys as $key)
+        @if (isset($form[$key]))
+            <tr>
+                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                <td class="p-3">
+                    @php
+                        $jsonData = json_decode($form[$key], true);
+                        $isJson = is_array($jsonData);
+                    @endphp
 
-                                                    @if ($isJson)
-                                                        <table class="table table-bordered mb-0"
-                                                            style="font-size: 0.9rem;">
-                                                            <tbody>
-                                                                @foreach ($jsonData as $jsonKey => $jsonValue)
-                                                                    <tr>
-                                                                        <th class="bg-light" style="width: 35%;">
-                                                                            {{ ucfirst($jsonKey) }}</th>
-                                                                        <td>
-                                                                            @if (strtolower($jsonKey) === 'statuscase')
-                                                                                <span
-                                                                                    class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
-                                                                                    {{ ucfirst($jsonValue) }}
-                                                                                </span>
-                                                                                @elseif (strtolower($jsonKey) === 'action')
-                                                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
-                                                                            @else
-                                                                                {{ $jsonValue }}
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    @else
-                                                            @php
-                                                            $links = preg_split('/[\s,]+/', $form[$key]);
-                                                            $isAllLinks = collect($links)->every(function ($link) {
-                                                                return filter_var($link, FILTER_VALIDATE_URL);
-                                                            });
-                                                        @endphp
-                                                        {{-- Jika bukan JSON, cek apakah berupa link --}}
-                                                
-                                                        @if ($isAllLinks && count($links) > 0)
-                                                            @foreach ($links as $i => $link)
-                                                                <div class="mb-1">
-                                                                    <a href="{{ $link }}" target="_blank"
-                                                                        class="text-primary text-decoration-none fw-semibold">
-                                                                        <i class="fas fa-link me-1"></i> Buka
-                                                                        Eviden
-                                                                        {{ count($links) > 1 ? $i + 1 : '' }}
-                                                                    </a>
-                                                                </div>
-                                                            @endforeach
-                                                        @else
-                                                            {{ $form[$key] }}
-                                                        @endif
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endif
+                    @if ($isJson)
+                        <table class="table table-bordered mb-0" style="font-size: 0.9rem;">
+                            <tbody>
+                                @foreach ($jsonData as $jsonKey => $jsonValue)
+                                    <tr>
+                                        <th class="bg-light" style="width: 35%;">{{ ucfirst($jsonKey) }}</th>
+                                        <td>
+                                            @if (strtolower($jsonKey) === 'statuscase')
+                                                <span class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
+                                                    {{ ucfirst($jsonValue) }}
+                                                </span>
+                                            @elseif (strtolower($jsonKey) === 'action')
+                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
+                                            @else
+                                                {{ $jsonValue }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        @php
+                            $links = preg_split('/[\s,]+/', $form[$key]);
+                            $isAllLinks = collect($links)->every(function ($link) {
+                                return filter_var($link, FILTER_VALIDATE_URL);
+                            });
+                        @endphp
+                        @if ($isAllLinks && count($links) > 0)
+                            @foreach ($links as $i => $link)
+                                <div class="mb-1">
+                                    <a href="{{ $link }}" target="_blank"
+                                       class="text-primary text-decoration-none fw-semibold">
+                                        <i class="fas fa-link me-1"></i> Buka Eviden
+                                        {{ count($links) > 1 ? $i + 1 : '' }}
+                                    </a>
+                                </div>
+                            @endforeach
+                        @else
+                            {{ $form[$key] }}
+                        @endif
+                    @endif
+                </td>
+            </tr>
+        @endif
+    @endforeach
+</tbody>
+</table>
+</div>
+
+{{-- Bagian C. Sub Component --}}
+<h6 class="mb-3">C. Sub Component</h6>
+<div class="table-responsive mb-4" style="font-size: 0.875rem;">
+<table class="table table-bordered table-striped align-middle mb-0">
+<tbody>
+    @foreach ($componentKeys as $key)
+        @if (isset($form[$key]) && $form[$key] !== '')
+            @php
+                $jsonData = json_decode($form[$key], true);
+                $isJson = is_array($jsonData);
+            @endphp
+            <tr>
+                <th class="w-40 bg-light p-3">{{ $key }}</th>
+                <td class="p-3">
+                    @if ($isJson && count($jsonData) > 0)
+                        @foreach ($jsonData as $temuan)
+                            <table class="table table-bordered mb-3" style="font-size: 0.85rem;">
+                                <tbody>
+                                    @foreach ($temuan as $label => $value)
+                                        <tr>
+                                            <th class="bg-light" style="width: 30%;">
+                                                {{ ucfirst($label) }}
+                                            </th>
+                                            <td>
+                                                @if (strtolower($label) === 'statuscase')
+                                                    <span class="badge bg-{{ $value == 'open' ? 'danger' : 'success' }}">
+                                                        {{ ucfirst($value) }}
+                                                    </span>
+                                                @elseif (strtolower($label) === 'action')
+                                                    <span class="badge bg-info text-dark">
+                                                        {{ $value }}
+                                                    </span>
+                                                @else
+                                                    {{ $value }}
+                                                @endif
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
+                        @endforeach
+                    @else
+                        <span class="text-muted">-</span>
+                    @endif
+                </td>
+            </tr>
+        @endif
+    @endforeach
+</tbody>
+</table>
+</div>
 
-                        {{-- Bagian C. Sub Component --}}
-                        <h6 class="mb-3">C. Sub Component</h6>
-                        <div class="table-responsive mb-4">
-                            <table class="table table-bordered table-striped align-middle">
-                                <tbody>
-                                    @foreach ($componentKeys as $key)
-                                        @if (isset($form[$key]))
-                                            <tr>
-                                                <th class="w-40 bg-light p-3">{{ $key }}</th>
-                                                <td class="p-3">
-                                                    @php
-                                                        $jsonData = json_decode($form[$key], true);
-                                                        $isJson = is_array($jsonData);
-                                                    @endphp
 
-                                                    @if ($isJson)
-                                                        <table class="table table-bordered mb-0"
-                                                            style="font-size: 0.9rem;">
-                                                            <tbody>
-                                                                @foreach ($jsonData as $jsonKey => $jsonValue)
-                                                                    <tr>
-                                                                        <th class="bg-light" style="width: 35%;">
-                                                                            {{ ucfirst($jsonKey) }}</th>
-                                                                        <td>
-                                                                            @if (strtolower($jsonKey) === 'statuscase')
-                                                                                <span
-                                                                                    class="badge bg-{{ $jsonValue == 'open' ? 'danger' : 'success' }}">
-                                                                                    {{ ucfirst($jsonValue) }}
-                                                                                </span>
-                                                                                @elseif (strtolower($jsonKey) === 'action')
-                                                                                <span class="badge bg-info text-dark">{{ $jsonValue }}</span>
-                                                                            @else
-                                                                                {{ $jsonValue }}
-                                                                            @endif
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    @else
-                                                        @php
-                                                            $links = preg_split('/[\s,]+/', $form[$key]);
-                                                            $isAllLinks = collect($links)->every(function (
-                                                                $link
-                                                            ) {
-                                                                return filter_var($link, FILTER_VALIDATE_URL);
-                                                            });
-                                                        @endphp
-                                                        @if ($isAllLinks && count($links) > 0)
-                                                            @foreach ($links as $i => $link)
-                                                                <div class="mb-1">
-                                                                    <a href="{{ $link }}" target="_blank"
-                                                                        class="text-primary text-decoration-none fw-semibold">
-                                                                        <i class="fas fa-link me-1"></i> Buka
-                                                                        Eviden
-                                                                        {{ count($links) > 1 ? $i + 1 : '' }}
-                                                                    </a>
-                                                                </div>
-                                                            @endforeach
-                                                        @else
-                                                            {{ $form[$key] }}
-                                                        @endif
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+
 
 
                     </div>
@@ -574,136 +547,139 @@
             </div>
             <!-- Modal Update Status Case -->
             <div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
-                    aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-xl">
-
-                        <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-content shadow-sm border-0 rounded-4">
-                                <div class="modal-header bg-warning text-dark rounded-top-4">
-                                    <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
-                                        Edit Status Case - ID: {{ $form['ID'] }}
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-
-                                <div class="modal-body">
-                                    @php
-                                        $caseData = collect($form)->filter(function ($val, $key) {
-                                            return is_string($val) && strpos($val, '"statusCase"') !== false;
-                                        });
-
-                                        $groupedKeys = [
-                                            'A. Check Level Lubricant Coolant' => [
-                                                'Engine Oil level',
-                                                'Radiator Coolant Level',
-                                                'Final Drive Oil Level',
-                                                'Differential Oil Level',
-                                                'Transmission & Steering Oil Level',
-                                                'Hydraulic Oil Level',
-                                                'Fuel Level',
-                                                'PTO Oil',
-                                                'Brake Oil',
-                                                'Compressor Oil Level',
-                                            ],
-                                            'B. Check Job Condition After Repair' => [
-                                                'Check Leaking',
-                                                'Check tighting Bolt',
-                                                'Check Abnormal Noise',
-                                                'Check Abnormal Temperature',
-                                                'Check Abnormal Smoke/Smell',
-                                                'Check Abnormal Vibration',
-                                                'Check Abnormal Bending/Crack',
-                                                'Check Abnormal Tention',
-                                                'Check Abnormal Pressure',
-                                                'Check Error Vault Code',
-                                            ],
-                                            'C. Sub Component' => [
-                                                'AC SYSTEM',
-                                                'BRAKE SYSTEM',
-                                                'DIFFERENTIAL & FINAL DRAVE',
-                                                'ELECTRICAL SYSTEM',
-                                                'ENGINE',
-                                                'GENERAL ( ACCESSORIES, CABIN, ETC )',
-                                                'HYDRAULIC SYSTEM',
-                                                'IT SYSTEM',
-                                                'MAIN FRAME / CHASSIS / VASSEL',
-                                                'PERIODICAL SERVICE',
-                                                'PNEUMATIC SYSTEM',
-                                                'PREEICTIVE MAINTENANCE',
-                                                'PREVENTIF MAINTENANCE',
-                                                'PROBLEM SDT',
-                                                'PROBLEM TYRE SDT',
-                                                'STEERING SYSTEM',
-                                                'TRANSMISSION SYSTEM',
-                                                'TYRE',
-                                                'UNDERGRADUATE',
-                                                'WORK EQUIPMENT',
-                                            ],
-                                        ];
-                                    @endphp
-
-
-                                    @foreach ($groupedKeys as $groupTitle => $keys)
-                                        <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
-                                        <div class="row">
-                                            @foreach ($keys as $key)
-                                                @if (isset($caseData[$key]))
-                                                    @php
-                                                        $data = json_decode($caseData[$key], true);
-                                                        $status = $data['statusCase'] ?? 'open';
-                                                        $bgClass = $status === 'close' ? 'bg-danger text-white' : 'bg-primary text-white';
-                                                    @endphp
-                                                    <div class="col-md-3 mb-3">
-                                                        <label class="form-label fw-semibold text-truncate d-block" title="{{ $key }}">{{ $key }}</label>
-                                                        <input type="hidden" name="keys[]" value="{{ $key }}">
-                                                        <select name="statuses[{{ $key }}]" class="form-select status-select {{ $bgClass }}" required>
-                                                            <option value="open" {{ $status === 'open' ? 'selected' : '' }}>OPEN</option>
-                                                            <option value="close" {{ $status === 'close' ? 'selected' : '' }}>CLOSE</option>
-                                                        </select>
-                                                    </div>
-                                                @endif
+            aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+                <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-content shadow-sm border-0 rounded-4">
+                        <div class="modal-header bg-warning text-dark rounded-top-4">
+                            <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
+                                Edit Status Case - ID: {{ $form['ID'] }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+            
+                        <div class="modal-body">
+                            @php
+                                $caseData = collect($form)->filter(function ($val, $key) {
+                                    return is_string($val) && strpos($val, '"statusCase"') !== false;
+                                });
+            
+                                $groupedKeys = [
+                                    'A. Check Level Lubricant Coolant' => [
+                                        'Engine Oil level',
+                                        'Radiator Coolant Level',
+                                        'Final Drive Oil Level',
+                                        'Differential Oil Level',
+                                        'Transmission & Steering Oil Level',
+                                        'Hydraulic Oil Level',
+                                        'Fuel Level',
+                                        'PTO Oil',
+                                        'Brake Oil',
+                                        'Compressor Oil Level',
+                                    ],
+                                    'B. Check Job Condition After Repair' => [
+                                        'Check Leaking',
+                                        'Check tighting Bolt',
+                                        'Check Abnormal Noise',
+                                        'Check Abnormal Temperature',
+                                        'Check Abnormal Smoke/Smell',
+                                        'Check Abnormal Vibration',
+                                        'Check Abnormal Bending/Crack',
+                                        'Check Abnormal Tention',
+                                        'Check Abnormal Pressure',
+                                        'Check Error Vault Code',
+                                    ],
+                                    'C. Sub Component' => [
+                                        'AC SYSTEM',
+                                        'BRAKE SYSTEM',
+                                        'DIFFERENTIAL & FINAL DRAVE',
+                                        'ELECTRICAL SYSTEM',
+                                        'ENGINE',
+                                        'GENERAL ( ACCESSORIES, CABIN, ETC )',
+                                        'HYDRAULIC SYSTEM',
+                                        'IT SYSTEM',
+                                        'MAIN FRAME / CHASSIS / VASSEL',
+                                        'PERIODICAL SERVICE',
+                                        'PNEUMATIC SYSTEM',
+                                        'PREEICTIVE MAINTENANCE',
+                                        'PREVENTIF MAINTENANCE',
+                                        'PROBLEM SDT',
+                                        'PROBLEM TYRE SDT',
+                                        'STEERING SYSTEM',
+                                        'TRANSMISSION SYSTEM',
+                                        'TYRE',
+                                        'UNDERGRADUATE',
+                                        'WORK EQUIPMENT',
+                                    ],
+                                ];
+                            @endphp
+            
+                            @foreach ($groupedKeys as $groupTitle => $keys)
+                                <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
+                                <div class="row">
+                                    @foreach ($keys as $key)
+                                        @if (isset($caseData[$key]))
+                                            @php
+                                                $data = json_decode($caseData[$key], true);
+                                                // Check if data is an array of findings (Section C) or a single item (Sections A, B)
+                                                $isSectionC = $groupTitle === 'C. Sub Component';
+                                                $items = $isSectionC && is_array($data) && !isset($data['statusCase']) ? $data : [$data];
+                                            @endphp
+                                            @foreach ($items as $index => $item)
+                                                @php
+                                                    $status = $item['statusCase'] ?? 'open';
+                                                    $bgClass = $status === 'close' ? 'bg-danger text-white' : 'bg-primary text-white';
+                                                    // For Section C, create a unique name combining sub_component and temuan
+                                                    $displayName = $isSectionC ? "{$key}-" . ($item['temuan'] ?? 'Unknown') : $key;
+                                                    $inputName = $isSectionC ? "{$key}_{$index}" : $key;
+                                                @endphp
+                                                <div class="col-md-3 mb-3">
+                                                    <label class="form-label fw-semibold text-truncate d-block" title="{{ $displayName }}">{{ $displayName }}</label>
+                                                    <input type="hidden" name="keys[]" value="{{ $inputName }}">
+                                                    <select name="statuses[{{ $inputName }}]" class="form-select status-select {{ $bgClass }}" required>
+                                                        <option value="open" {{ $status === 'open' ? 'selected' : '' }}>OPEN</option>
+                                                        <option value="close" {{ $status === 'close' ? 'selected' : '' }}>CLOSE</option>
+                                                    </select>
+                                                </div>
                                             @endforeach
-
-                                        </div>
+                                        @endif
                                     @endforeach
-                                    <script>
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const selects = document.querySelectorAll('.status-select');
-                                    
-                                            selects.forEach(select => {
-                                                select.addEventListener('change', function () {
-                                                    // Hapus semua class warna dulu
-                                                    this.classList.remove('bg-danger', 'bg-primary', 'text-white');
-                                    
-                                                    // Tambahkan class sesuai value terpilih
-                                                    if (this.value === 'close') {
-                                                        this.classList.add('bg-danger', 'text-white');
-                                                    } else if (this.value === 'open') {
-                                                        this.classList.add('bg-primary', 'text-white');
-                                                    }
-                                                });
-                                            });
+                                </div>
+                            @endforeach
+            
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const selects = document.querySelectorAll('.status-select');
+                                    selects.forEach(select => {
+                                        select.addEventListener('change', function () {
+                                            this.classList.remove('bg-danger', 'bg-primary', 'text-white');
+                                            if (this.value === 'close') {
+                                                this.classList.add('bg-danger', 'text-white');
+                                            } else if (this.value === 'open') {
+                                                this.classList.add('bg-primary', 'text-white');
+                                            }
                                         });
-                                    </script>
-                                    
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-warning fw-semibold px-4">
-                                        <i class="bi bi-save2 me-1"></i> Simpan
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
-                                        data-bs-dismiss="modal">
-                                        Batal
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                                    });
+                                });
+                            </script>
+                        </div>
+            
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-warning fw-semibold px-4">
+                                <i class="bi bi-save2 me-1"></i> Simpan
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                                data-bs-dismiss="modal">
+                                Batal
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </form>
+            </div>
+            </div>
         @endforeach
     @endforeach
 
