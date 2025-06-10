@@ -50,7 +50,7 @@ class AdminApprovalController extends Controller
 
     private function groupBySupervisor($forms)
 {
-    $supervisors = ['Ari Handoko', 'Teo Hermansyah', 'Herri Setiawan', 'Budi Wahono'];
+    $supervisors = ['Ari Handoko', 'Teo Hermansyah', 'Herri Setiawan', 'Andrian'];
 
     $grouped = [];
     foreach ($supervisors as $supervisor) {

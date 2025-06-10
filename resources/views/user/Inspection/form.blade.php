@@ -148,7 +148,7 @@
                                         <option value="Ari Handoko">Ari Handoko</option>
                                         <option value="Teo Hermansyah">Teo Hermansyah</option>
                                         <option value="Herri Setiawan">Herri Setiawan</option>
-                                        <option value="Budi Wahono">Budi Wahono</option>
+                                        <option value="Andrian">Andrian</option>
                                     </select>
                                     @error('supervisor')
                                         <div class="invalid-feedback">{{ $message }}</div>

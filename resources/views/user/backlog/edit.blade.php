@@ -170,9 +170,8 @@
                                     {{ old('supervisor', $form['Supervisor']) == 'Herri Setiawan' ? 'selected' : '' }}>
                                     Herri
                                     Setiawan</option>
-                                <option value="Budi Wahono"
-                                    {{ old('supervisor', $form['Supervisor']) == 'Budi Wahono' ? 'selected' : '' }}>Budi
-                                    Wahono
+                                <option value="Andrian"
+                                    {{ old('supervisor', $form['Supervisor']) == 'Andrian' ? 'selected' : '' }}>Andrian
                                 </option>
 
                             </select>
