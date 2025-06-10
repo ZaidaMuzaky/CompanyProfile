@@ -137,19 +137,15 @@ class AdminInspectionController extends Controller
             for ($i = 1; $i < count($values); $i++) {
                 $row = $values[$i];
                 $data = array_combine($headers, array_pad($row, count($headers), ''));
-    
-                if (($data['Username'] ?? '') === (auth()->user()->username ?? '')) {
-                    $userForms[] = $data;
-                }
+                $userForms[] = $data; // Tidak lagi difilter berdasarkan Username
             }
         }
-
-        $supervisorForms = $this->groupBySupervisor($userForms);
-
     
-        return view('admin.inspection.index', compact('userForms', 'headers','supervisorForms'));
-
-}
+        $supervisorForms = $this->groupBySupervisor($userForms);
+    
+        return view('admin.inspection.index', compact('userForms', 'headers', 'supervisorForms'));
+    }
+    
 
     private function groupBySupervisor($forms)
     {
