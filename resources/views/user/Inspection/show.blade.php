@@ -704,152 +704,140 @@
                     </div>
                 </div>
                <!-- Modal Update Status Case -->
-<div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
-aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-xl">
-    <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
-        @csrf
-        @method('PUT')
-        <div class="modal-content shadow-sm border-0 rounded-4">
-            <div class="modal-header bg-warning text-dark rounded-top-4">
-                <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
-                    Edit Status Case - ID: {{ $form['ID'] }}
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-                @php
-                    $caseData = collect($form)->filter(function ($val, $key) {
-                        return is_string($val) && strpos($val, '"statusCase"') !== false;
-                    });
-
-                    $groupedKeys = [
-                        'A. Check Level Lubricant Coolant' => [
-                            'Engine Oil level',
-                            'Radiator Coolant Level',
-                            'Final Drive Oil Level',
-                            'Differential Oil Level',
-                            'Transmission & Steering Oil Level',
-                            'Hydraulic Oil Level',
-                            'Fuel Level',
-                            'PTO Oil',
-                            'Brake Oil',
-                            'Compressor Oil Level',
-                        ],
-                        'B. Check Job Condition After Repair' => [
-                            'Check Leaking',
-                            'Check tighting Bolt',
-                            'Check Abnormal Noise',
-                            'Check Abnormal Temperature',
-                            'Check Abnormal Smoke/Smell',
-                            'Check Abnormal Vibration',
-                            'Check Abnormal Bending/Crack',
-                            'Check Abnormal Tention',
-                            'Check Abnormal Pressure',
-                            'Check Error Vault Code',
-                        ],
-                        'C. Sub Component' => [
-                            'AC SYSTEM',
-                            'BRAKE SYSTEM',
-                            'DIFFERENTIAL & FINAL DRAVE',
-                            'ELECTRICAL SYSTEM',
-                            'ENGINE',
-                            'GENERAL ( ACCESSORIES, CABIN, ETC )',
-                            'HYDRAULIC SYSTEM',
-                            'IT SYSTEM',
-                            'MAIN FRAME / CHASSIS / VASSEL',
-                            'PERIODICAL SERVICE',
-                            'PNEUMATIC SYSTEM',
-                            'PREEICTIVE MAINTENANCE',
-                            'PREVENTIF MAINTENANCE',
-                            'PROBLEM SDT',
-                            'PROBLEM TYRE SDT',
-                            'STEERING SYSTEM',
-                            'TRANSMISSION SYSTEM',
-                            'TYRE',
-                            'UNDERGRADUATE',
-                            'WORK EQUIPMENT',
-                        ],
-                    ];
-                @endphp
-
-                @foreach ($groupedKeys as $groupTitle => $keys)
-                    <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
-                    <div class="row">
-                        @foreach ($keys as $key)
-                            @if ($groupTitle === 'C. Sub Component')
-                                @if (!empty($form[$key]) && is_string($form[$key]) && substr(trim($form[$key]), 0, 1) === '[')
-                                    @php
-                                        $jsonData = json_decode($form[$key], true);
-                                    @endphp
-                                    @if (is_array($jsonData))
-                                        @foreach ($jsonData as $idx => $item)
-                                            <div class="col-md-6 mb-3">
-                                                <label class="form-label">{{ $key }} - {{ $item['temuan'] ?? '' }}</label>
-                                                <select name="actions[{{ $key }}_{{ $idx }}]" class="form-select">
-                                                    @foreach (['CHECK', 'INSTALL', 'REPLACE', 'MONITORING', 'REPAIR'] as $action)
-                                                        <option value="{{ $action }}" {{ (isset($item['action']) && $item['action'] == $action) ? 'selected' : '' }}>
-                                                            {{ $action }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        @endforeach
-                                    @endif
-                                @endif
-                            @else
-                                @if (isset($form[$key]) && is_string($form[$key]) && strpos($form[$key], '"action"') !== false)
-                                    @php
-                                        $jsonData = json_decode($form[$key], true);
-                                    @endphp
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">{{ $key }}</label>
-                                        <select name="actions[{{ $key }}]" class="form-select">
-                                            @foreach (['CHECK', 'INSTALL', 'REPLACE', 'MONITORING', 'REPAIR'] as $action)
-                                                <option value="{{ $action }}" {{ (isset($jsonData['action']) && $jsonData['action'] == $action) ? 'selected' : '' }}>
-                                                    {{ $action }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                            @endif
-                        @endforeach
-                    </div>
-                @endforeach
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const selects = document.querySelectorAll('.status-select');
-                        selects.forEach(select => {
-                            select.addEventListener('change', function () {
-                                this.classList.remove('bg-danger', 'bg-primary', 'text-white');
-                                if (this.value === 'close') {
-                                    this.classList.add('bg-danger', 'text-white');
-                                } else if (this.value === 'open') {
-                                    this.classList.add('bg-primary', 'text-white');
-                                }
-                            });
-                        });
-                    });
-                </script>
-            </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-warning fw-semibold px-4">
-                    <i class="bi bi-save2 me-1"></i> Simpan
-                </button>
-                <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
-                    data-bs-dismiss="modal">
-                    Batal
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
-</div>
+               <div class="modal fade" id="caseModal{{ $form['ID'] }}" tabindex="-1"
+               aria-labelledby="caseModalLabel{{ $form['ID'] }}" aria-hidden="true">
+               <div class="modal-dialog modal-dialog-centered modal-xl">
+                   <form action="{{ route('user.inspection.updateCase', ['id' => $form['ID']]) }}" method="POST">
+                       @csrf
+                       @method('PUT')
+                       <div class="modal-content shadow-sm border-0 rounded-4">
+                           <div class="modal-header bg-warning text-dark rounded-top-4">
+                               <h5 class="modal-title fw-bold" id="caseModalLabel{{ $form['ID'] }}">
+                                   Edit Status Case - ID: {{ $form['ID'] }}
+                               </h5>
+                               <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                   aria-label="Close"></button>
+                           </div>
+               
+                           <div class="modal-body">
+                               @php
+                                   $caseData = collect($form)->filter(function ($val, $key) {
+                                       return is_string($val) && strpos($val, '"statusCase"') !== false;
+                                   });
+               
+                                   $groupedKeys = [
+                                       'A. Check Level Lubricant Coolant' => [
+                                           'Engine Oil level',
+                                           'Radiator Coolant Level',
+                                           'Final Drive Oil Level',
+                                           'Differential Oil Level',
+                                           'Transmission & Steering Oil Level',
+                                           'Hydraulic Oil Level',
+                                           'Fuel Level',
+                                           'PTO Oil',
+                                           'Brake Oil',
+                                           'Compressor Oil Level',
+                                       ],
+                                       'B. Check Job Condition After Repair' => [
+                                           'Check Leaking',
+                                           'Check tighting Bolt',
+                                           'Check Abnormal Noise',
+                                           'Check Abnormal Temperature',
+                                           'Check Abnormal Smoke/Smell',
+                                           'Check Abnormal Vibration',
+                                           'Check Abnormal Bending/Crack',
+                                           'Check Abnormal Tention',
+                                           'Check Abnormal Pressure',
+                                           'Check Error Vault Code',
+                                       ],
+                                       'C. Sub Component' => [
+                                           'AC SYSTEM',
+                                           'BRAKE SYSTEM',
+                                           'DIFFERENTIAL & FINAL DRAVE',
+                                           'ELECTRICAL SYSTEM',
+                                           'ENGINE',
+                                           'GENERAL ( ACCESSORIES, CABIN, ETC )',
+                                           'HYDRAULIC SYSTEM',
+                                           'IT SYSTEM',
+                                           'MAIN FRAME / CHASSIS / VASSEL',
+                                           'PERIODICAL SERVICE',
+                                           'PNEUMATIC SYSTEM',
+                                           'PREEICTIVE MAINTENANCE',
+                                           'PREVENTIF MAINTENANCE',
+                                           'PROBLEM SDT',
+                                           'PROBLEM TYRE SDT',
+                                           'STEERING SYSTEM',
+                                           'TRANSMISSION SYSTEM',
+                                           'TYRE',
+                                           'UNDERGRADUATE',
+                                           'WORK EQUIPMENT',
+                                       ],
+                                   ];
+                               @endphp
+               
+                               @foreach ($groupedKeys as $groupTitle => $keys)
+                                   <h6 class="fw-bold mt-4">{{ $groupTitle }}</h6>
+                                   <div class="row">
+                                       @foreach ($keys as $key)
+                                           @if (isset($caseData[$key]))
+                                               @php
+                                                   $data = json_decode($caseData[$key], true);
+                                                   // Check if data is an array of findings (Section C) or a single item (Sections A, B)
+                                                   $isSectionC = $groupTitle === 'C. Sub Component';
+                                                   $items = $isSectionC && is_array($data) && !isset($data['statusCase']) ? $data : [$data];
+                                               @endphp
+                                               @foreach ($items as $index => $item)
+                                                   @php
+                                                       $status = $item['statusCase'] ?? 'open';
+                                                       $bgClass = $status === 'close' ? 'bg-danger text-white' : 'bg-primary text-white';
+                                                       // For Section C, create a unique name combining sub_component and temuan
+                                                       $displayName = $isSectionC ? "{$key}-" . ($item['temuan'] ?? 'Unknown') : $key;
+                                                       $inputName = $isSectionC ? "{$key}_{$index}" : $key;
+                                                   @endphp
+                                                   <div class="col-md-3 mb-3">
+                                                       <label class="form-label fw-semibold text-truncate d-block" title="{{ $displayName }}">{{ $displayName }}</label>
+                                                       <input type="hidden" name="keys[]" value="{{ $inputName }}">
+                                                       <select name="statuses[{{ $inputName }}]" class="form-select status-select {{ $bgClass }}" required>
+                                                           <option value="open" {{ $status === 'open' ? 'selected' : '' }}>OPEN</option>
+                                                           <option value="close" {{ $status === 'close' ? 'selected' : '' }}>CLOSE</option>
+                                                       </select>
+                                                   </div>
+                                               @endforeach
+                                           @endif
+                                       @endforeach
+                                   </div>
+                               @endforeach
+               
+                               <script>
+                                   document.addEventListener('DOMContentLoaded', function () {
+                                       const selects = document.querySelectorAll('.status-select');
+                                       selects.forEach(select => {
+                                           select.addEventListener('change', function () {
+                                               this.classList.remove('bg-danger', 'bg-primary', 'text-white');
+                                               if (this.value === 'close') {
+                                                   this.classList.add('bg-danger', 'text-white');
+                                               } else if (this.value === 'open') {
+                                                   this.classList.add('bg-primary', 'text-white');
+                                               }
+                                           });
+                                       });
+                                   });
+                               </script>
+                           </div>
+               
+                           <div class="modal-footer">
+                               <button type="submit" class="btn btn-warning fw-semibold px-4">
+                                   <i class="bi bi-save2 me-1"></i> Simpan
+                               </button>
+                               <button type="button" class="btn btn-outline-secondary fw-semibold px-4"
+                                   data-bs-dismiss="modal">
+                                   Batal
+                               </button>
+                           </div>
+                       </div>
+                   </form>
+               </div>
+               </div>
             @endforeach
         @else
             <div class="row">
