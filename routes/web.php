@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AdminInspectionController;
 use App\Models\Achivements;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -12,6 +11,8 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\FoldersController;
+use App\Http\Controllers\UserGisController;
+use App\Http\Controllers\AdminGisController;
 use App\Http\Controllers\MenuFileController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\NewsViewController;
@@ -32,10 +33,11 @@ use App\Http\Controllers\BacklogHeaderController;
 use App\Http\Controllers\ParetoProblemController;
 use App\Http\Controllers\ParetoSectionController;
 use App\Http\Controllers\PartUnscheduleController;
+use App\Http\Controllers\UserInspectionController;
 use App\Http\Controllers\UserStatusVIewController;
 use App\Http\Controllers\AdminFormStatusController;
+use App\Http\Controllers\AdminInspectionController;
 use App\Http\Controllers\PartUnscheduleViewController;
-use App\Http\Controllers\UserInspectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -239,8 +241,20 @@ Route::get('/{audit_id}/uploads', [AuditUploadController::class, 'index'])->name
     Route::put('/audit/upload/{id}/update', [AuditUploadController::class, 'update'])->name('upload.update');
     Route::delete('/audit/upload/{id}', [AuditUploadController::class, 'destroy'])->name('upload.destroy');
 
+});
 
+// GIS
+// Admin CN Unit
+Route::prefix('admin/cn-units')->name('admin.cn-units.')->group(function () {
+    Route::get('/', [AdminGisController::class, 'index'])->name('index');
+    Route::post('/', [AdminGisController::class, 'store'])->name('store');
+    Route::put('/{id}', [AdminGisController::class, 'update'])->name('update');
+    Route::delete('/{id}', [AdminGisController::class, 'destroy'])->name('destroy');
 
+    Route::get('/{id}/links', [AdminGisController::class, 'addLink'])->name('addLink');
+    Route::post('/{id}/links', [AdminGisController::class, 'storeLink'])->name('storeLink');
+    Route::delete('/links/{id}', [AdminGisController::class, 'deleteLink'])->name('deleteLink');
+    Route::put('/links/{id}', [AdminGisController::class, 'updateLink'])->name('updateLink');
 
 });
 
@@ -331,6 +345,13 @@ Route::get('/user/inspection', [UserInspectionController::class, 'index'])->name
 // edit inspection form
 Route::get('/inspection/{id}/edit', [UserInspectionController::class, 'edit'])->name('user.inspection.edit');
 Route::put('/inspection/{id}/resubmit', [UserInspectionController::class, 'resubmit'])->name('user.inspection.resubmit');
+
+// gis management for users
+Route::prefix('user/cn-units')->name('user.cn-units.')->group(function () {
+    Route::get('/', [UserGisController::class, 'index'])->name('index');
+    Route::get('/{id}/links', [UserGisController::class, 'showLinks'])->name('links');
+});
+
 });
 
 
