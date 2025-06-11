@@ -47,6 +47,14 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('user.cn-units.index') ? '' : 'collapsed' }}"
+                href="{{ route('user.cn-units.index') }}">            
+                <i class="bi bi-geo-alt"></i> <span>GIS CN Unit</span>
+            </a>
+        </li>
+        
+
+        <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#backlog-submenu" aria-expanded="false">
                 <i class="bi bi-journal-check"></i> <span>Backlog</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
@@ -251,6 +259,13 @@
                     <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.cn-units.*') ? '' : 'collapsed' }}"
+                    href="{{ route('admin.cn-units.index') }}">
+                    <i class="bi bi-geo-alt-fill"></i> <span>GIS Manajemen</span>
+                </a>
+            </li>
+            
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#backlog-admin" aria-expanded="false">
                     <i class="bi bi-clipboard-data"></i> <span>Backlog Admin</span>
