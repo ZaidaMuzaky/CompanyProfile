@@ -12,52 +12,34 @@
     <h4 class="mb-3">Spreadsheet untuk CN Unit: {{ $unit->name }}</h4>
 
     @if (collect($links)->isEmpty())
-        <p>Tidak ada link untuk CN Unit ini.</p>
-    @else
-        <ul class="list-group">
-            @foreach ($links as $index => $link)
-                @php
-                    $spreadsheetId = null;
-                    if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link->spreadsheet_link, $matches)) {
-                        $spreadsheetId = $matches[1];
-                    }
-                    $pdfUrl = $spreadsheetId 
-                        ? "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=pdf"
-                        : null;
-                @endphp
-
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ $link->description ?? 'Link Spreadsheet' }}</strong><br>
-                        <a href="{{ $link->spreadsheet_link }}" target="_blank">
-                            {{ $link->spreadsheet_link }}
-                        </a>
-                    </div>
-                    @if ($pdfUrl)
-                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#pdfModal{{ $index }}">
-                            <i class="bi bi-eye"></i> Lihat PDF
-                        </button>
-                    @endif
-                </li>
-
-                <!-- Modal PDF Viewer -->
-                @if ($pdfUrl)
-                <div class="modal fade" id="pdfModal{{ $index }}" tabindex="-1" aria-labelledby="pdfModalLabel{{ $index }}" aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="pdfModalLabel{{ $index }}">Preview PDF - {{ $link->description ?? 'Spreadsheet' }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                            </div>
-                            <div class="modal-body">
-                                <iframe src="{{ $pdfUrl }}" width="100%" height="600px" style="border: none;"></iframe>
-                            </div>
+    <p class="text-muted">Tidak ada link untuk CN Unit ini.</p>
+@else
+    <div class="row" id="spreadsheetList">
+        @foreach ($links as $index => $link)
+            @php
+                $spreadsheetId = null;
+                if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link->spreadsheet_link, $matches)) {
+                    $spreadsheetId = $matches[1];
+                }
+            @endphp
+            <div class="col-12 mb-4">
+                <div class="card h-100 shadow-sm rounded border-0">
+                    <div class="card-body d-flex flex-column flex-md-row align-items-center bg-light gap-3">
+                        <div class="d-flex align-items-center justify-content-center text-white rounded-circle flex-shrink-0"
+                             style="width: 50px; height: 50px; background: linear-gradient(135deg, #28a745, #1e7e34); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <i class="bi bi-file-earmark-excel-fill" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="text-center text-md-start w-100">
+                            <h5 class="card-title mb-1 fw-semibold">{{ $link->description ?? 'Link Spreadsheet' }}</h5>
+                            <a href="{{ $link->spreadsheet_link }}" target="_blank" class="btn btn-sm btn-primary w-100 w-md-auto">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> Buka
+                            </a>
                         </div>
                     </div>
                 </div>
-                @endif
-            @endforeach
-        </ul>
-    @endif
+            </div>
+        @endforeach
+    </div>
+@endif
 </div>
 @endsection
