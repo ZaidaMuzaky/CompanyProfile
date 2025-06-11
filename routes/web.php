@@ -256,6 +256,9 @@ Route::prefix('admin/cn-units')->name('admin.cn-units.')->group(function () {
     Route::delete('/links/{id}', [AdminGisController::class, 'deleteLink'])->name('deleteLink');
     Route::put('/links/{id}', [AdminGisController::class, 'updateLink'])->name('updateLink');
 
+    Route::post('//import', [AdminGisController::class, 'import'])->name('import');
+
+
 });
 
 

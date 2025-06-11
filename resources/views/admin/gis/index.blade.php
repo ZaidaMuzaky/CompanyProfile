@@ -14,6 +14,11 @@
                 <i class="bi bi-folder-plus"></i>
                 <span class="d-none d-sm-inline ms-1">Add CN Unit</span>
             </button>
+
+            <button class="btn btn-info d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#importCnUnitModal">
+                <i class="bi bi-file-earmark-excel"></i>
+                <span class="d-none d-sm-inline ms-1">Import CN Units</span>
+            </button>
         </div>
         <form method="GET" action="{{ route('admin.cn-units.index') }}" class="d-flex mx-auto" style="width: 50%;">
             <input type="text" name="search" class="form-control" placeholder="Search CN Unit..."
@@ -80,6 +85,33 @@
                 <button type="submit" class="btn btn-primary">Add CN Unit</button>
             </div>
         </form>
+    </div>
+</div>
+{{-- import modal --}}
+<div class="modal fade" id="importCnUnitModal" tabindex="-1" aria-labelledby="importCnUnitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importCnUnitModalLabel">Import CN Units</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <p>Pastikan file Excel yang Anda upload sesuai dengan format yang ditentukan.</p>
+                <p>Anda dapat mengunduh template Excel di bawah ini:</p>
+                <a href="{{ asset('templates/cn_unit_template.xlsx') }}" class="btn btn-outline-success mb-3" download>
+                    <i class="bi bi-download"></i> Download Template
+                </a>
+
+                <form id="importCnUnitForm" method="POST" action="{{ route('admin.cn-units.import') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="importCnUnitFile" class="form-label">Upload Excel File</label>
+                        <input type="file" class="form-control" id="importCnUnitFile" name="file" accept=".xlsx, .xls" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Import</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 

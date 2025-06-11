@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CnUnit;
 use App\Models\CnUnitLink;
 use Illuminate\Http\Request;
+use App\Imports\CnUnitImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminGisController extends Controller
 {
@@ -110,4 +112,15 @@ class AdminGisController extends Controller
     return redirect()->route('admin.cn-units.addLink', $link->cn_unit_id)->with('success', 'Link berhasil diperbarui.');
 }
 
+
+public function import(Request $request)
+{
+    $request->validate([
+        'file' => 'required|mimes:xls,xlsx'
+    ]);
+
+    Excel::import(new CnUnitImport, $request->file('file'));
+
+    return redirect()->route('admin.cn-units.index')->with('success', 'Data CN Unit berhasil diimport.');
+}
 }
