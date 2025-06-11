@@ -80,7 +80,7 @@
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-submenu" aria-expanded="false">
-                <i class="bi bi-tools"></i> <span>Inspection After Repair</span>
+                <i class="bi bi-tools"></i> <span>Backlog / Inspection After Repair</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="inspection-submenu" class="nav-content collapse" data-bs-parent="#sidebar-nav">
@@ -292,7 +292,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-admin"
                     aria-expanded="false">
-                    <i class="bi bi-shield-check"></i> <span>Inspection After Review Admin</span>
+                    <i class="bi bi-shield-check"></i> <span>Backlog / Inspection After Repair</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="inspection-admin" class="nav-content collapse" data-bs-parent="#sidebar-nav">

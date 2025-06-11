@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Google\Client;
+use App\Models\CnUnit;
 use Google\Service\Sheets;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -121,10 +122,9 @@ class UserInspectionController extends Controller
             "AC SYSTEM", "BRAKE SYSTEM", "DIFFERENTIAL & FINAL DRAVE",
             "ELECTRICAL SYSTEM", "ENGINE", "GENERAL ( ACCESSORIES, CABIN, ETC )",
             "HYDRAULIC SYSTEM", "IT SYSTEM", "MAIN FRAME / CHASSIS / VASSEL",
-            "PERIODICAL SERVICE", "PNEUMATIC SYSTEM", "PREEICTIVE MAINTENANCE",
-            "PREVENTIF MAINTENANCE", "PROBLEM SDT", "PROBLEM TYRE SDT",
+            "PERIODICAL SERVICE", "PNEUMATIC SYSTEM", "PROBLEM SDT", "PROBLEM TYRE SDT",
             "STEERING SYSTEM", "TRANSMISSION SYSTEM", "TYRE",
-            "UNDERGRADUATE", "WORK EQUIPMENT"
+            "UNDERCARRIAGE"
         ];
     
         foreach ($sectionC as $sub) {
@@ -614,15 +614,12 @@ class UserInspectionController extends Controller
             "MAIN FRAME / CHASSIS / VASSEL",
             "PERIODICAL SERVICE",
             "PNEUMATIC SYSTEM",
-            "PREEICTIVE MAINTENANCE",
-            "PREVENTIF MAINTENANCE",
             "PROBLEM SDT",
             "PROBLEM TYRE SDT",
             "STEERING SYSTEM",
             "TRANSMISSION SYSTEM",
             "TYRE",
-            "UNDERGRADUATE",
-            "WORK EQUIPMENT"
+            "UNDERCARRIAGE",
         ];
 
         foreach ($values as $index => $row) {
@@ -774,10 +771,9 @@ class UserInspectionController extends Controller
             "AC SYSTEM", "BRAKE SYSTEM", "DIFFERENTIAL & FINAL DRAVE",
             "ELECTRICAL SYSTEM", "ENGINE", "GENERAL ( ACCESSORIES, CABIN, ETC )",
             "HYDRAULIC SYSTEM", "IT SYSTEM", "MAIN FRAME / CHASSIS / VASSEL",
-            "PERIODICAL SERVICE", "PNEUMATIC SYSTEM", "PREEICTIVE MAINTENANCE",
-            "PREVENTIF MAINTENANCE", "PROBLEM SDT", "PROBLEM TYRE SDT",
+            "PERIODICAL SERVICE", "PNEUMATIC SYSTEM", "PROBLEM SDT", "PROBLEM TYRE SDT",
             "STEERING SYSTEM", "TRANSMISSION SYSTEM", "TYRE",
-            "UNDERGRADUATE", "WORK EQUIPMENT"
+            "UNDERCARRIAGE"
         ];
         foreach ($sectionC as $sub) {
             $header = "{$sub}";
@@ -891,6 +887,17 @@ class UserInspectionController extends Controller
         }
 
         return redirect()->route('user.inspection.show')->with('success', 'Form berhasil dikirim ulang.');
+    }
+
+    public function autocomplete(Request $request)
+    {
+        $query = $request->input('query');
+
+        $results = CnUnit::where('name', 'like', '%' . $query . '%')
+            ->pluck('name')
+            ->take(10);
+
+        return response()->json($results);
     }
 
 

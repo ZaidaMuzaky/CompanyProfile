@@ -341,6 +341,7 @@ Route::get('/inspection/{id}/edit', [AdminApprovalController::class, 'edit'])->n
 // inspection form
 Route::get('/user/inspection/form', [UserInspectionController::class, 'form'])->name('user.inspection.form');
 Route::post('/user/inspection/form', [UserInspectionController::class, 'store']);
+Route::get('/user/autocompletecn', [UserInspectionController::class, 'autocomplete'])->name('autocomplete.cn');
 // inspection show
 Route::get('/user/inspection/show', [UserInspectionController::class, 'status'])->name('user.inspection.show');
 Route::delete('user/inspection/{id}', [UserInspectionController::class, 'destroy'])->name('user.inspection.destroy');

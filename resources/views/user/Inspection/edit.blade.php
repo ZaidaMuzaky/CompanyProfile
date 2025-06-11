@@ -256,15 +256,57 @@
                                 });
                             </script>
                             <div class="row">
-                                <div class="col-md-6 mb-4">
+                                <div class="col-md-6 mb-4 position-relative">
                                     <label for="cn_unit" class="form-label fw-semibold">CN Unit *</label>
                                     <input type="text" name="cn_unit" id="cn_unit"
                                         value="{{ old('cn_unit', $form['CN Unit'] ?? '') }}"
-                                        class="form-control rounded-3 @error('cn_unit') is-invalid @enderror" required>
+                                        class="form-control rounded-3 @error('cn_unit') is-invalid @enderror"
+                                        autocomplete="off" required>
+                                
+                                    <ul id="cn_suggestions" class="list-group position-absolute w-100 z-3" style="top: 100%; z-index: 1050;"></ul>
+                                
                                     @error('cn_unit')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const input = document.getElementById('cn_unit');
+                                        const suggestionBox = document.getElementById('cn_suggestions');
+                                
+                                        input.addEventListener('input', function () {
+                                            const query = this.value;
+                                
+                                            if (query.length >= 2) {
+                                                fetch(`{{ route('autocomplete.cn') }}?query=${encodeURIComponent(query)}`)
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        suggestionBox.innerHTML = '';
+                                                        data.forEach(item => {
+                                                            const li = document.createElement('li');
+                                                            li.className = 'list-group-item list-group-item-action';
+                                                            li.textContent = item;
+                                                            li.addEventListener('click', function () {
+                                                                input.value = this.textContent;
+                                                                suggestionBox.innerHTML = '';
+                                                            });
+                                                            suggestionBox.appendChild(li);
+                                                        });
+                                                    });
+                                            } else {
+                                                suggestionBox.innerHTML = '';
+                                            }
+                                        });
+                                
+                                        document.addEventListener('click', function (e) {
+                                            if (!suggestionBox.contains(e.target) && e.target !== input) {
+                                                suggestionBox.innerHTML = '';
+                                            }
+                                        });
+                                    });
+                                </script>
+                                
                                 <div class="col-md-6 mb-4">
                                     <label for="hour_meter" class="form-label fw-semibold">Hour Meter (HM) *</label>
                                     <input type="number" name="hour_meter" id="hour_meter"
@@ -401,15 +443,12 @@
                                     "MAIN FRAME / CHASSIS / VASSEL",
                                     "PERIODICAL SERVICE",
                                     "PNEUMATIC SYSTEM",
-                                    "PREEICTIVE MAINTENANCE",
-                                    "PREVENTIF MAINTENANCE",
                                     "PROBLEM SDT",
                                     "PROBLEM TYRE SDT",
                                     "STEERING SYSTEM",
                                     "TRANSMISSION SYSTEM",
                                     "TYRE",
-                                    "UNDERGRADUATE",
-                                    "WORK EQUIPMENT"
+                                    "UNDERCARRIAGE",
                                 ];
 
                                 function renderSection(sectionId, items) {
