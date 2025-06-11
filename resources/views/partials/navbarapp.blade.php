@@ -306,6 +306,11 @@
                             <i class="bi bi-person-check"></i><span>Supervisor Approval</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.inspection.header.edit') }}">
+                            <i class="bi bi-image"></i><span>Edit Gambar</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
 

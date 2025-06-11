@@ -19,7 +19,7 @@ class BacklogHeaderController extends Controller
     public function updateImage(Request $request)
     {
         $request->validate([
-            'header_image' => 'image|max:2048',
+            'header_image' => 'image|max:204800', // Maksimal 20MB
         ]);
 
         $header = BacklogHeader::first(); // atau berdasarkan ID

@@ -33,35 +33,35 @@
                         </div> --}}
 
                         <!-- Jadwal Schedule Service -->
-                        {{-- <h5 class="fw-bold text-center mb-4">Jadwal Schedule Service</h5>
+                        {{-- <h5 class="fw-bold text-center mb-4">Jadwal Schedule Service</h5> --}}
                         @php
-                            $header = \App\Models\BacklogHeader::first(); // atau disesuaikan
+                        $header = \App\Models\InspectionHeader::first(); // Ganti ke model InspectionHeader
                         @endphp
-
+                        
                         @if ($header && $header->header_image)
                             <div class="text-center mb-4">
                                 <img src="{{ Storage::url($header->header_image) }}" class="img-fluid rounded-3 shadow-sm"
-                                    style="max-height: 400px; cursor: pointer;" alt="Header Backlog" data-bs-toggle="modal"
+                                    style="max-height: 400px; cursor: pointer;" alt="Header Inspection" data-bs-toggle="modal"
                                     data-bs-target="#imageModal">
                             </div>
                         @else
                             <div class="card border-0 shadow-sm rounded-3 text-center py-5 mb-4">
                                 <div class="card-body">
                                     <i class="fas fa-image fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted mb-0">Belum ada jadwal service yang diunggah.</p>
+                                    <p class="text-muted mb-0">Belum ada gambar header inspeksi yang diunggah.</p>
                                 </div>
                             </div>
-                        @endif --}}
-
+                        @endif
+                        
                         <!-- Modal Gambar -->
-                        {{-- @if ($header && $header->header_image)
+                        @if ($header && $header->header_image)
                             <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel"
                                 aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered modal-xl">
                                     <div class="modal-content bg-transparent border-0">
                                         <div class="modal-body text-center">
                                             <img src="{{ Storage::url($header->header_image) }}"
-                                                class="img-fluid rounded-3 shadow-sm" alt="Gambar Besar">
+                                                class="img-fluid rounded-3 shadow-sm" alt="Gambar Header Inspeksi">
                                         </div>
                                         <div class="modal-footer border-0 justify-content-center">
                                             <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
@@ -72,7 +72,8 @@
                                     </div>
                                 </div>
                             </div>
-                        @endif --}}
+                        @endif
+                    
 
                         <!-- Form -->
                         <form action="" method="POST" enctype="multipart/form-data">

@@ -37,6 +37,7 @@ use App\Http\Controllers\UserInspectionController;
 use App\Http\Controllers\UserStatusVIewController;
 use App\Http\Controllers\AdminFormStatusController;
 use App\Http\Controllers\AdminInspectionController;
+use App\Http\Controllers\InspectionHeaderController;
 use App\Http\Controllers\PartUnscheduleViewController;
 
 /*
@@ -170,6 +171,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::put('/update/{id}', [PeopleController::class, 'update'])->name('update');
         Route::delete('/destroy/{id}', [PeopleController::class, 'destroy'])->name('destroy');
     });
+
+    Route::get('/inspection/header', [InspectionHeaderController::class, 'edit'])->name('admin.inspection.header.edit');
+    Route::post('/inspection/header/update', [InspectionHeaderController::class, 'updateImage'])->name('admin.inspection.header.update');
 // Pareto Problem management routes
 Route::prefix('admin/pareto')->name('admin.pareto.')->group(function () {
     Route::get('/', [ParetoProblemController::class, 'index'])->name('index');
