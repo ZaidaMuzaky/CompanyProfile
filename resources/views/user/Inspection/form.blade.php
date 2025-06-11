@@ -107,7 +107,7 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-4">
-                                    <label for="waktu_serah_terima" class="form-label fw-semibold">Waktu Serah Terima
+                                    <label for="waktu_serah_terima" class="form-label fw-semibold">Waktu Unit Masuk Breakdown
                                         *</label>
                                     <input type="time" name="waktu_serah_terima" id="waktu_serah_terima"
                                         class="form-control rounded-3 @error('waktu_serah_terima') is-invalid @enderror"

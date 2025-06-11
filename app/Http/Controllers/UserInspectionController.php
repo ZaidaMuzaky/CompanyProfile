@@ -155,7 +155,7 @@ class UserInspectionController extends Controller
     
         if (empty($existingHeaders) || $existingHeaders[0] !== 'ID') {
             $headers = array_merge([
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Serah Terima',
+                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
                 'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
                 'Evidence Files', 'Status', 'Approved By', 'Note'
             ], $inspectionTitles, $temuanHeaders);
@@ -206,7 +206,7 @@ class UserInspectionController extends Controller
     
         foreach ($existingHeaders as $header) {
             if (!in_array($header, array_merge(array_keys($temuanData), $inspectionTitles, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Serah Terima',
+                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
                 'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
                 'Evidence Files', 'Status', 'Approved By', 'Note'
             ]))) {
@@ -217,7 +217,7 @@ class UserInspectionController extends Controller
         $finalRow = [];
         foreach ($existingHeaders as $header) {
             if (in_array($header, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Serah Terima',
+                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
                 'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
                 'Evidence Files', 'Status', 'Approved By', 'Note'
             ])) {
@@ -633,9 +633,9 @@ class UserInspectionController extends Controller
             ) {
                 // Format waktu agar cocok dengan <input type="time">
                 try {
-                    $data['Waktu Serah Terima'] = Carbon::parse($data['Waktu Serah Terima'])->format('H:i');
+                    $data['Waktu Unit Masuk Breakdown'] = Carbon::parse($data['Waktu Unit Masuk Breakdown'])->format('H:i');
                 } catch (\Exception $e) {
-                    $data['Waktu Serah Terima'] = '';
+                    $data['Waktu Unit Masuk Breakdown'] = '';
                 }
 
                 $form = $data;
@@ -845,7 +845,7 @@ class UserInspectionController extends Controller
 
         foreach ($headers as $header) {
             if (!in_array($header, array_merge(array_keys($temuanData), $inspectionTitles, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Serah Terima',
+                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
                 'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
                 'Evidence Files', 'Status', 'Approved By', 'Note'
             ]))) {
@@ -856,7 +856,7 @@ class UserInspectionController extends Controller
         $finalRow = [];
         foreach ($headers as $header) {
             if (in_array($header, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Serah Terima',
+                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
                 'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
                 'Evidence Files', 'Status', 'Approved By', 'Note'
             ])) {
