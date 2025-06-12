@@ -359,6 +359,8 @@ Route::put('/inspection/{id}/resubmit', [UserInspectionController::class, 'resub
 Route::prefix('user/cn-units')->name('user.cn-units.')->group(function () {
     Route::get('/', [UserGisController::class, 'index'])->name('index');
     Route::get('/{id}/links', [UserGisController::class, 'showLinks'])->name('links');
+    Route::get('/download/cn-file/{id}', [UserGisController::class, 'downloadFile'])->name('downloadFile');
+
 });
 
 });

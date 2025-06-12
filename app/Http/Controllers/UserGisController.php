@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CnUnit;
 use App\Models\CnUnitFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserGisController extends Controller
 {
@@ -26,6 +27,19 @@ class UserGisController extends Controller
 
         return view('user.gis.links', compact('unit', 'files'));
     }
+
+    public function downloadFile($id)
+{
+    $file = CnUnitFile::findOrFail($id);
+
+    // pastikan ini valid
+    if (!Storage::disk('public')->exists($file->file_path)) {
+        abort(404, 'File tidak ditemukan.');
+    }
+
+    return Storage::disk('public')->download($file->file_path, $file->file_name);
+}
+
 
     
 }

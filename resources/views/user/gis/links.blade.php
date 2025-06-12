@@ -26,10 +26,11 @@
 
                             <div class="text-center text-md-start w-100">
                                 <h5 class="card-title mb-1 fw-semibold">{{ $file->file_name }}</h5>
-                                <a href="{{ asset('storage/' . $file->file_path) }}" download class="btn btn-sm btn-success w-100 w-md-auto">
+                                <a href="{{ route('user.cn-units.downloadFile', $file->id) }}" class="btn btn-sm btn-success w-100 w-md-auto">
                                     <i class="bi bi-download me-1"></i> Download
                                 </a>
-                            </div>
+                                
+                                
                         </div>
                     </div>
                 </div>

@@ -25,7 +25,7 @@ class AdminGisController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        CnUnit::create([ 'name' => $request->name ]);
+        CnUnit::create(['name' => $request->name]);
 
         return redirect()->back()->with('success', 'CN Unit berhasil ditambahkan.');
     }
@@ -37,11 +37,10 @@ class AdminGisController extends Controller
         ]);
 
         $unit = CnUnit::findOrFail($id);
-        $unit->update([ 'name' => $request->name ]);
+        $unit->update(['name' => $request->name]);
 
         return redirect()->back()->with('success', 'CN Unit berhasil diperbarui.');
     }
-
 
     public function updateFile(Request $request, $id)
 {
@@ -50,12 +49,14 @@ class AdminGisController extends Controller
     ]);
 
     $file = CnUnitFile::findOrFail($id);
-    $file->description = $request->description;
-    $file->save();
+    $file->update([
+        'description' => $request->description,
+    ]);
 
     return redirect()->route('admin.cn-units.addFile', $file->cn_unit_id)
         ->with('success', 'Deskripsi file berhasil diperbarui.');
 }
+
 
     public function destroy($id)
     {
@@ -82,7 +83,9 @@ class AdminGisController extends Controller
 
         $unit = CnUnit::findOrFail($id);
         $uploadedFile = $request->file('file');
-        $path = $uploadedFile->store('uploads/cn_files');
+
+        // ✅ Simpan ke storage/app/public/uploads/cn_files
+        $path = $uploadedFile->store('uploads/cn_files', 'public');
 
         $unit->files()->create([
             'file_path' => $path,
@@ -99,8 +102,8 @@ class AdminGisController extends Controller
         $file = CnUnitFile::findOrFail($id);
         $cnUnitId = $file->cn_unit_id;
 
-        if (Storage::exists($file->file_path)) {
-            Storage::delete($file->file_path);
+        if (Storage::disk('public')->exists($file->file_path)) {
+            Storage::disk('public')->delete($file->file_path);
         }
 
         $file->delete();
