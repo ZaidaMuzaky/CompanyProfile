@@ -255,10 +255,11 @@ Route::prefix('admin/cn-units')->name('admin.cn-units.')->group(function () {
     Route::put('/{id}', [AdminGisController::class, 'update'])->name('update');
     Route::delete('/{id}', [AdminGisController::class, 'destroy'])->name('destroy');
 
-    Route::get('/{id}/links', [AdminGisController::class, 'addLink'])->name('addLink');
-    Route::post('/{id}/links', [AdminGisController::class, 'storeLink'])->name('storeLink');
-    Route::delete('/links/{id}', [AdminGisController::class, 'deleteLink'])->name('deleteLink');
-    Route::put('/links/{id}', [AdminGisController::class, 'updateLink'])->name('updateLink');
+    // File management
+    Route::get('/{id}/files', [AdminGisController::class, 'addFile'])->name('addFile');
+    Route::post('/{id}/files', [AdminGisController::class, 'storeFile'])->name('storeFile');
+    Route::delete('/files/{id}', [AdminGisController::class, 'deleteFile'])->name('deleteFile');
+    Route::put('/files/{id}', [AdminGisController::class, 'updateFile'])->name('updateFile');
 
     Route::post('//import', [AdminGisController::class, 'import'])->name('import');
 

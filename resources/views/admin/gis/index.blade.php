@@ -41,7 +41,7 @@
         @foreach ($cnUnits as $index => $unit)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td style="cursor: pointer;" onclick="window.location='{{ route('admin.cn-units.addLink', $unit->id) }}'">
+                <td style="cursor: pointer;" onclick="window.location='{{ route('admin.cn-units.addFile', $unit->id) }}'">
                     {{ $unit->name }}
                 </td>
                 <td>

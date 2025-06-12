@@ -14,6 +14,12 @@ class CnUnit extends Model
     {
         return $this->hasMany(CnUnitLink::class);
     }
+
+        public function files()
+    {
+        return $this->hasMany(CnUnitFile::class);
+    }
+
 }
 
 ?>
