@@ -231,6 +231,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // inspection form approval
     Route::get('/inspection', [AdminInspectionController::class, 'index'])->name('admin.inspection.index');
     Route::post('/inspection/{id}/approve', [AdminInspectionController::class, 'approveForm'])->name('admin.inspection.approve');
+  
 
 // audit management
 Route::prefix('admin/audit')->name('admin.audit.')->group(function () {
@@ -354,6 +355,8 @@ Route::get('/user/inspection', [UserInspectionController::class, 'index'])->name
 // edit inspection form
 Route::get('/inspection/{id}/edit', [UserInspectionController::class, 'edit'])->name('user.inspection.edit');
 Route::put('/inspection/{id}/resubmit', [UserInspectionController::class, 'resubmit'])->name('user.inspection.resubmit');
+  // admin control
+  Route::post('/update-temuan-case/{id}', [AdminInspectionController::class, 'updateTemuanCaseAjax']);
 
 // gis management for users
 Route::prefix('user/cn-units')->name('user.cn-units.')->group(function () {

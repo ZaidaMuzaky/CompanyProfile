@@ -35,6 +35,7 @@
                                             <th class="py-2 text-uppercase small fw-semibold">Model Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold">CN Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold">Status</th>
+                                            <th class="py-3 text-uppercase small fw-semibold">Temuan</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Aksi</th>
                                             <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
                                                 Case
@@ -68,14 +69,173 @@
                                                         {{ $form['Status'] }}
                                                     </span>
                                                 </td>
+                                                <td class="py-3">
+                                                    @php
+                                                        if (!function_exists('is_list_array')) {
+                                                            function is_list_array($array) {
+                                                                if (!is_array($array)) return false;
+                                                                return array_keys($array) === range(0, count($array) - 1);
+                                                            }
+                                                        }
+                                                
+                                                        $temuanList = [];
+                                                
+                                                        foreach ($form as $header => $value) {
+                                                            $decoded = json_decode($value, true);
+                                                
+                                                            if (!is_array($decoded)) continue;
+                                                
+                                                            if (is_list_array($decoded)) {
+                                                                foreach ($decoded as $item) {
+                                                                    if (($item['statusCase'] ?? '') === 'open') {
+                                                                        $temuanList[] = [
+                                                                            'temuan' => $item['temuan'] ?? $header,
+                                                                            'action' => $item['action'] ?? '',
+                                                                            'statusCase' => $item['statusCase'] ?? '',
+                                                                            'key' => $header . '_' . ($item['temuan'] ?? uniqid()),
+                                                                        ];
+                                                                    }
+                                                                }
+                                                            } elseif (($decoded['statusCase'] ?? '') === 'open') {
+                                                                $temuanList[] = [
+                                                                    'temuan' => $decoded['temuan'] ?? $header,
+                                                                    'action' => $decoded['action'] ?? '',
+                                                                    'statusCase' => $decoded['statusCase'] ?? '',
+                                                                    'key' => $header . '_' . ($decoded['temuan'] ?? uniqid()),
+                                                                ];
+                                                            }
+                                                        }
+                                                    @endphp
+                                                
+                                                    <style>
+                                                        .select-action-CHECK { background-color: #fff3cd; }     /* kuning */
+                                                        .select-action-INSTALL { background-color: #cce5ff; }   /* biru muda */
+                                                        .select-action-REPLACE { background-color: #f8d7da; }   /* merah muda */
+                                                        .select-action-MONITORING { background-color: #d1ecf1; }/* biru tosca */
+                                                        .select-action-REPAIR { background-color: #d4edda; }    /* hijau muda */
+                                                        .select-status-open { background-color: #fff3cd; }      /* kuning */
+                                                        .select-status-close { background-color: #d4edda; }     /* hijau muda */
+                                                    </style>
+                                                
+                                                    <div class="container-fluid">
+                                                        @if (count($temuanList))
+                                                            <ul class="list-group mb-0">
+                                                                @foreach ($temuanList as $index => $item)
+                                                                    <li class="list-group-item border-0 border-bottom">
+                                                                        <div class="mb-2">
+                                                                            <strong class="text-dark">{{ $item['temuan'] }}</strong>
+                                                                        </div>
+                                                                        <div class="d-flex flex-column flex-sm-row gap-2">
+                                                                            <select class="form-select form-select-sm update-action"
+                                                                                data-type="action"
+                                                                                data-index="{{ $index }}"
+                                                                                data-key="{{ $item['key'] }}"
+                                                                                data-id="{{ $form['ID'] }}">
+                                                                                <option value="CHECK" {{ $item['action'] == 'CHECK' ? 'selected' : '' }}>CHECK</option>
+                                                                                <option value="INSTALL" {{ $item['action'] == 'INSTALL' ? 'selected' : '' }}>INSTALL</option>
+                                                                                <option value="REPLACE" {{ $item['action'] == 'REPLACE' ? 'selected' : '' }}>REPLACE</option>
+                                                                                <option value="MONITORING" {{ $item['action'] == 'MONITORING' ? 'selected' : '' }}>MONITORING</option>
+                                                                                <option value="REPAIR" {{ $item['action'] == 'REPAIR' ? 'selected' : '' }}>REPAIR</option>
+                                                                            </select>
+                                                
+                                                                            <select class="form-select form-select-sm update-action"
+                                                                                data-type="statusCase"
+                                                                                data-index="{{ $index }}"
+                                                                                data-key="{{ $item['key'] }}"
+                                                                                data-id="{{ $form['ID'] }}">
+                                                                                <option value="open" {{ $item['statusCase'] == 'open' ? 'selected' : '' }}>Open</option>
+                                                                                <option value="close" {{ $item['statusCase'] == 'close' ? 'selected' : '' }}>Close</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @else
+                                                            <span class="text-muted fst-italic">Tidak ada temuan open.</span>
+                                                        @endif
+                                                    </div>
+                                                
+                                                    <script>
+                                                        document.querySelectorAll('.update-action').forEach(function(select) {
+                                                            function updateSelectClass(el) {
+                                                                const type = el.dataset.type;
+                                                                const value = el.value;
+                                                
+                                                                // Reset semua warna dulu
+                                                                el.classList.remove(
+                                                                    'select-action-CHECK',
+                                                                    'select-action-INSTALL',
+                                                                    'select-action-REPLACE',
+                                                                    'select-action-MONITORING',
+                                                                    'select-action-REPAIR',
+                                                                    'select-status-open',
+                                                                    'select-status-close'
+                                                                );
+                                                
+                                                                // Tambahkan class warna yang sesuai
+                                                                if (type === 'action') {
+                                                                    el.classList.add('select-action-' + value);
+                                                                } else if (type === 'statusCase') {
+                                                                    el.classList.add('select-status-' + value);
+                                                                }
+                                                            }
+                                                
+                                                            // Set warna awal saat load
+                                                            updateSelectClass(select);
+                                                
+                                                            select.addEventListener('change', function () {
+                                                                const value = this.value;
+                                                                const type = this.dataset.type;
+                                                                const key = this.dataset.key;
+                                                                const index = this.dataset.index;
+                                                                const id = this.dataset.id;
+                                                
+                                                                updateSelectClass(this); // update warna
+                                                
+                                                                fetch(`/update-temuan-case/${id}`, {
+                                                                    method: 'POST',
+                                                                    headers: {
+                                                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                                        'Content-Type': 'application/json'
+                                                                    },
+                                                                    body: JSON.stringify({
+                                                                        key: key,
+                                                                        index: index,
+                                                                        type: type,
+                                                                        value: value
+                                                                    })
+                                                                })
+                                                                .then(response => response.json())
+                                                                .then(result => {
+                                                                    if (!result.success) {
+                                                                        alert('Gagal memperbarui data.');
+                                                                    }
+                                                                })
+                                                                .catch(error => {
+                                                                    console.error('Error:', error);
+                                                                    alert('Terjadi kesalahan saat menyimpan.');
+                                                                });
+                                                            });
+                                                        });
+                                                    </script>
+                                                </td>
                                                 {{-- <td class="py-2 table-cell">{{ $form['Status Case'] ?? '-' }}</td> --}}
                                                 <td class="pe-4 py-2 action-buttons text-center">
-                                                    <button class="btn btn-sm btn-outline-primary rounded-pill mb-1"
+                                                    <button
+                                                        class="btn btn-sm btn-outline-primary rounded-pill me-1"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#detailModal{{ $index }}"
+                                                        data-bs-target="#detailModal{{ $form['ID'] }}"
                                                         data-bs-toggle="tooltip" title="Lihat detail formulir">
-                                                        <i class="fas fa-eye me-1"></i>
+                                                        <i class="fas fa-eye"></i>
                                                     </button>
+                                                    <script>
+                                                        document.addEventListener('DOMContentLoaded', function () {
+                                                            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+                                                            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                                                return new bootstrap.Tooltip(tooltipTriggerEl)
+                                                            });
+                                                        });
+                                                    </script>
 
                                                     @if (($form['Status'] ?? '') === 'Rejected')
                                                         <a href="{{ route('user.inspection.edit', $form['ID']) }}"
@@ -442,17 +602,17 @@
                     $allInspectionKeys = array_merge($lubricantKeys, $afterRepairKeys, $componentKeys);
                 @endphp
 
-                <div class="modal fade" id="detailModal{{ $index }}" tabindex="-1"
-                    aria-labelledby="detailModalLabel{{ $index }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                        <div class="modal-content border-0 shadow-lg rounded-3">
-                            <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title fw-semibold" id="detailModalLabel{{ $index }}">
-                                    Detail Formulir Inspeksi
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
+                <div class="modal fade" id="detailModal{{ $form['ID'] }}" tabindex="-1"
+                aria-labelledby="detailModalLabel{{ $form['ID'] }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content border-0 shadow-lg rounded-3">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title fw-semibold" id="detailModalLabel{{ $form['ID'] }}">
+                                Detail Formulir Inspeksi
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
                             <div class="modal-body p-4">
                                 <div class="row mb-4">
                                     <div class="col-md-6 mb-3">

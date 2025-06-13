@@ -36,6 +36,7 @@
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Model Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">CN Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Status</th>
+                                            <th class="py-3 text-uppercase small fw-semibold">Temuan</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -55,7 +56,76 @@
                                                         {{ $form['Status'] }}
                                                     </span>
                                                 </td>
-
+                                                <td class="py-3">
+                                                    @php
+                                                        if (!function_exists('is_list_array')) {
+                                                            function is_list_array($array) {
+                                                                if (!is_array($array)) return false;
+                                                                return array_keys($array) === range(0, count($array) - 1);
+                                                            }
+                                                        }
+                                                
+                                                        $temuanList = [];
+                                                
+                                                        foreach ($form as $header => $value) {
+                                                            $decoded = json_decode($value, true);
+                                                
+                                                            if (!is_array($decoded)) continue;
+                                                
+                                                            if (is_list_array($decoded)) {
+                                                                foreach ($decoded as $item) {
+                                                                    if (($item['statusCase'] ?? '') === 'open') {
+                                                                        $temuanList[] = [
+                                                                            'temuan' => $item['temuan'] ?? $header,
+                                                                            'action' => $item['action'] ?? '',
+                                                                            'statusCase' => $item['statusCase'] ?? '',
+                                                                        ];
+                                                                    }
+                                                                }
+                                                            } elseif (($decoded['statusCase'] ?? '') === 'open') {
+                                                                $temuanList[] = [
+                                                                    'temuan' => $decoded['temuan'] ?? $header,
+                                                                    'action' => $decoded['action'] ?? '',
+                                                                    'statusCase' => $decoded['statusCase'] ?? '',
+                                                                ];
+                                                            }
+                                                        }
+                                                    @endphp
+                                                
+                                                    <style>
+                                                        .badge-action-CHECK { background-color: #fff3cd; color: #000; }
+                                                        .badge-action-INSTALL { background-color: #cce5ff; color: #000; }
+                                                        .badge-action-REPLACE { background-color: #f8d7da; color: #000; }
+                                                        .badge-action-MONITORING { background-color: #d1ecf1; color: #000; }
+                                                        .badge-action-REPAIR { background-color: #d4edda; color: #000; }
+                                                        .badge-status-open { background-color: #fff3cd; color: #000; }
+                                                        .badge-status-close { background-color: #d4edda; color: #000; }
+                                                    </style>
+                                                
+                                                    <div class="container-fluid">
+                                                        @if (count($temuanList))
+                                                            <ul class="list-group mb-0">
+                                                                @foreach ($temuanList as $item)
+                                                                    <li class="list-group-item border-0 border-bottom">
+                                                                        <div class="mb-2">
+                                                                            <strong class="text-dark">{{ $item['temuan'] }}</strong>
+                                                                        </div>
+                                                                        <div class="d-flex flex-column flex-sm-row gap-2">
+                                                                            <span class="badge badge-action-{{ $item['action'] ?? 'UNKNOWN' }} px-2 py-1">
+                                                                                {{ $item['action'] ?? '-' }}
+                                                                            </span>
+                                                                            <span class="badge badge-status-{{ $item['statusCase'] ?? 'open' }} px-2 py-1">
+                                                                                {{ ucfirst($item['statusCase'] ?? '-') }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @else
+                                                            <span class="text-muted fst-italic">Tidak ada temuan open.</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
                                                 <td class="text-center pe-4 py-2">
                                                     <button class="btn btn-sm btn-outline-primary rounded-pill"
                                                         data-bs-toggle="modal"
