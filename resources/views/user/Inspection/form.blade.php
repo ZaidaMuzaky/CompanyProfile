@@ -307,14 +307,25 @@
                                       <div class="col-md-4 col-12 mb-2 mb-md-0">
                                         <span class="fw-semibold">__TITLE__</span>
                                       </div>
-                                      <div class="col-md-3 col-6">
-                                        <select name="condition[]" class="form-select" required>
+                                      <div class="col-md-2 col-6">
+                                        <select name="condition[]" class="form-select" >
+                                            <option value="" disabled selected>-- Condition --</option>  
                                           <option value="OK">OK</option>
                                           <option value="BAD">BAD</option>
                                         </select>
                                       </div>
-                                      <div class="col-md-5 col-6">
+                                      <div class="col-md-3 col-6">
                                         <input type="text" name="recommendation[]" class="form-control" placeholder="Rekomendasi (opsional)">
+                                      </div>
+                                      <div class="col-md-3 col-6">
+                                        <select name="action[]" class="form-select" >
+                                          <option value="" disabled selected>-- Action --</option>
+                                          <option value="CHECK">CHECK</option>
+                                          <option value="INSTALL">INSTALL</option>
+                                          <option value="REPLACE">REPLACE</option>
+                                          <option value="MONITORING">MONITORING</option>
+                                          <option value="REPAIR">REPAIR</option>
+                                        </select>
                                       </div>
                                       <div class="col-md-3 mt-2 col-lg ">
                                         <input type="file" name="evidence_item[__INDEX__][]" class="form-control mt-2" multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi">
@@ -342,7 +353,7 @@
                                             <input type="text" name="temuan_sub_component[__INDEX__][temuan]"
                                                 class="form-control form-control-sm" placeholder="Temuan" >
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <select name="temuan_sub_component[__INDEX__][condition]"
                                                 class="form-select form-select-sm" >
                                                 <option value="" disabled selected>-- Condition --</option>
@@ -350,10 +361,21 @@
                                                 <option value="BAD">BAD</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <input type="text" name="temuan_sub_component[__INDEX__][recommendation]"
                                                 class="form-control form-control-sm" placeholder="Recommendation">
                                         </div>
+                                        <div class="col-md-2">
+                                            <select name="temuan_sub_component[__INDEX__][action]"
+                                                    class="form-select form-select-sm" required>
+                                              <option value="" disabled selected>-- Action --</option>
+                                              <option value="CHECK">CHECK</option>
+                                              <option value="INSTALL">INSTALL</option>
+                                              <option value="REPLACE">REPLACE</option>
+                                              <option value="MONITORING">MONITORING</option>
+                                              <option value="REPAIR">REPAIR</option>
+                                            </select>
+                                          </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-sm btn-danger remove-temuan">×</button>
                                         </div>

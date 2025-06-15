@@ -346,7 +346,7 @@ Route::post('/user/inspection/form', [UserInspectionController::class, 'store'])
 Route::get('/user/autocompletecn', [UserInspectionController::class, 'autocomplete'])->name('autocomplete.cn');
 // inspection show
 Route::get('/user/inspection/show', [UserInspectionController::class, 'status'])->name('user.inspection.show');
-Route::delete('user/inspection/{id}', [UserInspectionController::class, 'destroy'])->name('user.inspection.destroy');
+Route::delete('/inspection/{id}', [UserInspectionController::class, 'destroy'])->name('user.inspection.destroy');
 // update case status
 Route::put('/admin/inspection/update-case/{id}', [UserInspectionController::class, 'updateCase'])->name('user.inspection.updateCase');
 Route::post('actionReview-inspection/{id}', [UserInspectionController::class, 'updateActionInspection'])->name('user.action.inspection');

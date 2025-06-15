@@ -352,16 +352,27 @@
                                         <div class="col-md-4 col-12 mb-2 mb-md-0">
                                             <span class="inspection-title fw-medium text-dark">__TITLE__</span>
                                         </div>
-                                        <div class="col-md-3 col-6">
-                                            <select name="condition[]" class="form-select form-select-sm" required>
-                                                <option value="OK">OK</option>
-                                                <option value="BAD">BAD</option>
+                                        <div class="col-md-2 col-6">
+                                            <select name="condition[]" class="form-select form-select-sm">
+                                                <option value="" disabled selected>-- Condition --</option>
+                                                <option value="OK" {{ ($item['condition'] ?? '') == 'OK' ? 'selected' : '' }}>OK</option>
+                                                <option value="BAD" {{ ($item['condition'] ?? '') == 'BAD' ? 'selected' : '' }}>BAD</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-5 col-6">
+                                        <div class="col-md-3 col-6">
                                             <input type="text" name="recommendation[]" class="form-control form-control-sm"
                                                 placeholder="Recommendation (optional)">
                                         </div>
+                                        <div class="col-md-3 col-6">
+                                            <select name="action[]" class="form-select form-select-sm">
+                                                <option value="" disabled selected>-- Action --</option>
+                                                <option value="CHECK" {{ ($item['action'] ?? '') == 'CHECK' ? 'selected' : '' }}>CHECK</option>
+                                                <option value="INSTALL" {{ ($item['action'] ?? '') == 'INSTALL' ? 'selected' : '' }}>INSTALL</option>
+                                                <option value="REPLACE" {{ ($item['action'] ?? '') == 'REPLACE' ? 'selected' : '' }}>REPLACE</option>
+                                                <option value="MONITORING" {{ ($item['action'] ?? '') == 'MONITORING' ? 'selected' : '' }}>MONITORING</option>
+                                                <option value="REPAIR" {{ ($item['action'] ?? '') == 'REPAIR' ? 'selected' : '' }}>REPAIR</option>
+                                            </select>
+                                          </div>
                                         <div class="col-md-3 mt-2 col-lg">
                                             <input type="file" name="evidence_item[__INDEX__][]" class="form-control mt-2"
                                                 multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi">
@@ -386,7 +397,7 @@
                                             <input type="text" name="temuan_sub_component[__INDEX__][temuan]"
                                                 class="form-control form-control-sm" placeholder="Temuan" >
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <select name="temuan_sub_component[__INDEX__][condition]"
                                                 class="form-select form-select-sm" >
                                                 <option value="" disabled selected>-- Condition --</option>
@@ -394,10 +405,21 @@
                                                 <option value="BAD">BAD</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <input type="text" name="temuan_sub_component[__INDEX__][recommendation]"
                                                 class="form-control form-control-sm" placeholder="Recommendation">
                                         </div>
+                                        <div class="col-md-2">
+                                            <select name="temuan_sub_component[__INDEX__][action]"
+                                                    class="form-select form-select-sm">
+                                              <option value="" disabled selected>-- Action --</option>
+                                              <option value="CHECK">CHECK</option>
+                                              <option value="INSTALL">INSTALL</option>
+                                              <option value="REPLACE">REPLACE</option>
+                                              <option value="MONITORING">MONITORING</option>
+                                              <option value="REPAIR">REPAIR</option>
+                                            </select>
+                                          </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-sm btn-danger remove-temuan">×</button>
                                         </div>
@@ -411,7 +433,6 @@
                             <script>
                                 const previousInspectionValues = @json($inspectionValues ?? []);
                             </script>
-
                             <script>
                                 const sectionAItems = [
                                     "Engine Oil level",
@@ -472,6 +493,16 @@
                                         // Set previous value if available
                                         const select = wrapper.querySelector('select[name="condition[]"]');
                                         const input = wrapper.querySelector('input[name="recommendation[]"]');
+                                        const actionSelect = wrapper.querySelector('select[name="action[]"]');
+                                        if (previousInspectionValues[title]) {
+                                            select.value = previousInspectionValues[title].condition || '';
+                                            input.value = previousInspectionValues[title].recommendation || '';
+                                            actionSelect.value = previousInspectionValues[title].action || '';
+                                        } else {
+                                            select.value = '';
+                                            input.value = '';
+                                            actionSelect.value = '';
+                                        }
                                         const prev = previousInspectionValues[title];
                                         if (prev) {
                                             select.value = prev.condition;
@@ -508,6 +539,9 @@
                                                     }
                                                     if (input.name && input.name.endsWith('[recommendation]')) {
                                                         input.value = temuan.recommendation || '';
+                                                    }
+                                                    if (input.name && input.name.endsWith('[action]')) {
+                                                        input.value = temuan.action || '';
                                                     }
                                                 });
                                                 // Add hidden input for sub_component

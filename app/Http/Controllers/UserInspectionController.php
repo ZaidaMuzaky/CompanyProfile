@@ -40,6 +40,8 @@ class UserInspectionController extends Controller
             'condition.*'                              => 'nullable|string|in:OK,BAD',
             'recommendation'                           => 'nullable|array',
             'recommendation.*'                         => 'nullable|string|max:255',
+            'action'                                   => 'nullable|array',
+            'action.*'                                 => 'nullable|string|in:CHECK,INSTALL,REPLACE,MONITORING,REPAIR', 
             'evidence_item'                            => 'nullable|array',
             'evidence_item.*'                          => 'nullable|array',
             'evidence_item.*.*'                        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
@@ -50,6 +52,7 @@ class UserInspectionController extends Controller
             'temuan_sub_component.*.temuan'            => 'required|string',
             'temuan_sub_component.*.condition'         => 'required|string|in:OK,BAD',
             'temuan_sub_component.*.recommendation'    => 'nullable|string|max:255',
+            'temuan_sub_component.*.action'            => 'nullable|string|in:CHECK,INSTALL,REPLACE,MONITORING,REPAIR',
             'temuan_sub_component.*.evidence'          => 'nullable|array',
             'temuan_sub_component.*.evidence.*'        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
         ]);
@@ -94,12 +97,14 @@ class UserInspectionController extends Controller
             $rec        = $recommendations[$i] ?? '';
             $evidences  = $evidencePerItem[$index] ?? [];
             $statusCase = $cond === 'OK' ? 'close' : 'open';
+            $action     = $request->input("action.{$i}", 'CHECK');
+
 
             $inspectionData[] = json_encode([
                 'condition'      => $cond,
                 'recommendation' => $rec,
                 'evidence'       => $evidences,
-                'action'         => 'CHECK',
+                'action'         => $action,
                 'statusCase'     => $statusCase,
             ], JSON_UNESCAPED_UNICODE);
         }
@@ -131,7 +136,7 @@ class UserInspectionController extends Controller
                 'condition'     => $item['condition'],
                 'recommendation'=> $item['recommendation'] ?? '',
                 'evidence'      => $urls,
-                'action'        => 'CHECK',
+                'action'        => $item['action'] ?? 'CHECK',
                 'statusCase'    => $statusCase,
             ];
         }
@@ -292,7 +297,7 @@ class UserInspectionController extends Controller
     
             $service = new Sheets($client);
             $spreadsheetId = '1BeBtZZNZBEQBfZHV28Jq_KWRhqBrSuRIBJIrLfNeFfY';
-            $range = 'Sheet1!A2:BD'; // Ambil semua data dari baris 2 ke bawah
+            $range = 'Sheet1!A2:AZ'; // Ambil semua data dari baris 2 ke bawah
     
             $response = $service->spreadsheets_values->get($spreadsheetId, $range);
             $values = $response->getValues();
@@ -301,7 +306,7 @@ class UserInspectionController extends Controller
     
             foreach ($values as $index => $row) {
                 $currentId = $row[0] ?? null;
-                $status = strtolower($row[13] ?? ''); // Kolom Status ada di kolom 14 (index 13)
+                $status = strtolower($row[12] ?? ''); // Kolom Status ada di kolom 14 (index 13)
     
                 if ($currentId == $id && $status === 'pending') {
                     $targetRow = $index + 2; // Karena range dimulai dari A2, tambahkan 2
@@ -700,6 +705,8 @@ class UserInspectionController extends Controller
             'condition.*'                              => 'nullable|string|in:OK,BAD',
             'recommendation'                           => 'nullable|array',
             'recommendation.*'                         => 'nullable|string|max:255',
+            'action'                                   => 'nullable|array',
+            'action.*'                                 => 'nullable|string|in:CHECK,INSTALL,REPLACE,MONITORING,REPAIR', 
             'evidence_item'                            => 'nullable|array',
             'evidence_item.*'                          => 'nullable|array',
             'evidence_item.*.*'                        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
@@ -709,6 +716,7 @@ class UserInspectionController extends Controller
             'temuan_sub_component.*.temuan'            => 'required|string',
             'temuan_sub_component.*.condition'         => 'required|string|in:OK,BAD',
             'temuan_sub_component.*.recommendation'    => 'nullable|string|max:255',
+            'temuan_sub_component.*.action'            => 'nullable|string|in:CHECK,INSTALL,REPLACE,MONITORING,REPAIR',
             'temuan_sub_component.*.evidence'          => 'nullable|array',
             'temuan_sub_component.*.evidence.*'        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
         ]);
@@ -749,12 +757,13 @@ class UserInspectionController extends Controller
             $rec = $recommendations[$i] ?? '';
             $evidences = $evidencePerItem[$index] ?? [];
             $statusCase = $cond === 'OK' ? 'close' : 'open';
+            $action     = $request->input("action.{$i}", 'CHECK');
     
             $inspectionData[] = json_encode([
                 'condition' => $cond,
                 'recommendation' => $rec,
                 'evidence' => $evidences,
-                'action' => 'CHECK',
+                'action' => $action,
                 'statusCase' => $statusCase,
             ], JSON_UNESCAPED_UNICODE);
         }
@@ -785,7 +794,7 @@ class UserInspectionController extends Controller
                 'condition' => $item['condition'],
                 'recommendation' => $item['recommendation'] ?? '',
                 'evidence' => $urls,
-                'action' => 'CHECK',
+                'action' => $item['action'] ?? 'CHECK',
                 'statusCase' => $statusCase,
             ];
         }
@@ -843,6 +852,44 @@ class UserInspectionController extends Controller
         if (is_null($targetRowIndex)) {
             return back()->with('error', 'Data tidak ditemukan di Google Sheets.');
         }
+
+        // Ambil data lama dari baris yang akan diupdate
+            $oldRow = $rows[$targetRowIndex - 1] ?? null;
+
+            if ($oldRow) {
+                foreach ($headers as $colIndex => $headerName) {
+                    // Hapus evidence lama dari Section A/B
+                    if (in_array($headerName, $inspectionTitles)) {
+                        $data = $oldRow[$colIndex] ?? null;
+                        if ($data) {
+                            $decoded = json_decode($data, true);
+                            if (is_array($decoded) && isset($decoded['evidence'])) {
+                                foreach ($decoded['evidence'] as $url) {
+                                    $relativePath = str_replace('/storage/', '', parse_url($url, PHP_URL_PATH));
+                                    Storage::disk('public')->delete($relativePath);
+                                }
+                            }
+                        }
+                    }
+
+                    // Hapus evidence lama dari Section C (temuan)
+                    elseif (!in_array($headerName, $fixed) && isset($oldRow[$colIndex])) {
+                        $data = $oldRow[$colIndex];
+                        $decoded = json_decode($data, true);
+                        if (is_array($decoded)) {
+                            foreach ($decoded as $temuanItem) {
+                                if (isset($temuanItem['evidence']) && is_array($temuanItem['evidence'])) {
+                                    foreach ($temuanItem['evidence'] as $url) {
+                                        $relativePath = str_replace('/storage/', '', parse_url($url, PHP_URL_PATH));
+                                        Storage::disk('public')->delete($relativePath);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
     
         // Siapkan baseRow
         $baseRow = [
