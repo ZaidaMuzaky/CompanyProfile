@@ -347,21 +347,25 @@
                                 <!-- Template for Inspection Items -->
                                 <template id="inspection-item-template">
                                     <div
-                                        class="row align-items-center mb-3 p-2 bg-white rounded-2 shadow-sm inspection-item animate__animated animate__fadeIn">
+                                        class="row align-items-center mb-3 p-2 bg-white rounded-2 shadow-sm inspection-item animate__animated animate__fadeIn"
+                                        data-index="__INDEX__">
                                         <div class="col-md-4 col-12 mb-2 mb-md-0">
-                                            <span class="inspection-title fw-medium text-dark"></span>
+                                            <span class="inspection-title fw-medium text-dark">__TITLE__</span>
                                         </div>
                                         <div class="col-md-3 col-6">
                                             <select name="condition[]" class="form-select form-select-sm" required>
-                                                <option value="" disabled selected>-- Condition --</option>
                                                 <option value="OK">OK</option>
                                                 <option value="BAD">BAD</option>
                                             </select>
                                         </div>
                                         <div class="col-md-5 col-6">
-                                            <input type="text" name="recommendation[]"
-                                                class="form-control form-control-sm"
+                                            <input type="text" name="recommendation[]" class="form-control form-control-sm"
                                                 placeholder="Recommendation (optional)">
+                                        </div>
+                                        <div class="col-md-3 mt-2 col-lg">
+                                            <input type="file" name="evidence_item[__INDEX__][]" class="form-control mt-2"
+                                                multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi">
+                                            <small class="text-muted">Upload evidence (opsional, multiple)</small>
                                         </div>
                                     </div>
                                 </template>
@@ -396,6 +400,10 @@
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-sm btn-danger remove-temuan">×</button>
+                                        </div>
+                                        <div class="col-md-5 mt-2 col-lg">
+                                            <input type="file" name="temuan_sub_component[__INDEX__][evidence][]" class="form-control form-control-sm" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi" multiple>
+                                            <small class="text-muted">Upload evidence (opsional, multiple)</small>
                                         </div>
                                     </div>
                                 </template>
@@ -453,23 +461,23 @@
 
                                 function renderSection(sectionId, items) {
                                     const container = document.getElementById(sectionId);
-                                    const template = document.getElementById('inspection-item-template');
-
-                                    items.forEach(title => {
-                                        const clone = template.content.cloneNode(true);
-                                        clone.querySelector('.inspection-title').textContent = title;
-
-                                        const select = clone.querySelector('select[name="condition[]"]');
-                                        const input = clone.querySelector('input[name="recommendation[]"]');
-
-                                        // Cek apakah ada nilai sebelumnya dari previousInspectionValues
-                                        const previous = previousInspectionValues[title];
-                                        if (previous) {
-                                            select.value = previous.condition;
-                                            input.value = previous.recommendation || '';
+                                    const template = document.getElementById('inspection-item-template').innerHTML;
+                                    items.forEach((title, idx) => {
+                                        const index = sectionId === 'section-a-items' ? `a_${idx}` : `b_${idx}`;
+                                        let html = template
+                                            .replace(/__INDEX__/g, index)
+                                            .replace(/__TITLE__/g, title);
+                                        const wrapper = document.createElement('div');
+                                        wrapper.innerHTML = html;
+                                        // Set previous value if available
+                                        const select = wrapper.querySelector('select[name="condition[]"]');
+                                        const input = wrapper.querySelector('input[name="recommendation[]"]');
+                                        const prev = previousInspectionValues[title];
+                                        if (prev) {
+                                            select.value = prev.condition;
+                                            input.value = prev.recommendation || '';
                                         }
-
-                                        container.appendChild(clone);
+                                        container.appendChild(wrapper.firstElementChild);
                                     });
                                 }
 
@@ -478,14 +486,12 @@
                                     const sectionTemplate = document.getElementById('sub-component-template');
                                     const itemTemplate = document.getElementById('temuan-item-template');
                                     let temuanIndex = 0;
-
                                     items.forEach(subComponent => {
                                         const sectionClone = sectionTemplate.content.cloneNode(true);
                                         const sectionDiv = sectionClone.querySelector('.sub-component-section');
                                         const title = sectionDiv.querySelector('.sub-component-title');
                                         const itemsDiv = sectionDiv.querySelector('.sub-component-items');
                                         title.textContent = subComponent;
-
                                         // Render previous temuan if available
                                         if (previousInspectionValues.section_c && previousInspectionValues.section_c[subComponent]) {
                                             previousInspectionValues.section_c[subComponent].forEach(temuan => {
@@ -514,6 +520,15 @@
                                                 temuanIndex++;
                                             });
                                         }
+                                        document.addEventListener('click', function (e) {
+                                            if (e.target && e.target.classList.contains('remove-temuan')) {
+                                                e.preventDefault();
+                                                const row = e.target.closest('.row');
+                                                if (row) {
+                                                    row.remove();
+                                                }
+                                            }
+                                        });
 
                                         // Add temuan button
                                         const addBtn = sectionDiv.querySelector('.add-temuan');
@@ -543,7 +558,7 @@
                                 });
                             </script>
 
-                            <div class="mb-4">
+                            {{-- <div class="mb-4">
                                 <label class="form-label fw-semibold">Evidence</label>
                                 <p class="text-muted small mb-3">Masukkan evidence untuk temuan mayor. Hubungi pengawas
                                     jika bingung.</p>
@@ -552,7 +567,7 @@
                                         id="evidence_files" multiple
                                         accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi">
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary px-4">Submit</button>

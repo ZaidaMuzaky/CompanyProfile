@@ -75,7 +75,7 @@
                     
 
                         <!-- Form -->
-                        <form action="" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('user.inspection.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @if (session('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -302,24 +302,27 @@
                                 <!-- Template for Inspection Items -->
                                 <template id="inspection-item-template">
                                     <div
-                                        class="row align-items-center mb-3 p-2 bg-white rounded-2 shadow-sm inspection-item animate__animated animate__fadeIn">
-                                        <div class="col-md-4 col-12 mb-2 mb-md-0">
-                                            <span class="inspection-title fw-medium text-dark"></span>
-                                        </div>
-                                        <div class="col-md-3 col-6">
-                                            <select name="condition[]" class="form-select form-select-sm" >
-                                                <option value="" disabled selected>-- Condition --</option>
-                                                <option value="OK">OK</option>
-                                                <option value="BAD">BAD</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-5 col-6">
-                                            <input type="text" name="recommendation[]"
-                                                class="form-control form-control-sm"
-                                                placeholder="Recommendation (optional)">
-                                        </div>
+                                      class="row align-items-center mb-3 p-2 bg-white rounded-2 shadow-sm inspection-item animate__animated animate__fadeIn"
+                                      data-index="__INDEX__">
+                                      <div class="col-md-4 col-12 mb-2 mb-md-0">
+                                        <span class="fw-semibold">__TITLE__</span>
+                                      </div>
+                                      <div class="col-md-3 col-6">
+                                        <select name="condition[]" class="form-select" required>
+                                          <option value="OK">OK</option>
+                                          <option value="BAD">BAD</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-md-5 col-6">
+                                        <input type="text" name="recommendation[]" class="form-control" placeholder="Rekomendasi (opsional)">
+                                      </div>
+                                      <div class="col-md-3 mt-2 col-lg ">
+                                        <input type="file" name="evidence_item[__INDEX__][]" class="form-control mt-2" multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi">
+                                        <small class="text-muted">Upload evidence (opsional, multiple)</small>
+                                      </div>
                                     </div>
-                                </template>
+                                  </template>
+                                  
 
                                 <!-- Template khusus Section C (Sub Component) -->
                                 <template id="sub-component-template">
@@ -354,6 +357,11 @@
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-sm btn-danger remove-temuan">×</button>
                                         </div>
+                                        <div class="col-md-5 mt-2 col-lg">
+                                            <input type="file" name="temuan_sub_component[__INDEX__][evidence][]"
+                                                   class="form-control form-control-sm"
+                                                   accept="image/*" multiple>
+                                          </div>
                                     </div>
                                 </template>
 
@@ -409,14 +417,17 @@
 
                                 function renderSection(sectionId, items) {
                                     const container = document.getElementById(sectionId);
-                                    const template = document.getElementById('inspection-item-template');
-
-                                    items.forEach(title => {
-                                        const clone = template.content.cloneNode(true);
-                                        clone.querySelector('.inspection-title').textContent = title;
-                                        container.appendChild(clone);
+                                    const template  = document.getElementById('inspection-item-template').innerHTML;
+                                    items.forEach((title, idx) => {
+                                        const index = sectionId === 'section-a-items' ? `a_${idx}` : `b_${idx}`;
+                                        let html = template
+                                            .replace(/__INDEX__/g, index)
+                                            .replace(/__TITLE__/g, title);
+                                        const wrapper = document.createElement('div');
+                                        wrapper.innerHTML = html;
+                                        container.appendChild(wrapper.firstElementChild);
                                     });
-                                }
+                                }    
 
                                 function renderSectionC(sectionId, items) {
                                     const container = document.getElementById(sectionId);
@@ -469,7 +480,7 @@
                             </script>
 
 
-                            <div class="mb-4">
+                            {{-- <div class="mb-4">
                                 <label class="form-label fw-semibold">Evidence</label>
                                 <p class="text-muted small mb-3">Masukkan evidence untuk temuan mayor. Hubungi pengawas
                                     jika bingung.</p>
@@ -478,7 +489,7 @@
                                         id="evidence_files" multiple
                                         accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.mp4,.avi">
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary px-4">Submit</button>

@@ -7,9 +7,11 @@ use Carbon\Carbon;
 use Google\Client;
 use App\Models\CnUnit;
 use Google\Service\Sheets;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Google\Service\Sheets\ValueRange;
+use Illuminate\Support\Facades\Storage;
 
 class UserInspectionController extends Controller
 {
@@ -20,44 +22,59 @@ class UserInspectionController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input
+        // 1. Validasi input
         $request->validate([
-            'tanggal_service' => 'required|date',
-            'nama_mekanik' => 'required|string|max:255',
-            'waktu_serah_terima' => 'required',
-            'nik' => 'required|string|max:50',
-            'section' => 'required|string|in:Section DT,Section SDT,Section A2B',
-            'supervisor' => 'required|string|in:Ari Handoko,Teo Hermansyah,Herri Setiawan,Andrian',
-            'model_unit' => 'required|string',
-            'other_model_unit' => 'nullable|string|max:255',
-            'cn_unit' => 'required|string|max:100',
-            'hour_meter' => 'required|integer|min:0',
-            'condition' => 'nullable|array',
-            'condition.*' => 'nullable|string|in:OK,BAD',
-            'recommendation' => 'nullable|array',
-            'recommendation.*' => 'nullable|string|max:255',
-            'evidence.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:10240',
-            'temuan_sub_component' => 'nullable|array',
-            'temuan_sub_component.*.sub_component' => 'required|string|min:1',
-            'temuan_sub_component.*.temuan' => 'required|string',
-            'temuan_sub_component.*.condition' => 'required|string|in:OK,BAD',
-            'temuan_sub_component.*.recommendation' => 'nullable|string',
+            'tanggal_service'                          => 'required|date',
+            'nama_mekanik'                             => 'required|string|max:255',
+            'waktu_serah_terima'                       => 'required|string',
+            'nik'                                      => 'required|string|max:50',
+            'section'                                  => 'required|string|in:Section DT,Section SDT,Section A2B',
+            'supervisor'                               => 'required|string|in:Ari Handoko,Teo Hermansyah,Herri Setiawan,Andrian',
+            'model_unit'                               => 'required|string',
+            'other_model_unit'                         => 'nullable|string|max:255',
+            'cn_unit'                                  => 'required|string|max:100',
+            'hour_meter'                               => 'required|integer|min:0',
+
+            // Section A/B
+            'condition'                                => 'nullable|array',
+            'condition.*'                              => 'nullable|string|in:OK,BAD',
+            'recommendation'                           => 'nullable|array',
+            'recommendation.*'                         => 'nullable|string|max:255',
+            'evidence_item'                            => 'nullable|array',
+            'evidence_item.*'                          => 'nullable|array',
+            'evidence_item.*.*'                        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
+
+            // Section C
+            'temuan_sub_component'                     => 'nullable|array',
+            'temuan_sub_component.*.sub_component'     => 'required|string|min:1',
+            'temuan_sub_component.*.temuan'            => 'required|string',
+            'temuan_sub_component.*.condition'         => 'required|string|in:OK,BAD',
+            'temuan_sub_component.*.recommendation'    => 'nullable|string|max:255',
+            'temuan_sub_component.*.evidence'          => 'nullable|array',
+            'temuan_sub_component.*.evidence.*'        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
         ]);
-    
-        $modelUnit = $request->model_unit === 'Other' ? $request->other_model_unit : $request->model_unit;
-    
-        // Upload evidence files
-        $evidenceFiles = [];
-        if ($request->hasFile('evidence')) {
-            foreach ($request->file('evidence') as $file) {
-                if ($file->isValid()) {
-                    $path = $file->store('evidence_files_inspection', 'public');
-                    $evidenceFiles[] = asset('storage/' . $path);
+
+        // 2. Tentukan Model Unit
+        $modelUnit = $request->model_unit === 'Other'
+                   ? $request->other_model_unit
+                   : $request->model_unit;
+
+        // 3. Upload evidence per item Section A/B
+        $evidencePerItem = [];
+        $evidenceItems = $request->file('evidence_item', []);
+        foreach ($evidenceItems as $idx => $files) {
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    if ($file && $file->isValid()) {
+                        $path = $file->store('evidence_files_inspection', 'public');
+                        $url = Storage::url($path);
+                        $evidencePerItem[$idx][] = $url;
+                    }
                 }
             }
         }
-    
-        // Judul inspeksi tetap
+
+        // 4. Siapkan judul dan data inspection A+B
         $inspectionTitles = [
             "Engine Oil level", "Radiator Coolant Level", "Final Drive Oil Level",
             "Differential Oil Level", "Transmission & Steering Oil Level",
@@ -67,126 +84,127 @@ class UserInspectionController extends Controller
             "Check Abnormal Bending/Crack", "Check Abnormal Tention", "Check Abnormal Pressure",
             "Check Error Vault Code"
         ];
-    
-        $conditions = $request->input('condition', []);
-        $recommendations = $request->input('recommendation', []);
+        $conditions     = $request->input('condition', []);
+        $recommendations= $request->input('recommendation', []);
         $inspectionData = [];
-    
-        foreach ($inspectionTitles as $index => $title) {
-            $cond = $conditions[$index] ?? 'OK';
-            $rec = $recommendations[$index] ?? '';
+
+        foreach ($inspectionTitles as $i => $title) {
+            $index      = $i < 10 ? "a_$i" : "b_" . ($i - 10);
+            $cond       = $conditions[$i]    ?? 'OK';
+            $rec        = $recommendations[$i] ?? '';
+            $evidences  = $evidencePerItem[$index] ?? [];
             $statusCase = $cond === 'OK' ? 'close' : 'open';
-    
+
             $inspectionData[] = json_encode([
-                'condition' => $cond,
+                'condition'      => $cond,
                 'recommendation' => $rec,
-                'action' => 'CHECK',
-                'statusCase' => $statusCase,
+                'evidence'       => $evidences,
+                'action'         => 'CHECK',
+                'statusCase'     => $statusCase,
             ], JSON_UNESCAPED_UNICODE);
         }
-    
-        // Temuan sub komponen
-        $temuanGabung = [];
-        $temuanHeaders = [];
-        $temuanData = [];
-        $temuan_sub_component = $request->input('temuan_sub_component', []);
-    
-        if (!empty($temuan_sub_component)) {
-            foreach ($temuan_sub_component as $temuan) {
-                $sub = trim($temuan['sub_component'] ?? '');
-                if ($sub === '') continue;
-    
-                $statusCase = $temuan['condition'] === 'OK' ? 'close' : 'open';
-    
-                $temuanGabung[$sub][] = [
-                    'sub_component' => $sub,
-                    'temuan' => $temuan['temuan'],
-                    'condition' => $temuan['condition'],
-                    'recommendation' => $temuan['recommendation'] ?? '',
-                    'action' => 'CHECK',
-                    'statusCase' => $statusCase
-                ];
-            }
-    
-            foreach ($temuanGabung as $sub => $listTemuan) {
-                $header = "{$sub}";
-                if (!in_array($header, $temuanHeaders)) {
-                    $temuanHeaders[] = $header;
+
+        // 5. Proses TEMUAN Sub‑component (Section C)
+        $temuanInput    = $request->input('temuan_sub_component', []);
+        $temuanGrouped  = [];
+        $temuanHeaders  = [];
+        $temuanData     = [];
+
+        foreach ($temuanInput as $idx => $item) {
+            $sub        = trim($item['sub_component']);
+            $statusCase = $item['condition'] === 'OK' ? 'close' : 'open';
+
+            // Upload file evidence untuk temuan ini
+            $urls = [];
+            if ($request->hasFile("temuan_sub_component.{$idx}.evidence")) {
+                foreach ($request->file("temuan_sub_component.{$idx}.evidence") as $f) {
+                    if ($f->isValid()) {
+                        $p = $f->store('evidence_files_inspection', 'public');
+                        $urls[] = asset("storage/{$p}");
+                    }
                 }
-                $temuanData[$header] = json_encode($listTemuan, JSON_UNESCAPED_UNICODE);
             }
+
+            $temuanGrouped[$sub][] = [
+                'sub_component' => $sub,
+                'temuan'        => $item['temuan'],
+                'condition'     => $item['condition'],
+                'recommendation'=> $item['recommendation'] ?? '',
+                'evidence'      => $urls,
+                'action'        => 'CHECK',
+                'statusCase'    => $statusCase,
+            ];
         }
-    
-        // Pastikan semua header Section C masuk
-        $sectionC = [
+
+        // Susun header & JSON per sub_component
+        foreach ($temuanGrouped as $sub => $entries) {
+            $temuanHeaders[]       = $sub;
+            $temuanData[$sub]      = json_encode($entries, JSON_UNESCAPED_UNICODE);
+        }
+
+        // Pastikan semua sub‑component Section C ter-cover
+        $allSectionC = [
             "AC SYSTEM", "BRAKE SYSTEM", "DIFFERENTIAL & FINAL DRAVE",
             "ELECTRICAL SYSTEM", "ENGINE", "GENERAL ( ACCESSORIES, CABIN, ETC )",
             "HYDRAULIC SYSTEM", "IT SYSTEM", "MAIN FRAME / CHASSIS / VASSEL",
             "PERIODICAL SERVICE", "PNEUMATIC SYSTEM", "PROBLEM SDT", "PROBLEM TYRE SDT",
-            "STEERING SYSTEM", "TRANSMISSION SYSTEM", "TYRE",
-            "UNDERCARRIAGE"
+            "STEERING SYSTEM", "TRANSMISSION SYSTEM", "TYRE", "UNDERCARRIAGE"
         ];
-    
-        foreach ($sectionC as $sub) {
-            $header = "{$sub}";
-            if (!in_array($header, $temuanHeaders)) {
-                $temuanHeaders[] = $header;
-            }
-            if (!array_key_exists($header, $temuanData)) {
-                $temuanData[$header] = '';
+        foreach ($allSectionC as $sub) {
+            if (! in_array($sub, $temuanHeaders)) {
+                $temuanHeaders[]  = $sub;
+                $temuanData[$sub] = '';
             }
         }
-    
-        // Setup Google Sheets
-        $client = new Client();
+
+        // 6. KONEKSI dan KIRIM ke Google Sheets
+        $client        = new Client();
         $client->setApplicationName('Laravel Service Inspection');
         $client->setScopes([Sheets::SPREADSHEETS]);
         $client->setAuthConfig(storage_path('app/google/credentials.json'));
         $client->setAccessType('offline');
-    
-        $service = new Sheets($client);
+        $service       = new Sheets($client);
         $spreadsheetId = '1BeBtZZNZBEQBfZHV28Jq_KWRhqBrSuRIBJIrLfNeFfY';
-        $range = 'Sheet1!A1';
-    
-        // Ambil header
-        $response = $service->spreadsheets_values->get($spreadsheetId, 'Sheet1!A1:ZZ');
-        $rows = $response->getValues();
-        $existingHeaders = $rows[0] ?? [];
-    
-        if (empty($existingHeaders) || $existingHeaders[0] !== 'ID') {
-            $headers = array_merge([
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
-                'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
-                'Evidence Files', 'Status', 'Approved By', 'Note'
-            ], $inspectionTitles, $temuanHeaders);
-    
-            $headerBody = new ValueRange(['values' => [$headers]]);
-            $service->spreadsheets_values->append($spreadsheetId, $range, $headerBody, ['valueInputOption' => 'RAW']);
-            $existingHeaders = $headers;
+        $sheetRange    = 'Sheet1!A1';
+
+        // a) ambil header
+        $resp    = $service->spreadsheets_values->get($spreadsheetId, 'Sheet1!A1:ZZ');
+        $rows    = $resp->getValues();
+        $headers = $rows[0] ?? [];
+
+        $fixed = ['ID','Timestamp','Username','Tanggal Service','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
+        // b) inisialisasi header jika belum ada
+        if (empty($headers) || $headers[0] !== 'ID') {
+            $fixed    = ['ID','Timestamp','Username','Tanggal Service','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
+            $allHeads = array_merge($fixed, $inspectionTitles, $temuanHeaders);
+            $service->spreadsheets_values->append($spreadsheetId, $sheetRange, new ValueRange(['values'=>[$allHeads]]), ['valueInputOption'=>'RAW']);
+            $headers = $allHeads;
         }
-    
-        $missingHeaders = array_diff($temuanHeaders, $existingHeaders);
-        if (!empty($missingHeaders)) {
-            $updatedHeaders = array_merge($existingHeaders, $missingHeaders);
-            $headerUpdate = new ValueRange([
-                'range' => 'Sheet1!A1',
-                'values' => [$updatedHeaders]
-            ]);
-            $service->spreadsheets_values->update($spreadsheetId, 'Sheet1!A1', $headerUpdate, ['valueInputOption' => 'RAW']);
-            $existingHeaders = $updatedHeaders;
+
+        // c) update header temuan baru
+        $diff = array_diff($temuanHeaders, $headers);
+        if (! empty($diff)) {
+            $newHeads = array_merge($headers, array_values($diff));
+            $service->spreadsheets_values->update($spreadsheetId, 'Sheet1!A1', new ValueRange(['values'=>[$newHeads]]), ['valueInputOption'=>'RAW']);
+            $headers = $newHeads;
         }
-    
+
+        // d) generate new ID
+        $rows = $resp->getValues();
+        $rows = is_array($rows) ? $rows : [];
+
         $existingIds = [];
-        if (is_array($rows)) {
-            foreach ($rows as $i => $row) {
-                if ($i === 0) continue;
-                $existingIds[] = intval($row[0] ?? 0);
-            }
+
+        foreach ($rows as $i => $r) {
+            if ($i === 0) continue;
+            $existingIds[] = isset($r[0]) ? (int)$r[0] : 0;
         }
-        $id = empty($existingIds) ? 1 : max($existingIds) + 1;
-    
-        $baseData = [
-            $id,
+
+        $newId = empty($existingIds) ? 1 : max($existingIds) + 1;
+
+        // e) bangun base row
+        $baseRow = [
+            $newId,
             now()->toDateTimeString(),
             Auth::user()->username ?? '-',
             $request->tanggal_service,
@@ -198,48 +216,37 @@ class UserInspectionController extends Controller
             $modelUnit,
             $request->cn_unit,
             $request->hour_meter,
-            count($evidenceFiles) ? implode(", ", $evidenceFiles) : '-',
-            'Pending',
-            '',
-            ''
+            // Semua evidence Section A/B jadi satu kolom (opsional)
+            'Pending','',''
         ];
-    
-        foreach ($existingHeaders as $header) {
-            if (!in_array($header, array_merge(array_keys($temuanData), $inspectionTitles, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
-                'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
-                'Evidence Files', 'Status', 'Approved By', 'Note'
-            ]))) {
-                $temuanData[$header] = '';
-            }
-        }
-    
+
+
+
+        // f) bangun final row sesuai headers
         $finalRow = [];
-        foreach ($existingHeaders as $header) {
-            if (in_array($header, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
-                'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
-                'Evidence Files', 'Status', 'Approved By', 'Note'
-            ])) {
-                $index = array_search($header, $existingHeaders);
-                $finalRow[] = $baseData[$index] ?? '';
-            } elseif (in_array($header, $inspectionTitles)) {
-                $index = array_search($header, $inspectionTitles);
-                $finalRow[] = $inspectionData[$index] ?? '';
+        foreach ($headers as $h) {
+            if (in_array($h, $fixed)) {
+                $idx = array_search($h, $fixed);
+                $finalRow[] = $baseRow[$idx] ?? '';
+            } elseif (in_array($h, $inspectionTitles)) {
+                $idx = array_search($h, $inspectionTitles);
+                $finalRow[] = $inspectionData[$idx] ?? '';
             } else {
-                $finalRow[] = $temuanData[$header] ?? '';
+                $finalRow[] = $temuanData[$h] ?? '';
             }
         }
-    
-        // Kirim ke Google Sheets
-        $body = new ValueRange(['values' => [$finalRow]]);
-        $params = ['valueInputOption' => 'RAW'];
-        $service->spreadsheets_values->append($spreadsheetId, $range, $body, $params);
-    
+
+        // g) append ke sheet
+        $service->spreadsheets_values->append(
+            $spreadsheetId,
+            $sheetRange,
+            new ValueRange(['values'=>[$finalRow]]),
+            ['valueInputOption'=>'RAW']
+        );
+
         return back()->with('success', 'Data Inspeksi berhasil disimpan dan dikirim ke Google Sheets.');
     }
-    
-    
+
  
     public function status()
     {
@@ -584,7 +591,7 @@ class UserInspectionController extends Controller
     {
         // Set up Google Sheets client
         $client = new Client();
-        $client->setApplicationName('Backlog Service Form');
+        $client->setApplicationName('Inspection Service Form');
         $client->setScopes([Sheets::SPREADSHEETS_READONLY]);
         $client->setAuthConfig(storage_path('app/google/credentials.json'));
         $client->setAccessType('offline');
@@ -629,7 +636,7 @@ class UserInspectionController extends Controller
             if (
                 $data['ID'] == $id &&
                 $data['Username'] == Auth::user()->username &&
-                $data['Status'] === 'Rejected'
+                in_array($data['Status'], ['Rejected', 'Pending'])
             ) {
                 // Format waktu agar cocok dengan <input type="time">
                 try {
@@ -676,44 +683,54 @@ class UserInspectionController extends Controller
     
     public function resubmit(Request $request, $id)
     {
-        // Validasi input
+        // 1. Validasi input (sama dengan store)
         $request->validate([
-            'tanggal_service' => 'required|date',
-            'nama_mekanik' => 'required|string|max:255',
-            'waktu_serah_terima' => 'required',
-            'nik' => 'required|string|max:50',
-            'section' => 'required|string|in:Section DT,Section SDT,Section A2B',
-            'supervisor' => 'required|string|in:Ari Handoko,Teo Hermansyah,Herri Setiawan,Andrian',
-            'model_unit' => 'required|string',
-            'other_model_unit' => 'nullable|string|max:255',
-            'cn_unit' => 'required|string|max:100',
-            'hour_meter' => 'required|integer|min:0',
-            'condition' => 'required|array',
-            'condition.*' => 'required|string|in:OK,BAD',
-            'recommendation' => 'nullable|array',
-            'recommendation.*' => 'nullable|string|max:255',
-            'evidence.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:10240',
-            'temuan_sub_component' => 'nullable|array',
-            'temuan_sub_component.*.sub_component' => 'required|string|min:1',
-            'temuan_sub_component.*.temuan' => 'required|string',
-            'temuan_sub_component.*.condition' => 'required|string|in:OK,BAD',
-            'temuan_sub_component.*.recommendation' => 'nullable|string',
+            'tanggal_service'                          => 'required|date',
+            'nama_mekanik'                             => 'required|string|max:255',
+            'waktu_serah_terima'                       => 'required|string',
+            'nik'                                      => 'required|string|max:50',
+            'section'                                  => 'required|string|in:Section DT,Section SDT,Section A2B',
+            'supervisor'                               => 'required|string|in:Ari Handoko,Teo Hermansyah,Herri Setiawan,Andrian',
+            'model_unit'                               => 'required|string',
+            'other_model_unit'                         => 'nullable|string|max:255',
+            'cn_unit'                                  => 'required|string|max:100',
+            'hour_meter'                               => 'required|integer|min:0',
+    
+            'condition'                                => 'nullable|array',
+            'condition.*'                              => 'nullable|string|in:OK,BAD',
+            'recommendation'                           => 'nullable|array',
+            'recommendation.*'                         => 'nullable|string|max:255',
+            'evidence_item'                            => 'nullable|array',
+            'evidence_item.*'                          => 'nullable|array',
+            'evidence_item.*.*'                        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
+    
+            'temuan_sub_component'                     => 'nullable|array',
+            'temuan_sub_component.*.sub_component'     => 'required|string|min:1',
+            'temuan_sub_component.*.temuan'            => 'required|string',
+            'temuan_sub_component.*.condition'         => 'required|string|in:OK,BAD',
+            'temuan_sub_component.*.recommendation'    => 'nullable|string|max:255',
+            'temuan_sub_component.*.evidence'          => 'nullable|array',
+            'temuan_sub_component.*.evidence.*'        => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,mp4,avi|max:102400',
         ]);
-
+    
+        // 2. Tentukan model unit
         $modelUnit = $request->model_unit === 'Other' ? $request->other_model_unit : $request->model_unit;
-
-        $evidenceFiles = [];
-        if ($request->hasFile('evidence')) {
-            foreach ($request->file('evidence') as $file) {
-                if ($file->isValid()) {
+    
+        // 3. Upload evidence per item Section A/B
+        $evidencePerItem = [];
+        $evidenceItems = $request->file('evidence_item', []);
+        foreach ($evidenceItems as $idx => $files) {
+            foreach ($files ?? [] as $file) {
+                if ($file && $file->isValid()) {
                     $path = $file->store('evidence_files_inspection', 'public');
-                    $evidenceFiles[] = asset('storage/' . $path);
+                    $url = Storage::url($path);
+                    $evidencePerItem[$idx][] = $url;
                 }
             }
         }
-
-        // Judul inspeksi tetap
-        $inspectionTitles = [
+    
+        // 4. Judul inspection dan data A/B
+        $inspectionTitles = [ /* ... sama seperti fungsi store ... */ 
             "Engine Oil level", "Radiator Coolant Level", "Final Drive Oil Level",
             "Differential Oil Level", "Transmission & Steering Oil Level",
             "Hydraulic Oil Level", "Fuel Level", "PTO Oil", "Brake Oil", "Compressor Oil Level",
@@ -722,109 +739,113 @@ class UserInspectionController extends Controller
             "Check Abnormal Bending/Crack", "Check Abnormal Tention", "Check Abnormal Pressure",
             "Check Error Vault Code"
         ];
-
         $conditions = $request->input('condition', []);
         $recommendations = $request->input('recommendation', []);
         $inspectionData = [];
-
-        foreach ($inspectionTitles as $index => $title) {
-            $cond = $conditions[$index] ?? '';
-            $rec = $recommendations[$index] ?? '';
+    
+        foreach ($inspectionTitles as $i => $title) {
+            $index = $i < 10 ? "a_$i" : "b_" . ($i - 10);
+            $cond = $conditions[$i] ?? 'OK';
+            $rec = $recommendations[$i] ?? '';
+            $evidences = $evidencePerItem[$index] ?? [];
             $statusCase = $cond === 'OK' ? 'close' : 'open';
+    
             $inspectionData[] = json_encode([
                 'condition' => $cond,
                 'recommendation' => $rec,
+                'evidence' => $evidences,
                 'action' => 'CHECK',
                 'statusCase' => $statusCase,
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
         }
-
-        // Temuan sub komponen (Section C)
-        $temuanGabung = [];
+    
+        // 5. Proses temuan Section C
+        $temuanInput = $request->input('temuan_sub_component', []);
+        $temuanGrouped = [];
         $temuanHeaders = [];
         $temuanData = [];
-        $temuan_sub_component = $request->input('temuan_sub_component', []);
-
-        if (!empty($temuan_sub_component)) {
-            foreach ($temuan_sub_component as $temuan) {
-                $sub = trim($temuan['sub_component'] ?? '');
-                if ($sub === '') continue;
-                $statusCase = $temuan['condition'] === 'OK' ? 'close' : 'open';
-                $temuanGabung[$sub][] = [
-                    'temuan' => $temuan['temuan'] ?? '',
-                    'condition' => $temuan['condition'] ?? '',
-                    'recommendation' => $temuan['recommendation'] ?? '',
-                    'statusCase' => $statusCase,
-                ];
-            }
-            foreach ($temuanGabung as $sub => $listTemuan) {
-                $header = "{$sub}";
-                if (!in_array($header, $temuanHeaders)) {
-                    $temuanHeaders[] = $header;
+    
+        foreach ($temuanInput as $idx => $item) {
+            $sub = trim($item['sub_component']);
+            $statusCase = $item['condition'] === 'OK' ? 'close' : 'open';
+    
+            $urls = [];
+            if ($request->hasFile("temuan_sub_component.{$idx}.evidence")) {
+                foreach ($request->file("temuan_sub_component.{$idx}.evidence") as $f) {
+                    if ($f->isValid()) {
+                        $p = $f->store('evidence_files_inspection', 'public');
+                        $urls[] = asset("storage/{$p}");
+                    }
                 }
-                $temuanData[$header] = json_encode($listTemuan, JSON_UNESCAPED_UNICODE);
             }
+    
+            $temuanGrouped[$sub][] = [
+                'sub_component' => $sub,
+                'temuan' => $item['temuan'],
+                'condition' => $item['condition'],
+                'recommendation' => $item['recommendation'] ?? '',
+                'evidence' => $urls,
+                'action' => 'CHECK',
+                'statusCase' => $statusCase,
+            ];
         }
-
-        // Pastikan semua header Section C masuk
-        $sectionC = [
+    
+        foreach ($temuanGrouped as $sub => $entries) {
+            $temuanHeaders[] = $sub;
+            $temuanData[$sub] = json_encode($entries, JSON_UNESCAPED_UNICODE);
+        }
+    
+        $allSectionC = [/* ... sama seperti store ... */ 
             "AC SYSTEM", "BRAKE SYSTEM", "DIFFERENTIAL & FINAL DRAVE",
             "ELECTRICAL SYSTEM", "ENGINE", "GENERAL ( ACCESSORIES, CABIN, ETC )",
             "HYDRAULIC SYSTEM", "IT SYSTEM", "MAIN FRAME / CHASSIS / VASSEL",
             "PERIODICAL SERVICE", "PNEUMATIC SYSTEM", "PROBLEM SDT", "PROBLEM TYRE SDT",
-            "STEERING SYSTEM", "TRANSMISSION SYSTEM", "TYRE",
-            "UNDERCARRIAGE"
+            "STEERING SYSTEM", "TRANSMISSION SYSTEM", "TYRE", "UNDERCARRIAGE"
         ];
-        foreach ($sectionC as $sub) {
-            $header = "{$sub}";
-            if (!in_array($header, $temuanHeaders)) {
-                $temuanHeaders[] = $header;
-            }
-            if (!array_key_exists($header, $temuanData)) {
-                $temuanData[$header] = '';
+        foreach ($allSectionC as $sub) {
+            if (!in_array($sub, $temuanHeaders)) {
+                $temuanHeaders[] = $sub;
+                $temuanData[$sub] = '';
             }
         }
-
-        // Setup Google Sheets
+    
+        // 6. Kirim ke Google Sheet
         $client = new Client();
-        $client->setApplicationName('Backlog Service Form');
+        $client->setApplicationName('Laravel Service Inspection');
         $client->setScopes([Sheets::SPREADSHEETS]);
         $client->setAuthConfig(storage_path('app/google/credentials.json'));
         $client->setAccessType('offline');
-
         $service = new Sheets($client);
         $spreadsheetId = '1BeBtZZNZBEQBfZHV28Jq_KWRhqBrSuRIBJIrLfNeFfY';
-        $sheetName = 'Sheet1';
-
-        $response = $service->spreadsheets_values->get($spreadsheetId, $sheetName);
-        $rows = $response->getValues();
-
-        if (empty($rows)) {
-            return back()->with('error', 'Sheet kosong.');
+    
+        $resp = $service->spreadsheets_values->get($spreadsheetId, 'Sheet1!A1:ZZ');
+        $rows = $resp->getValues();
+        $headers = $rows[0] ?? [];
+    
+        $fixed = ['ID','Timestamp','Username','Tanggal Service','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
+    
+        // Update header jika ada temuan baru
+        $diff = array_diff($temuanHeaders, $headers);
+        if (! empty($diff)) {
+            $headers = array_merge($headers, array_values($diff));
+            $service->spreadsheets_values->update($spreadsheetId, 'Sheet1!A1', new ValueRange(['values'=>[$headers]]), ['valueInputOption'=>'RAW']);
         }
-
-        $headers = $rows[0];
-        $rowIndex = null;
-
-        foreach ($rows as $index => $row) {
-            if ($index === 0) continue;
-            $rowData = array_combine($headers, array_pad($row, count($headers), ''));
-            if (
-                ($rowData['ID'] ?? null) == $id &&
-                ($rowData['Username'] ?? null) === Auth::user()->username &&
-                ($rowData['Status'] ?? '') === 'Rejected'
-            ) {
-                $rowIndex = $index;
+    
+        // Temukan baris yang akan di-update berdasarkan ID
+        $targetRowIndex = null;
+        foreach ($rows as $i => $row) {
+            if (isset($row[0]) && (string)$row[0] === (string)$id) {
+                $targetRowIndex = $i + 1; // baris di Google Sheets dimulai dari 1
                 break;
             }
         }
-
-        if ($rowIndex === null) {
-            return back()->with('error', 'Data tidak ditemukan atau tidak memenuhi syarat untuk resubmit.');
+    
+        if (is_null($targetRowIndex)) {
+            return back()->with('error', 'Data tidak ditemukan di Google Sheets.');
         }
-
-        // Susun ulang data sesuai urutan header
-        $baseData = [
+    
+        // Siapkan baseRow
+        $baseRow = [
             $id,
             now()->toDateTimeString(),
             Auth::user()->username ?? '-',
@@ -837,57 +858,35 @@ class UserInspectionController extends Controller
             $modelUnit,
             $request->cn_unit,
             $request->hour_meter,
-            count($evidenceFiles) ? implode(", ", $evidenceFiles) : '-',
-            'Pending',
-            '',
-            ''
+            'Pending', '', ''
         ];
-
-        foreach ($headers as $header) {
-            if (!in_array($header, array_merge(array_keys($temuanData), $inspectionTitles, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
-                'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
-                'Evidence Files', 'Status', 'Approved By', 'Note'
-            ]))) {
-                $temuanData[$header] = '';
-            }
-        }
-
+    
+        // Bangun final row sesuai urutan header
         $finalRow = [];
-        foreach ($headers as $header) {
-            if (in_array($header, [
-                'ID', 'Timestamp', 'Username', 'Tanggal Service', 'Nama Mekanik', 'Waktu Unit Masuk Breakdown',
-                'NIK', 'Section', 'Supervisor', 'Model Unit', 'CN Unit', 'Hour Meter',
-                'Evidence Files', 'Status', 'Approved By', 'Note'
-            ])) {
-                $index = array_search($header, $headers);
-                $finalRow[] = $baseData[$index] ?? '';
-            } elseif (in_array($header, $inspectionTitles)) {
-                $index = array_search($header, $inspectionTitles);
-                $finalRow[] = $inspectionData[$index] ?? '';
+        foreach ($headers as $h) {
+            if (in_array($h, $fixed)) {
+                $idx = array_search($h, $fixed);
+                $finalRow[] = $baseRow[$idx] ?? '';
+            } elseif (in_array($h, $inspectionTitles)) {
+                $idx = array_search($h, $inspectionTitles);
+                $finalRow[] = $inspectionData[$idx] ?? '';
             } else {
-                $finalRow[] = $temuanData[$header] ?? '';
+                $finalRow[] = $temuanData[$h] ?? '';
             }
         }
     
-        $body = new ValueRange([
-            'values' => [array_map(function($v) {
-                return $v ?? '';
-            }, $finalRow)]
-        ]);
-
-        $range = $sheetName . '!A' . ($rowIndex + 1);
-
-        try {
-            $service->spreadsheets_values->update($spreadsheetId, $range, $body, [
-                'valueInputOption' => 'USER_ENTERED'
-            ]);
-        } catch (\Google\Service\Exception $e) {
-            return back()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
-        }
-
-        return redirect()->route('user.inspection.show')->with('success', 'Form berhasil dikirim ulang.');
+        // Update baris di sheet
+        $range = "Sheet1!A{$targetRowIndex}";
+        $service->spreadsheets_values->update(
+            $spreadsheetId,
+            $range,
+            new ValueRange(['values' => [$finalRow]]),
+            ['valueInputOption' => 'RAW']
+        );
+    
+        return back()->with('success', 'Data berhasil diperbarui dan dikirim ulang ke Google Sheets.');
     }
+    
 
     public function autocomplete(Request $request)
     {

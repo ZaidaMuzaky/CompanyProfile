@@ -222,7 +222,7 @@
                                                 {{-- <td class="py-2 table-cell">{{ $form['Status Case'] ?? '-' }}</td> --}}
                                                 <td class="pe-4 py-2 action-buttons text-center">
                                                     <button
-                                                        class="btn btn-sm btn-outline-primary rounded-pill me-1"
+                                                        class="btn btn-sm btn-outline-primary rounded-pill "
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#detailModal{{ $form['ID'] }}"
                                                         data-bs-toggle="tooltip" title="Lihat detail formulir">
@@ -787,28 +787,29 @@
                                     <table class="table table-bordered mb-3" style="font-size: 0.85rem;">
                                         <tbody>
                                             @foreach ($temuan as $label => $value)
-                                                <tr>
-                                                    <th class="bg-light" style="width: 30%;">{{ ucfirst($label) }}</th>
-                                                    <td>
-                                                        @if (strtolower($label) === 'statuscase')
-                                                            <span class="badge bg-{{ $value == 'open' ? 'danger' : 'success' }}">{{ ucfirst($value) }}</span>
-                                                        @elseif (strtolower($label) === 'action')
-                                                            <span class="badge bg-info text-dark">{{ $value }}</span>
-                                                        @elseif (strtolower($label) === 'evidence' && is_array($value))
-                                                            @foreach ($value as $i => $link)
-                                                                <div class="mb-1">
-                                                                    <a href="{{ $link }}" target="_blank"
-                                                                        class="text-primary text-decoration-none fw-semibold">
-                                                                        <i class="fas fa-link me-1"></i> Buka Eviden {{ count($value) > 1 ? $i + 1 : '' }}
-                                                                    </a>
-                                                                </div>
-                                                            @endforeach
-                                                        @else
-                                                            {{ $value }}
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
+                                            @continue(strtolower($label) === 'sub_component')
+                                            <tr>
+                                                <th class="bg-light" style="width: 30%;">{{ ucfirst($label) }}</th>
+                                                <td>
+                                                    @if (strtolower($label) === 'statuscase')
+                                                        <span class="badge bg-{{ $value == 'open' ? 'danger' : 'success' }}">{{ ucfirst($value) }}</span>
+                                                    @elseif (strtolower($label) === 'action')
+                                                        <span class="badge bg-info text-dark">{{ $value }}</span>
+                                                    @elseif (strtolower($label) === 'evidence' && is_array($value))
+                                                        @foreach ($value as $i => $link)
+                                                            <div class="mb-1">
+                                                                <a href="{{ $link }}" target="_blank"
+                                                                    class="text-primary text-decoration-none fw-semibold">
+                                                                    <i class="fas fa-link me-1"></i> Buka Eviden {{ count($value) > 1 ? $i + 1 : '' }}
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        {{ $value }}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 @endforeach
