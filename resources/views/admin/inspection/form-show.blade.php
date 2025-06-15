@@ -205,8 +205,7 @@
                 'STEERING SYSTEM',
                 'TRANSMISSION SYSTEM',
                 'TYRE',
-                'UNDERGRADUATE',
-                'WORK EQUIPMENT',
+                'UNDERRCARIAGE'
             ];
 
             // Gabungkan semua inspection keys supaya mudah pengecekan nanti
@@ -541,8 +540,7 @@
                                                 'STEERING SYSTEM',
                                                 'TRANSMISSION SYSTEM',
                                                 'TYRE',
-                                                'UNDERGRADUATE',
-                                                'WORK EQUIPMENT',
+                                                'UNDERRCARIAGE'
                                             ],
                                         ];
                                     @endphp

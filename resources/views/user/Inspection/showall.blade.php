@@ -148,57 +148,56 @@
 {{-- detail modal --}}
             @foreach ($userForms as $index => $form)
             @php
-            $lubricantKeys = [
-                'Engine Oil level',
-                'Radiator Coolant Level',
-                'Final Drive Oil Level',
-                'Differential Oil Level',
-                'Transmission & Steering Oil Level',
-                'Hydraulic Oil Level',
-                'Fuel Level',
-                'PTO Oil',
-                'Brake Oil',
-                'Compressor Oil Level',
-            ];
+                $lubricantKeys = [
+                    'Engine Oil level',
+                    'Radiator Coolant Level',
+                    'Final Drive Oil Level',
+                    'Differential Oil Level',
+                    'Transmission & Steering Oil Level',
+                    'Hydraulic Oil Level',
+                    'Fuel Level',
+                    'PTO Oil',
+                    'Brake Oil',
+                    'Compressor Oil Level',
+                ];
 
-            $afterRepairKeys = [
-                'Check Leaking',
-                'Check tighting Bolt',
-                'Check Abnormal Noise',
-                'Check Abnormal Temperature',
-                'Check Abnormal Smoke/Smell',
-                'Check Abnormal Vibration',
-                'Check Abnormal Bending/Crack',
-                'Check Abnormal Tention',
-                'Check Abnormal Pressure',
-                'Check Error Vault Code',
-            ];
+                $afterRepairKeys = [
+                    'Check Leaking',
+                    'Check tighting Bolt',
+                    'Check Abnormal Noise',
+                    'Check Abnormal Temperature',
+                    'Check Abnormal Smoke/Smell',
+                    'Check Abnormal Vibration',
+                    'Check Abnormal Bending/Crack',
+                    'Check Abnormal Tention',
+                    'Check Abnormal Pressure',
+                    'Check Error Vault Code',
+                ];
 
-            $componentKeys = [
-                'AC SYSTEM',
-                'BRAKE SYSTEM',
-                'DIFFERENTIAL & FINAL DRAVE',
-                'ELECTRICAL SYSTEM',
-                'ENGINE',
-                'GENERAL ( ACCESSORIES, CABIN, ETC )',
-                'HYDRAULIC SYSTEM',
-                'IT SYSTEM',
-                'MAIN FRAME / CHASSIS / VASSEL',
-                'PERIODICAL SERVICE',
-                'PNEUMATIC SYSTEM',
-                'PREEICTIVE MAINTENANCE',
-                'PREVENTIF MAINTENANCE',
-                'PROBLEM SDT',
-                'PROBLEM TYRE SDT',
-                'STEERING SYSTEM',
-                'TRANSMISSION SYSTEM',
-                'TYRE',
-                'UNDERGRADUATE',
-                'WORK EQUIPMENT',
-            ];
+                $componentKeys = [
+                    'AC SYSTEM',
+                    'BRAKE SYSTEM',
+                    'DIFFERENTIAL & FINAL DRAVE',
+                    'ELECTRICAL SYSTEM',
+                    'ENGINE',
+                    'GENERAL ( ACCESSORIES, CABIN, ETC )',
+                    'HYDRAULIC SYSTEM',
+                    'IT SYSTEM',
+                    'MAIN FRAME / CHASSIS / VASSEL',
+                    'PERIODICAL SERVICE',
+                    'PNEUMATIC SYSTEM',
+                    'PREEICTIVE MAINTENANCE',
+                    'PREVENTIF MAINTENANCE',
+                    'PROBLEM SDT',
+                    'PROBLEM TYRE SDT',
+                    'STEERING SYSTEM',
+                    'TRANSMISSION SYSTEM',
+                    'TYRE',
+                    'UNDERCARRIAGE',
+                ];
 
-            // Gabungkan semua inspection keys supaya mudah pengecekan nanti
-            $allInspectionKeys = array_merge($lubricantKeys, $afterRepairKeys, $componentKeys);
+                // Gabungkan semua inspection keys supaya mudah pengecekan nanti
+                $allInspectionKeys = array_merge($lubricantKeys, $afterRepairKeys, $componentKeys);
         @endphp
 
         <div class="modal fade" id="detailModal{{ $index }}" tabindex="-1"

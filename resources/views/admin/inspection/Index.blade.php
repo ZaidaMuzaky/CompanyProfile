@@ -362,8 +362,7 @@
                 'STEERING SYSTEM',
                 'TRANSMISSION SYSTEM',
                 'TYRE',
-                'UNDERGRADUATE',
-                'WORK EQUIPMENT',
+                'UNDERCARRIAGE',
             ];
 
             // Gabungkan semua inspection keys supaya mudah pengecekan nanti
