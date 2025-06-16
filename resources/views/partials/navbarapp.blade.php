@@ -32,19 +32,7 @@
             </a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('user.newsview.*') ? '' : 'collapsed' }}"
-                href="{{ route('user.newsview.index') }}">
-                <i class="bi bi-newspaper"></i> <span>Berita</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('user.gform.index') ? '' : 'collapsed' }}"
-                href="{{ route('user.gform.index') }}">
-                <i class="bi bi-google"></i> <span>Google Form</span>
-            </a>
-        </li>
+        
 
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('user.cn-units.index') ? '' : 'collapsed' }}"
@@ -53,8 +41,119 @@
             </a>
         </li>
         
-
-        <li class="nav-item">
+        @php
+        $mainMenus = \App\Models\MainMenu::with('menuSections.brands.files')->get();
+        $menus = \App\Models\Menu::with('submenus')->get();
+        $audits = \App\Models\Audit::with('uploads')->get();
+    
+        // Deteksi apakah ada submenu aktif
+        $isGeneralOpen = request()->routeIs('user.newsview.*') || request()->routeIs('user.gform.index') ||
+                         request()->routeIs('user.pareto.index') || request()->routeIs('menus.view') ||
+                         request()->routeIs('audit.view');
+    @endphp
+    
+    <!-- GENERAL INFORMATION PLANT -->
+    <li class="nav-item">
+        <a class="nav-link {{ $isGeneralOpen ? '' : 'collapsed' }}" data-bs-target="#general-info-plant" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-building"></i> <span>General Information Plant</span> <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="general-info-plant" class="nav-content collapse {{ $isGeneralOpen ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+    
+            <!-- BERITA -->
+            <li>
+                <a href="{{ route('user.newsview.index') }}"
+                   class="nav-link {{ request()->routeIs('user.newsview.*') ? 'active' : '' }}">
+                    <i class="bi bi-newspaper"></i> <span>Berita</span>
+                </a>
+            </li>
+    
+            <!-- GOOGLE FORM -->
+            <li>
+                <a href="{{ route('user.gform.index') }}"
+                   class="nav-link {{ request()->routeIs('user.gform.index') ? 'active' : '' }}">
+                    <i class="bi bi-google"></i> <span>Google Form</span>
+                </a>
+            </li>
+    
+            <!-- PARETO PROBLEM UNIT -->
+            <li>
+                <a class="nav-link collapsed" data-bs-target="#pareto-problem-unit" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span> <i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="pareto-problem-unit" class="nav-content collapse" data-bs-parent="#general-info-plant">
+                    @foreach ($mainMenus as $mainMenu)
+                        <li>
+                            <a data-bs-toggle="collapse" href="#menu-{{ $mainMenu->id }}" class="nav-link collapsed">
+                                <i class="bi bi-folder"></i><span>{{ $mainMenu->nama }}</span>
+                            </a>
+                            <ul id="menu-{{ $mainMenu->id }}" class="nav-content collapse ms-4">
+                                @foreach ($mainMenu->menuSections as $section)
+                                    <li>
+                                        <a data-bs-toggle="collapse" href="#section-{{ $section->id }}"
+                                           class="nav-link collapsed">
+                                            <i class="bi bi-chevron-right"></i><span>{{ $section->nama }}</span>
+                                        </a>
+                                        <ul id="section-{{ $section->id }}" class="nav-content collapse ms-4">
+                                            @foreach ($section->brands as $brand)
+                                                <li>
+                                                    <a href="{{ route('user.pareto.index', $brand->id) }}"
+                                                       class="{{ request()->routeIs('user.pareto.index') && request()->route('menuBrand') == $brand->id ? 'active' : '' }}">
+                                                        <i class="bi bi-circle"></i>{{ $brand->nama }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+    
+            <!-- KPI PLANT -->
+            @if ($menus->count() > 0)
+                <li>
+                    <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-folder"></i> <span>KPI Plant</span> <i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="menu-database" class="nav-content collapse {{ request()->routeIs('menus.view') ? 'show' : '' }}"
+                        data-bs-parent="#general-info-plant">
+                        @foreach ($menus as $menu)
+                            <li>
+                                <a href="{{ route('menus.view', $menu->id_menu) }}"
+                                   class="{{ request()->routeIs('menus.view', $menu->id_menu) ? 'active' : '' }}">
+                                    <i class="bi bi-circle"></i><span>{{ $menu->nama }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endif
+    
+            <!-- AUDIT SERVICE -->
+            @if ($audits->count() > 0)
+                <li>
+                    <a class="nav-link collapsed" data-bs-target="#menu-audit" data-bs-toggle="collapse" href="#">
+                        <i class="bi bi-folder-check"></i> <span>Audit Service</span> <i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="menu-audit" class="nav-content collapse {{ request()->routeIs('audit.view') ? 'show' : '' }}"
+                        data-bs-parent="#general-info-plant">
+                        @foreach ($audits as $audit)
+                            <li>
+                                <a href="{{ route('audit.view', $audit->id) }}"
+                                   class="{{ request()->routeIs('audit.view') && request()->route('id') == $audit->id ? 'active' : '' }}">
+                                    <i class="bi bi-circle"></i><span>{{ $audit->nama }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </li>
+            @endif
+    
+        </ul>
+    </li>
+        {{-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#backlog-submenu" aria-expanded="false">
                 <i class="bi bi-journal-check"></i> <span>Backlog</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
@@ -76,7 +175,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-submenu" aria-expanded="false">
@@ -101,99 +200,7 @@
                 </li>
             </ul>
         </li>
-
-
-
-
-
-        @php
-            $mainMenus = \App\Models\MainMenu::with('menuSections.brands.files')->get();
-        @endphp
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#pareto-problem-unit" data-bs-toggle="collapse"
-                href="#">
-                <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span> <i
-                    class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="pareto-problem-unit" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-                @foreach ($mainMenus as $mainMenu)
-                    <li>
-                        <a data-bs-toggle="collapse" href="#menu-{{ $mainMenu->id }}" class="nav-link collapsed">
-                            <i class="bi bi-folder"></i><span>{{ $mainMenu->nama }}</span>
-                        </a>
-                        <ul id="menu-{{ $mainMenu->id }}" class="nav-content collapse ms-4">
-                            @foreach ($mainMenu->menuSections as $section)
-                                <li>
-                                    <a data-bs-toggle="collapse" href="#section-{{ $section->id }}"
-                                        class="nav-link collapsed">
-                                        <i class="bi bi-chevron-right"></i><span>{{ $section->nama }}</span>
-                                    </a>
-                                    <ul id="section-{{ $section->id }}" class="nav-content collapse ms-4">
-                                        @foreach ($section->brands as $brand)
-                                            <li>
-                                                <a href="{{ route('user.pareto.index', $brand->id) }}"
-                                                    class="{{ request()->routeIs('user.pareto.index') && request()->route('menuBrand') == $brand->id ? 'active' : '' }}">
-                                                    <i class="bi bi-circle"></i>{{ $brand->nama }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </li>
-                @endforeach
-            </ul>
-        </li>
-
-        @php
-            $menus = \App\Models\Menu::with('submenus')->get();
-        @endphp
-
-        @if ($menus->count() > 0)
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-folder"></i> <span>KPI Plant</span> <i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="menu-database"
-                    class="nav-content collapse {{ request()->routeIs('menus.view') ? 'show' : '' }}"
-                    data-bs-parent="#sidebar-nav">
-                    @foreach ($menus as $menu)
-                        <li>
-                            <a href="{{ route('menus.view', $menu->id_menu) }}"
-                                class="{{ request()->routeIs('menus.view', $menu->id_menu) ? 'active' : '' }}">
-                                <i class="bi bi-circle"></i><span>{{ $menu->nama }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </li>
-        @endif
-        @php
-            $audits = \App\Models\Audit::with('uploads')->get();
-        @endphp
-        @if ($audits->count() > 0)
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#menu-audit" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-folder-check"></i> <span>Audit Service</span> <i
-                        class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="menu-audit" class="nav-content collapse {{ request()->routeIs('audit.view') ? 'show' : '' }}"
-                    data-bs-parent="#sidebar-nav">
-                    @foreach ($audits as $audit)
-                        <li>
-                            <a href="{{ route('audit.view', $audit->id) }}"
-                                class="{{ request()->routeIs('audit.view') && request()->route('id') == $audit->id ? 'active' : '' }}">
-                                <i class="bi bi-circle"></i><span>{{ $audit->nama }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </li>
-        @endif
-
-
+    
         @if (Auth::check() && Auth::user()->type === 'admin')
             {{-- admin side --}}
             <li class="nav-item">
@@ -216,25 +223,7 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.google-form.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.google-form.edit') }}">
-                    <i class="bi bi-pencil"></i> <span>Edit Google Form Link</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.menus.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.menus.index') }}">
-                    <i class="bi bi-folder"></i> <span>Manajemen Meca</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.news.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.news.index') }}">
-                    <i class="bi bi-newspaper"></i> <span>Manajemen Berita</span>
-                </a>
-            </li>
+            
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.achievement.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.achievement.index') }}">
@@ -253,20 +242,69 @@
                     <i class="bi bi-people"></i> <span>Manajemen Our People</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.pareto.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.pareto.index') }}">
-                    <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span>
-                </a>
-            </li>
+            
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.cn-units.*') ? '' : 'collapsed' }}"
                     href="{{ route('admin.cn-units.index') }}">
                     <i class="bi bi-geo-alt-fill"></i> <span>GIS Manajemen</span>
                 </a>
             </li>
-            
+            @php
+                $isAdminOpen = request()->routeIs('admin.google-form.*') ||
+                            request()->routeIs('admin.menus.*') ||
+                            request()->routeIs('admin.news.*') ||
+                            request()->routeIs('admin.pareto.*') ||
+                            request()->routeIs('admin.audit.*');
+            @endphp
+
+            <!-- GENERAL INFORMATION PLANT ADMIN -->
             <li class="nav-item">
+                <a class="nav-link {{ $isAdminOpen ? '' : 'collapsed' }}" data-bs-target="#general-info-plant-admin"
+                data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-building-gear"></i> <span>General Information Plant Admin</span>
+                    <i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="general-info-plant-admin" class="nav-content collapse {{ $isAdminOpen ? 'show' : '' }}"
+                    data-bs-parent="#sidebar-nav">
+
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('admin.google-form.*') ? 'active' : 'collapsed' }}"
+                        href="{{ route('admin.google-form.edit') }}">
+                            <i class="bi bi-pencil"></i> <span>Edit Google Form Link</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('admin.menus.*') ? 'active' : 'collapsed' }}"
+                        href="{{ route('admin.menus.index') }}">
+                            <i class="bi bi-folder"></i> <span>Manajemen Meca</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('admin.news.*') ? 'active' : 'collapsed' }}"
+                        href="{{ route('admin.news.index') }}">
+                            <i class="bi bi-newspaper"></i> <span>Manajemen Berita</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('admin.pareto.*') ? 'active' : 'collapsed' }}"
+                        href="{{ route('admin.pareto.index') }}">
+                            <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="nav-link {{ request()->routeIs('admin.audit.*') ? 'active' : 'collapsed' }}"
+                        href="{{ route('admin.audit.index') }}">
+                            <i class="bi bi-check2-square"></i> <span>Audit Service Management</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#backlog-admin" aria-expanded="false">
                     <i class="bi bi-clipboard-data"></i> <span>Backlog Admin</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
@@ -288,7 +326,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-admin"
                     aria-expanded="false">
@@ -314,12 +352,7 @@
                 </ul>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.audit.*') ? '' : 'collapsed' }}"
-                    href="{{ route('admin.audit.index') }}">
-                    <i class="bi bi-check2-square"></i> <span>Audit Service Management</span>
-                </a>
-            </li>
+          
         @endif
 
         <li class="nav-item">
