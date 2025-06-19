@@ -66,7 +66,7 @@
 
                                                 <thead class="table-light">
                                                     <tr>
-                                                        <th class="ps-4 py-3 text-uppercase small fw-semibold">Nama Mekanik
+                                                        <th class="ps-4 py-3 text-uppercase small fw-semibold text-center">Nama Mekanik
                                                         </th>
                                                         <th class="py-3 text-uppercase small fw-semibold text-center">Section</th>
                                                         <th class="py-3 text-uppercase small fw-semibold text-center">Model Unit</th>
