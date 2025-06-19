@@ -24,7 +24,7 @@ class UserInspectionController extends Controller
     {
         // 1. Validasi input
         $request->validate([
-            'tanggal_service'                          => 'required|date',
+            'tanggal'                                  => 'required|date',
             'nama_mekanik'                             => 'required|string|max:255',
             'waktu_serah_terima'                       => 'required|string',
             'nik'                                      => 'required|string|max:50',
@@ -177,10 +177,10 @@ class UserInspectionController extends Controller
         $rows    = $resp->getValues();
         $headers = $rows[0] ?? [];
 
-        $fixed = ['ID','Timestamp','Username','Tanggal Service','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
+        $fixed = ['ID','Timestamp','Username','Tanggal','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
         // b) inisialisasi header jika belum ada
         if (empty($headers) || $headers[0] !== 'ID') {
-            $fixed    = ['ID','Timestamp','Username','Tanggal Service','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
+            $fixed    = ['ID','Timestamp','Username','Tanggal','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
             $allHeads = array_merge($fixed, $inspectionTitles, $temuanHeaders);
             $service->spreadsheets_values->append($spreadsheetId, $sheetRange, new ValueRange(['values'=>[$allHeads]]), ['valueInputOption'=>'RAW']);
             $headers = $allHeads;
@@ -212,7 +212,7 @@ class UserInspectionController extends Controller
             $newId,
             now()->toDateTimeString(),
             Auth::user()->username ?? '-',
-            $request->tanggal_service,
+            $request->tanggal,
             $request->nama_mekanik,
             $request->waktu_serah_terima,
             $request->nik,
@@ -690,7 +690,7 @@ class UserInspectionController extends Controller
     {
         // 1. Validasi input (sama dengan store)
         $request->validate([
-            'tanggal_service'                          => 'required|date',
+            'tanggal'                                  => 'required|date',
             'nama_mekanik'                             => 'required|string|max:255',
             'waktu_serah_terima'                       => 'required|string',
             'nik'                                      => 'required|string|max:50',
@@ -831,7 +831,7 @@ class UserInspectionController extends Controller
         $rows = $resp->getValues();
         $headers = $rows[0] ?? [];
     
-        $fixed = ['ID','Timestamp','Username','Tanggal Service','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
+        $fixed = ['ID','Timestamp','Username','Tanggal','Nama Mekanik','Waktu Unit Masuk Breakdown','NIK','Section','Supervisor','Model Unit','CN Unit','Hour Meter','Status','Approved By','Note'];
     
         // Update header jika ada temuan baru
         $diff = array_diff($temuanHeaders, $headers);
@@ -896,7 +896,7 @@ class UserInspectionController extends Controller
             $id,
             now()->toDateTimeString(),
             Auth::user()->username ?? '-',
-            $request->tanggal_service,
+            $request->tanggal,
             $request->nama_mekanik,
             $request->waktu_serah_terima,
             $request->nik,

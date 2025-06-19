@@ -87,11 +87,11 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-4">
-                                    <label for="tanggal_service" class="form-label fw-semibold">Tanggal Service *</label>
-                                    <input type="date" name="tanggal_service" id="tanggal_service"
-                                        class="form-control rounded-3 @error('tanggal_service') is-invalid @enderror"
+                                    <label for="tanggal" class="form-label fw-semibold">Tanggal *</label>
+                                    <input type="date" name="tanggal" id="tanggal"
+                                        class="form-control rounded-3 @error('tanggal') is-invalid @enderror"
                                         required>
-                                    @error('tanggal_service')
+                                    @error('tanggal')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -367,7 +367,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <select name="temuan_sub_component[__INDEX__][action]"
-                                                    class="form-select form-select-sm" required>
+                                                    class="form-select form-select-sm">
                                               <option value="" disabled selected>-- Action --</option>
                                               <option value="CHECK">CHECK</option>
                                               <option value="INSTALL">INSTALL</option>
