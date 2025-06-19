@@ -122,7 +122,7 @@
                                                             <ul class="list-group mb-0">
                                                                 @foreach ($temuanList as $index => $item)
                                                                     <li class="list-group-item border-0 border-bottom">
-                                                                        <div class="mb-2">
+                                                                        <div class="mb-2 text-start">
                                                                             <strong class="text-dark">{{ $item['temuan'] }}</strong>
                                                                         </div>
                                                                         <div class="d-flex flex-column flex-sm-row gap-2">

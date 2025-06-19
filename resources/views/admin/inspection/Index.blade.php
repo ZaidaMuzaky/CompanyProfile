@@ -68,12 +68,12 @@
                                                     <tr>
                                                         <th class="ps-4 py-3 text-uppercase small fw-semibold">Nama Mekanik
                                                         </th>
-                                                        <th class="py-3 text-uppercase small fw-semibold">Section</th>
-                                                        <th class="py-3 text-uppercase small fw-semibold">Model Unit</th>
-                                                        <th class="py-3 text-uppercase small fw-semibold">CN Unit</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Section</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Model Unit</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">CN Unit</th>
                                                         <!-- Kolom CN Unit -->
-                                                        <th class="py-3 text-uppercase small fw-semibold">Status</th>
-                                                        <th class="py-3 text-uppercase small fw-semibold">Temuan</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Status</th>
+                                                        <th class="py-3 text-uppercase small fw-semibold text-center">Temuan</th>
                                                         <th class="py-3 text-uppercase small fw-semibold text-center">Aksi
                                                             Formulir
                                                         </th>
@@ -89,19 +89,19 @@
                                                 <tbody>
                                                     @foreach ($forms as $form)
                                                         <tr class="border-top">
-                                                            <td class="ps-4 py-3">{{ $form['Nama Mekanik'] ?? '-' }}</td>
-                                                            <td class="py-3">{{ $form['Section'] ?? '-' }}</td>
-                                                            <td class="py-3">{{ $form['Model Unit'] ?? '-' }}
+                                                            <td class="ps-4 py-3 text-center">{{ $form['Nama Mekanik'] ?? '-' }}</td>
+                                                            <td class="py-3 text-center">{{ $form['Section'] ?? '-' }}</td>
+                                                            <td class="py-3 text-center">{{ $form['Model Unit'] ?? '-' }}
                                                             </td>
-                                                            <td class="py-3 cn-unit">{{ $form['CN Unit'] ?? '-' }}</td>
+                                                            <td class="py-3 cn-unit text-center">{{ $form['CN Unit'] ?? '-' }}</td>
                                                             <!-- Menampilkan CN Unit -->
-                                                            <td class="py-3">
+                                                            <td class="py-3 text-center">
                                                                 <span
                                                                     class="badge bg-{{ $form['Status'] == 'Approved' ? 'success' : ($form['Status'] == 'Rejected' ? 'danger' : 'warning text-dark') }} rounded-pill px-3 py-2">
                                                                     {{ $form['Status'] ?? 'Pending' }}
                                                                 </span>
                                                             </td>
-                                                            <td class="py-3">
+                                                            <td class="py-3 text-center">
                                                                 @php
                                                                     if (!function_exists('is_list_array')) {
                                                                         function is_list_array($array) {
@@ -154,7 +154,7 @@
                                                                         <ul class="list-group mb-0">
                                                                             @foreach ($temuanList as $index => $item)
                                                                                 <li class="list-group-item border-0 border-bottom">
-                                                                                    <div class="mb-2">
+                                                                                    <div class="mb-2 text-start">
                                                                                         <strong class="text-dark">{{ $item['temuan'] }}</strong>
                                                                                     </div>
                                                                                     <div class="d-flex flex-column flex-sm-row gap-2">
@@ -280,7 +280,7 @@
                                                                     </button>
                                                                 @endif
                                                             </td>
-                                                            <td class="text-center pe-4 py-3 text-nowrap">
+                                                            <td class="text-center pe-4 py-3 text-nowrap text-center">
                                                                 <button class="btn btn-sm btn-outline-warning rounded-pill"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#caseModal{{ $form['ID'] }}"
