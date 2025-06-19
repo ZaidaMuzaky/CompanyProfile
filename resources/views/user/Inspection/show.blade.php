@@ -31,10 +31,10 @@
                                     <thead class="table-light">
                                         <tr class="table-row">
                                             {{-- <th class="ps-4 py-2 text-uppercase small fw-semibold">Timestamp</th> --}}
-                                            <th class="py-2 text-uppercase small fw-semibold">Tanggal Service</th>
-                                            <th class="py-2 text-uppercase small fw-semibold">Model Unit</th>
-                                            <th class="py-2 text-uppercase small fw-semibold">CN Unit</th>
-                                            <th class="py-2 text-uppercase small fw-semibold">Status</th>
+                                            <th class="py-2 text-uppercase small fw-semibold text-center">Tanggal</th>
+                                            <th class="py-2 text-uppercase small fw-semibold text-center">Model Unit</th>
+                                            <th class="py-2 text-uppercase small fw-semibold text-center">CN Unit</th>
+                                            <th class="py-2 text-uppercase small fw-semibold text-center">Status</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Temuan</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Aksi</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Aksi
@@ -59,17 +59,17 @@
                                         @foreach ($sortedForms as $index => $form)
                                             <tr class="border-top table-row">
                                                 {{-- <td class="ps-4 py-2 table-cell">{{ $form['Timestamp'] ?? '-' }}</td> --}}
-                                                <td class="py-2 table-cell">{{ $form['Tanggal Service'] ?? '-' }}</td>
-                                                <td class="py-2 table-cell fw-semibold">{{ $form['Model Unit'] ?? '-' }}
+                                                <td class="py-2 table-cell text-center">{{ $form['Tanggal'] ?? '-' }}</td>
+                                                <td class="py-2 table-cell fw-semibold text-center">{{ $form['Model Unit'] ?? '-' }}
                                                 </td>
-                                                <td class="py-2 table-cell">{{ $form['CN Unit'] ?? '-' }}</td>
-                                                <td class="py-2 table-cell">
+                                                <td class="py-2 table-cell text-center">{{ $form['CN Unit'] ?? '-' }}</td>
+                                                <td class="py-2 table-cell text-center">
                                                     <span
                                                         class="badge bg-{{ $form['Status'] == 'Rejected' ? 'danger' : ($form['Status'] == 'Pending' ? 'warning text-dark' : 'success') }} rounded-pill px-3 py-2">
                                                         {{ $form['Status'] }}
                                                     </span>
                                                 </td>
-                                                <td class="py-3">
+                                                <td class="py-3 text-center">
                                                     @php
                                                         if (!function_exists('is_list_array')) {
                                                             function is_list_array($array) {
@@ -117,7 +117,7 @@
                                                         .select-status-close { background-color: #d4edda; }     /* hijau muda */
                                                     </style>
                                                 
-                                                    <div class="container-fluid">
+                                                    <div class="container-fluid text-center">
                                                         @if (count($temuanList))
                                                             <ul class="list-group mb-0">
                                                                 @foreach ($temuanList as $index => $item)
@@ -151,7 +151,7 @@
                                                                 @endforeach
                                                             </ul>
                                                         @else
-                                                            <span class="text-muted fst-italic">Tidak ada temuan open.</span>
+                                                            <span class="text-center fst-italic">Tidak ada temuan open.</span>
                                                         @endif
                                                     </div>
                                                 
@@ -270,7 +270,7 @@
                                                     @endif
 
                                                 </td>
-                                                <td class="text-center pe-4 py-3 text-nowrap">
+                                                <td class="text-center pe-4 py-3 text-nowrap text-center">
                                                     <button class="btn btn-sm btn-outline-warning rounded-pill"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#caseModal{{ $form['ID'] }}"
@@ -615,8 +615,8 @@
                             <div class="modal-body p-4">
                                 <div class="row mb-4">
                                     <div class="col-md-6 mb-3">
-                                        <p class="mb-1 text-muted small">Tanggal Service</p>
-                                        <p class="mb-0 fw-bold">{{ $form['Tanggal Service'] ?? '-' }}</p>
+                                        <p class="mb-1 text-muted small">Tanggal</p>
+                                        <p class="mb-0 fw-bold">{{ $form['Tanggal'] ?? '-' }}</p>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <p class="mb-1 text-muted small">Status</p>
@@ -626,12 +626,12 @@
                                         </span>
                                     </div>
                                 </div>
-                                {{-- Tampilkan data selain inspection keys, tanggal service, dan status --}}
+                                {{-- Tampilkan data selain inspection keys, tanggal , dan status --}}
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped align-middle">
                                         <tbody>
                                             @foreach ($form as $key => $value)
-                                                @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status' && !in_array($key, $componentKeys))
+                                                @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal' && $key != 'Status' && !in_array($key, $componentKeys))
                                                     <tr>
                                                         <th class="w-40 bg-light p-3">{{ $key }}</th>
                                                         <td class="p-3">

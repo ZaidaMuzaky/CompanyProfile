@@ -31,7 +31,7 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th class="ps-4 py-2 text-uppercase small fw-semibold text-center">Username</th>
-                                            <th class="py-2 text-uppercase small fw-semibold text-center">Tanggal Service
+                                            <th class="py-2 text-uppercase small fw-semibold text-center">Tanggal
                                             </th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">Model Unit</th>
                                             <th class="py-2 text-uppercase small fw-semibold text-center">CN Unit</th>
@@ -46,7 +46,7 @@
         }) as $index => $form)
                                             <tr class="border-top">
                                                 <td class="ps-4 py-2 text-center">{{ $form['Username'] ?? '-' }}</td>
-                                                <td class="py-2 text-center">{{ $form['Tanggal Service'] ?? '-' }}</td>
+                                                <td class="py-2 text-center">{{ $form['Tanggal'] ?? '-' }}</td>
                                                 <td class="py-2 fw-semibold text-center">{{ $form['Model Unit'] ?? '-' }}
                                                 </td>
                                                 <td class="py-2 text-center">{{ $form['CN Unit'] ?? '-' }}</td>
@@ -56,7 +56,7 @@
                                                         {{ $form['Status'] }}
                                                     </span>
                                                 </td>
-<td class="py-3">
+<td class="py-3 text-center">
     @php
         if (!function_exists('is_list_array')) {
             function is_list_array($array) {
@@ -102,7 +102,7 @@
         .badge-status-close { background-color: #d4edda; color: #000; }
     </style>
 
-    <div class="container-fluid">
+    <div class="container-fluid text-center">
         @if (count($temuanList))
             <ul class="list-group mb-0">
                 @foreach ($temuanList as $item)
@@ -122,12 +122,12 @@
                 @endforeach
             </ul>
         @else
-            <span class="text-muted fst-italic">Tidak ada temuan open.</span>
+            <span class="text-muted fst-italic text-center">Tidak ada temuan open.</span>
         @endif
     </div>
 </td>
 
-                                                <td class="text-center pe-4 py-2">
+                                                <td class="text-center pe-4 py-2 text-center">
                                                     <button class="btn btn-sm btn-outline-primary rounded-pill"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#detailModal{{ $index }}"
@@ -214,8 +214,8 @@ aria-labelledby="detailModalLabel{{ $index }}" aria-hidden="true">
             <div class="modal-body p-4">
                 <div class="row mb-4">
                     <div class="col-md-6 mb-3">
-                        <p class="mb-1 text-muted small">Tanggal Service</p>
-                        <p class="mb-0 fw-bold">{{ $form['Tanggal Service'] ?? '-' }}</p>
+                        <p class="mb-1 text-muted small">Tanggal</p>
+                        <p class="mb-0 fw-bold">{{ $form['Tanggal'] ?? '-' }}</p>
                     </div>
                     <div class="col-md-3 mb-3">
                         <p class="mb-1 text-muted small">Status</p>
@@ -230,7 +230,7 @@ aria-labelledby="detailModalLabel{{ $index }}" aria-hidden="true">
                     <table class="table table-bordered table-striped align-middle">
                         <tbody>
                             @foreach ($form as $key => $value)
-                                @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal Service' && $key != 'Status' && !in_array($key, $componentKeys))
+                                @if (!in_array($key, $allInspectionKeys) && $key != 'Tanggal' && $key != 'Status' && !in_array($key, $componentKeys))
                                     <tr>
                                         <th class="w-40 bg-light p-3">{{ $key }}</th>
                                         <td class="p-3">
