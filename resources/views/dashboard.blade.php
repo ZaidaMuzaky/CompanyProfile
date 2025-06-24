@@ -62,6 +62,8 @@
                 </div>
             </div>
         </div>
+
+        
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h4 class="mb-3 pt-4 text-center fw-bold">Grafik Data Inspection</h4>
@@ -73,33 +75,83 @@
                         <option value="30" {{ $range == '30' ? 'selected' : '' }}>30 Hari Terakhir</option>
                     </select>
                 </form>
-                <div class="row justify-content-center">
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
+                <div class="row d-flex gx-4"> <!-- Flexbox with horizontal gap -->
+                    <!-- Status Chart (Left Edge) -->
+                    <div class="col-md-4 mb-4 d-flex justify-content-start">
+                        <div class="card border-0 shadow-sm w-100">
+                            <div class="card-body d-flex flex-column align-items-center">
                                 <h6 class="card-title text-center fw-semibold">Status</h6>
-                                <div class="chart-container" style="position: relative; height: 300px;">
+                                <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
                                     <canvas id="statusChart"></canvas>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <h6 class="card-title text-center fw-semibold">Status Case</h6>
-                                <div class="chart-container" style="position: relative; height: 300px;">
-                                    <canvas id="caseChart"></canvas>
+                                <div class="chart-data-summary mt-3">
+                                    @php
+                                        $totalStatus = array_sum($statusCount);
+                                    @endphp
+                                    <div class="data-item">
+                                        <span class="color-box" style="background-color: #4CAF50;"></span>
+                                        <span class="label">Approved</span>
+                                        <span class="value">{{ $statusCount['Approved'] }}</span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="color-box" style="background-color: #FFC107;"></span>
+                                        <span class="label">Pending</span>
+                                        <span class="value">{{ $statusCount['Pending'] }} </span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="color-box" style="background-color: #F44336;"></span>
+                                        <span class="label">Rejected</span>
+                                        <span class="value">{{ $statusCount['Rejected'] }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
+                    <!-- Status Case Chart (Centered) -->
+                    <div class="col-md-4 mb-4 d-flex justify-content-center">
+                        <div class="card border-0 shadow-sm w-100">
+                            <div class="card-body d-flex flex-column align-items-center">
+                                <h6 class="card-title text-center fw-semibold">Status Case</h6>
+                                <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+                                    <canvas id="caseChart"></canvas>
+                                </div>
+                                <div class="chart-data-summary mt-3">
+                                    @php
+                                        $totalCase = array_sum($statusCaseCount);
+                                    @endphp
+                                    <div class="data-item">
+                                        <span class="color-box" style="background-color: #FF9800;"></span>
+                                        <span class="label">Open</span>
+                                        <span class="value">{{ $statusCaseCount['open'] }} </span>
+                                    </div>
+                                    <div class="data-item">
+                                        <span class="color-box" style="background-color: #2196F3;"></span>
+                                        <span class="label">Close</span>
+                                        <span class="value">{{ $statusCaseCount['close'] }} </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Action Type Chart (Right Edge) -->
+                    <div class="col-md-4 mb-4 d-flex justify-content-end">
+                        <div class="card border-0 shadow-sm w-100">
+                            <div class="card-body d-flex flex-column align-items-center">
                                 <h6 class="card-title text-center fw-semibold">Action Type</h6>
-                                <div class="chart-container" style="position: relative; height: 300px;">
+                                <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
                                     <canvas id="actionChart"></canvas>
+                                </div>
+                                <div class="chart-data-summary mt-3">
+                                    @php
+                                        $totalAction = array_sum($actionCount);
+                                    @endphp
+                                    @foreach ($actionCount as $label => $value)
+                                        <div class="data-item">
+                                            <span class="color-box" style="background-color: {{ $loop->index == 0 ? '#3F51B5' : ($loop->index == 1 ? '#4CAF50' : ($loop->index == 2 ? '#FF9800' : ($loop->index == 3 ? '#9C27B0' : '#F44336'))) }};"></span>
+                                            <span class="label">{{ $label }}</span>
+                                            <span class="value">{{ $value }}</span>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -110,28 +162,79 @@
         
         <style>
             .card {
-                max-height: 600px; /* Increased to accommodate larger charts */
-                overflow: hidden;
+                height: auto; /* Adjust to content */
             }
             .card-body {
-                max-height: 100%;
-                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center; /* Center content horizontally within card */
+                padding: 1.5rem;
             }
             .chart-container {
                 position: relative;
-                width: 100%;
-                height: 300px; /* Increased chart height */
+                width: 100%; /* Full width of column */
+                height: 300px;
+                margin: 0 auto; /* Center chart within column */
             }
             canvas {
                 max-width: 100% !important;
-                max-height: 300px !important; /* Match chart-container height */
+                max-height: 300px !important;
+            }
+            .chart-data-summary {
+                width: 100%; /* Full width of column */
+                margin-top: 1rem;
+                font-size: 15px;
+                font-family: 'Arial', sans-serif;
+            }
+            .data-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 8px 12px;
+                margin-bottom: 6px;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+            .color-box {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                margin-right: 10px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+            }
+            .label {
+                flex: 1;
+                font-weight: 500;
+                color: #333;
+            }
+            .value {
+                font-weight: 600;
+                color: #555;
             }
             @media (max-width: 768px) {
+                .row {
+                    flex-direction: column; /* Stack columns vertically */
+                }
+                .col-md-4 {
+                    justify-content: center !important; /* Center all charts on mobile */
+                }
                 .chart-container {
-                    height: 200px !important; /* Smaller height for mobile */
+                    height: 200px;
                 }
                 canvas {
                     max-height: 200px !important;
+                }
+                .chart-data-summary {
+                    font-size: 13px;
+                }
+                .data-item {
+                    padding: 6px 10px;
+                }
+                .color-box {
+                    width: 14px;
+                    height: 14px;
                 }
             }
         </style>
@@ -153,7 +256,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             title: { display: false },
-                            legend: { position: 'bottom' }
+                            legend: { display: false }
                         }
                     }
                 });
@@ -172,7 +275,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             title: { display: false },
-                            legend: { position: 'bottom' }
+                            legend: { display: false }
                         }
                     }
                 });
@@ -191,14 +294,12 @@
                         maintainAspectRatio: false,
                         plugins: {
                             title: { display: false },
-                            legend: { position: 'bottom' }
+                            legend: { display: false }
                         }
                     }
                 });
             });
         </script>
-        
-                
         
         <!-- Login Recap Card -->
         <div class="row">
