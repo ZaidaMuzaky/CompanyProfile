@@ -62,7 +62,144 @@
                 </div>
             </div>
         </div>
-
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3 text-center fw-bold">Grafik Data Inspection</h4>
+                <form method="GET" class="mb-4 text-center">
+                    <label for="range" class="me-2 fw-semibold">Tampilkan data berdasarkan:</label>
+                    <select name="range" id="range" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
+                        <option value="all" {{ $range == 'all' ? 'selected' : '' }}>Semua Data</option>
+                        <option value="7" {{ $range == '7' ? 'selected' : '' }}>7 Hari Terakhir</option>
+                        <option value="30" {{ $range == '30' ? 'selected' : '' }}>30 Hari Terakhir</option>
+                    </select>
+                </form>
+                <div class="row justify-content-center">
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="card-title text-center fw-semibold">Status</h6>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="statusChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="card-title text-center fw-semibold">Status Case</h6>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="caseChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="card-title text-center fw-semibold">Action Type</h6>
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="actionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            .card {
+                max-height: 600px; /* Increased to accommodate larger charts */
+                overflow: hidden;
+            }
+            .card-body {
+                max-height: 100%;
+                overflow-y: auto;
+            }
+            .chart-container {
+                position: relative;
+                width: 100%;
+                height: 300px; /* Increased chart height */
+            }
+            canvas {
+                max-width: 100% !important;
+                max-height: 300px !important; /* Match chart-container height */
+            }
+            @media (max-width: 768px) {
+                .chart-container {
+                    height: 200px !important; /* Smaller height for mobile */
+                }
+                canvas {
+                    max-height: 200px !important;
+                }
+            }
+        </style>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                new Chart(document.getElementById('statusChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Approved', 'Pending', 'Rejected'],
+                        datasets: [{
+                            data: [{{ $statusCount['Approved'] }}, {{ $statusCount['Pending'] }}, {{ $statusCount['Rejected'] }}],
+                            backgroundColor: ['#4CAF50', '#FFC107', '#F44336']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: false },
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+        
+                new Chart(document.getElementById('caseChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Open', 'Close'],
+                        datasets: [{
+                            data: [{{ $statusCaseCount['open'] }}, {{ $statusCaseCount['close'] }}],
+                            backgroundColor: ['#FF9800', '#2196F3']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: false },
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+        
+                new Chart(document.getElementById('actionChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: {!! json_encode(array_keys($actionCount)) !!},
+                        datasets: [{
+                            data: {!! json_encode(array_values($actionCount)) !!},
+                            backgroundColor: ['#3F51B5', '#4CAF50', '#FF9800', '#9C27B0', '#F44336']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: false },
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            });
+        </script>
+        
+                
+        
         <!-- Login Recap Card -->
         <div class="row">
             <div class="col-12 mb-4">
