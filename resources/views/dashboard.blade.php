@@ -167,8 +167,6 @@
             .card-body {
                 display: flex;
                 flex-direction: column;
-                align-items: center; /* Center content horizontally within card */
-                padding: 1.5rem;
             }
             .chart-container {
                 position: relative;
