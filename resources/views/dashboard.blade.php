@@ -64,7 +64,7 @@
         </div>
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h4 class="mb-3 text-center fw-bold">Grafik Data Inspection</h4>
+                <h4 class="mb-3 pt-4 text-center fw-bold">Grafik Data Inspection</h4>
                 <form method="GET" class="mb-4 text-center">
                     <label for="range" class="me-2 fw-semibold">Tampilkan data berdasarkan:</label>
                     <select name="range" id="range" onchange="this.form.submit()" class="form-select w-auto d-inline-block">
