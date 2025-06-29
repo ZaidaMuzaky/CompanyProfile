@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        
+{{--         
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h4 class="mb-3 pt-4 text-center fw-bold">Grafik Data Inspection</h4>
@@ -158,7 +158,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         
         <style>
             .card {
