@@ -177,7 +177,7 @@
             </ul>
         </li> --}}
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-submenu" aria-expanded="false">
                 <i class="bi bi-tools"></i> <span>Backlog / Inspection After Repair</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
@@ -199,7 +199,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
     
         @if (Auth::check() && Auth::user()->type === 'admin')
             {{-- admin side --}}
@@ -327,7 +327,7 @@
                     </li>
                 </ul>
             </li> --}}
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-admin"
                     aria-expanded="false">
                     <i class="bi bi-shield-check"></i> <span>Backlog / Inspection After Repair</span>
@@ -350,7 +350,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
           
         @endif
