@@ -121,7 +121,7 @@
                 </li> --}}
 
                 <!-- KPI PLANT -->
-                {{-- @if ($menus->count() > 0)
+                @if ($menus->count() > 0)
                     <li>
                         <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse"
                             href="#">
@@ -141,7 +141,7 @@
                             @endforeach
                         </ul>
                     </li>
-                @endif --}}
+                @endif
 
                 <!-- AUDIT SERVICE -->
                 @if ($audits->count() > 0)
@@ -303,13 +303,13 @@
                             <i class="bi bi-newspaper"></i> <span>Manajemen Berita</span>
                         </a>
                     </li>
-
+                    {{-- 
                     <li>
                         <a class="nav-link {{ request()->routeIs('admin.pareto.*') ? 'active' : 'collapsed' }}"
                             href="{{ route('admin.pareto.index') }}">
                             <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span>
                         </a>
-                    </li>
+                    </li> --}}
 
                     <li>
                         <a class="nav-link {{ request()->routeIs('admin.audit.*') ? 'active' : 'collapsed' }}"
