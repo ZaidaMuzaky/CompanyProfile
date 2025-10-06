@@ -82,7 +82,7 @@
                 </li>
 
                 <!-- PARETO PROBLEM UNIT -->
-                <li>
+                {{-- <li>
                     <a class="nav-link collapsed" data-bs-target="#pareto-problem-unit" data-bs-toggle="collapse"
                         href="#">
                         <i class="bi bi-diagram-3"></i> <span>Pareto Problem Unit</span> <i
@@ -118,10 +118,10 @@
                             </li>
                         @endforeach
                     </ul>
-                </li>
+                </li> --}}
 
                 <!-- KPI PLANT -->
-                @if ($menus->count() > 0)
+                {{-- @if ($menus->count() > 0)
                     <li>
                         <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse"
                             href="#">
@@ -141,7 +141,7 @@
                             @endforeach
                         </ul>
                     </li>
-                @endif
+                @endif --}}
 
                 <!-- AUDIT SERVICE -->
                 @if ($audits->count() > 0)
@@ -192,7 +192,7 @@
             </ul>
         </li> --}}
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-submenu" aria-expanded="false">
                 <i class="bi bi-tools"></i> <span>Backlog / Inspection After Repair</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
@@ -214,7 +214,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
 
         @if (Auth::check() && Auth::user()->type === 'admin')
             {{-- admin side --}}
@@ -343,7 +343,7 @@
                     </li>
                 </ul>
             </li> --}}
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#inspection-admin"
                     aria-expanded="false">
                     <i class="bi bi-shield-check"></i> <span>Backlog / Inspection After Repair</span>
@@ -366,7 +366,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
         @endif
 
         <li class="nav-item">
