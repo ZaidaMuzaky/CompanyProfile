@@ -121,7 +121,7 @@
                 </li> --}}
 
                 <!-- KPI PLANT -->
-                @if ($menus->count() > 0)
+                {{-- @if ($menus->count() > 0)
                     <li>
                         <a class="nav-link collapsed" data-bs-target="#menu-database" data-bs-toggle="collapse"
                             href="#">
@@ -141,7 +141,7 @@
                             @endforeach
                         </ul>
                     </li>
-                @endif
+                @endif --}}
 
                 <!-- AUDIT SERVICE -->
                 @if ($audits->count() > 0)
@@ -290,12 +290,12 @@
                         </a>
                     </li>
 
-                    <li>
+                    {{-- <li>
                         <a class="nav-link {{ request()->routeIs('admin.menus.*') ? 'active' : 'collapsed' }}"
                             href="{{ route('admin.menus.index') }}">
                             <i class="bi bi-folder"></i> <span>Manajemen Meca</span>
                         </a>
-                    </li>
+                    </li> --}}
 
                     <li>
                         <a class="nav-link {{ request()->routeIs('admin.news.*') ? 'active' : 'collapsed' }}"
